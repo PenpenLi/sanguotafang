@@ -72,7 +72,6 @@ public class ServerManager {
 
 		pclient.initClient(host, port, () =>
 			{
-				//JsonObject user = new JsonObject();
 				pclient.connect(null,callBack);
 			});
 		

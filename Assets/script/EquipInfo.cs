@@ -34,10 +34,19 @@ public class EquipInfo :Observer {
 	public Text suit4;
 	public Dictionary<string,Text> suitArr;
 	public Image suitPanel;
+	public List<Button> stoneArr;
+	public Button stone0;
+	public Button stone1;
+	public Button stone2;
+	public Button stone3;
+	public Button stone4;
+	public Image stonePanel;
+	public int pinzhi = 1;
 	public bool isFlesh = false;
 	// Use this for initialization
 	void Awake () {
 		suitArr = new Dictionary<string, Text> ();
+		stoneArr = new List<Button> ();
 		suitArr ["weapon"] = weapon;
 		suitArr ["armor"] = armor;
 		suitArr ["shoes"] = shoes;
@@ -46,6 +55,11 @@ public class EquipInfo :Observer {
 		suitArr ["suit2"] = suit2;
 		suitArr ["suit3"] = suit3;
 		suitArr ["suit4"] = suit4;
+		stoneArr.Add (stone0);
+		stoneArr.Add (stone1);
+		stoneArr.Add (stone2);
+		stoneArr.Add (stone3);
+		stoneArr.Add (stone4);
 		messageArr.Add (Message.EQUIP_LEVELUP);
 		PoolManager.getInstance ().initPoolByType (type,this,1);
 	}
@@ -84,6 +98,7 @@ public class EquipInfo :Observer {
 			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
 		}
 		icon.SetNativeSize();
+		pinzhi = DataManager.getInstance ().getPinZhi(jo ["color"].ToString ());
 		itemName.text = "Lv."+data ["level"].ToString () + " " + jo ["name"].ToString ();
 		itemName.color = DataManager.getInstance ().getColor (jo ["color"].ToString ());
 		itemInfo.text = jo ["desc"].ToString ();
@@ -131,6 +146,7 @@ public class EquipInfo :Observer {
 		}
 
 		initSuit (jo);
+		initStone (data);
 	}
 	public void initSuit(JsonObject jo){//套装系统
 		JsonObject suit = DataManager.getInstance ().getSuitByEquip (jo);
@@ -195,6 +211,16 @@ public class EquipInfo :Observer {
 			}
 		} else {
 			suitPanel.gameObject.SetActive (false);
+		}
+	}
+	public void onClickStoneBtn(int pos){
+		//stoneArr [pos];
+	}
+	public void initStone(JsonObject jo){//宝石系统
+		List<object> stones = jo["stones"] as List<object>;
+		for (int i = 0; i < stoneArr.Count; i++) {
+			stoneArr [i].gameObject.SetActive (i < pinzhi?true:false);
+
 		}
 	}
 	public void onClose(){

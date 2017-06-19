@@ -346,6 +346,24 @@ public class DataManager {
 		}
 
 	}
+	public int getPinZhi(string color){
+		if (color == "white") {
+			return 0;
+		} else if (color == "green") {
+			return 1;
+		} else if (color == "blue") {
+			return 2;
+		} else if (color == "purple") {
+			return 3;
+		} else if (color == "yellow") {
+			return 4;
+		} else if (color == "red") {
+			return 5;
+		} else {
+			return 0;
+		}
+
+	}
 	public JsonObject getItemDataById(int id){
 		if (id > 8000) {//装备
 			return equipDicJson[id];

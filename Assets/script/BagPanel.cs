@@ -21,6 +21,7 @@ public class BagPanel : Observer {
 	public string poolType;
 	public static BagPanel _demoPanel;
 	public bool isUpdate = false;
+	public int openType;
 	void Awake(){
 		messageArr.Add (Message.BAG_UPDATE);
 		PoolManager.getInstance ().initPoolByType (PoolManager.BAG_ITEM + poolType,this,3);
@@ -42,17 +43,25 @@ public class BagPanel : Observer {
 					JsonObject _data = (JsonObject)nt.data;
 					int updateheroId = int.Parse (_data ["id"].ToString ());
 					int curheroId = int.Parse (data ["id"].ToString ());
+					int count = int.Parse (_data ["count"].ToString ());
 					if (updateheroId == curheroId) {
-						data = _data;
-						init (data,0);
+						if (count > 0) {
+							data = _data;
+							init (data,0);
+						} else {
+							data = _data;
+							PoolManager.getInstance ().addToPool(this.poolType,this);
+						}
+
 					}
 				}
 				break;
 			}
 		}
 	}
-	public void init(JsonObject item,int openType)
+	public void init(JsonObject item,int _openType)
     {
+		
 		useBtn.gameObject.SetActive (false);
 		hechengBtn.gameObject.SetActive (false);
 		data = item;
@@ -76,6 +85,7 @@ public class BagPanel : Observer {
 		} else if(data.ContainsKey ("id")){
 			icon.sprite = (Resources.Load("icon/" + staticData["id"].ToString(), typeof(Sprite)) as Sprite);
 		}
+		openType = _openType;
 		//icon.sprite = ("icon/" + staticdata["icon"].ToString(), typeof(Sprite)) as Sprite);
 		icon.SetNativeSize();
 		name.text = staticData["name"].ToString();
@@ -136,13 +146,13 @@ public class BagPanel : Observer {
 				}
 
 			}
-			if (staticData ["itemType"].ToString () == "9") {
-				int heroid = int.Parse(staticData ["heroId"].ToString ());
+			if (staticData ["itemType"].ToString () == "9" || staticData ["itemType"].ToString () == "2") {
+					int heroid = int.Parse(staticData ["heroId"].ToString ());
 				//JsonObject hd = HeroManager.getInstance().getHeroById (heroid);
 				//if (hd == null) {//如果没有这个英雄
 					int count = int.Parse (item ["count"].ToString ());
 					int needcount = int.Parse (staticData ["addExp"].ToString ());
-					if (count >= needcount) {
+				if (count >= needcount && heroid > 0) {
 						hechengBtn.gameObject.SetActive (true);
 					}
 				//}
@@ -177,7 +187,23 @@ public class BagPanel : Observer {
     public void onUse()
     {
         //HeroManager.getInstance().heroscene.selectKind.image.sprite = icon.sprite;
-		HeroManager.getInstance ().heroscene.onEquip (this);
+		if (openType == 2) {//穿装备
+			HeroManager.getInstance ().heroscene.onEquip (this);
+		} else if (openType == 3) {//宝石镶嵌
+			
+			if (ListPanel._currentListPanel != null) {
+				JsonObject userMessage = new JsonObject();
+				userMessage.Add ("stoneId", data ["id"]);
+				userMessage.Add ("equipId", ListPanel._currentListPanel.openitemId);
+				ServerManager.getInstance ().request("area.equipHandler.addStone", userMessage, (data)=>{
+					Debug.Log(data.ToString());
+					AudioManager.instance.playEquip();
+
+				});
+				ListPanel._currentListPanel.onClickCloseBtn ();
+			}
+		}
+
 
         //this.transform.SetParent(HeroManager.getInstance().heroscene.selectKind.transform);
     }

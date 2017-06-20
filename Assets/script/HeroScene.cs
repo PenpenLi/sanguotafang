@@ -189,7 +189,10 @@ public class HeroScene : Observer {
 				AudioManager.instance.playEquip();
 
 			});
-			BagManager.getInstance ().getGameScene ().onclickBtn (2);
+			if (ListPanel._currentListPanel != null) {
+				ListPanel._currentListPanel.onClickCloseBtn ();
+			}
+			//BagManager.getInstance ().getGameScene ().onclickBtn (2);
 
 			//selectKind.GetComponent<Image> ().sprite = bp.icon.sprite;
 			//bp.transform.SetParent (null);
@@ -209,7 +212,8 @@ public class HeroScene : Observer {
 				AudioManager.instance.playUnEquip();
 
 			});
-			//BagManager.getInstance ().getGameScene ().onclickBtn (2);
+			//ListPanel _ListPanel = BagManager.getInstance ().getGameScene ().gameObject.GetComponent<ListPanel> ();
+
 			//selectKind.GetComponent<Image> ().sprite = bp.icon.sprite;
 			//bp.transform.SetParent (null);
 			//BagManager.getInstance ().addToPool (bp);
@@ -226,7 +230,11 @@ public class HeroScene : Observer {
 			_equipInfo.init (equip,1);
 			//onUnEquip(type);
 		} else {
-			BagManager.getInstance ().showEquipByType (type);
+			//BagManager.getInstance ().showEquipByType (type);
+			List<JsonObject> list = BagManager.getInstance ().getEquipByType(type);
+			ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
+			_listPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+			_listPanel.init (list,null,2);
 		}
 
 	}
@@ -378,7 +386,7 @@ public class HeroScene : Observer {
 		//skeletonGraphic.startingAnimation = "attack";
 		//btn.interactable = false;
 		//技能
-		skillData skilldata = DataManager.getInstance().skillDic[int.Parse(data["skillId"].ToString())];
+		skillData skilldata = DataManager.getInstance().skillDic[int.Parse(staticdata["skill1"].ToString())];
 		skillName.text = skilldata.skillName;
 
 		skillIcon.image.sprite = Resources.Load(skilldata.skillIcon,typeof(Sprite)) as Sprite;

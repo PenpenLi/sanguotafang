@@ -215,6 +215,11 @@ public class EquipInfo :Observer {
 	}
 	public void onClickStoneBtn(int pos){
 		//stoneArr [pos];
+		List<JsonObject> list = BagManager.getInstance ().getItemsByType("2");
+		ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
+		_listPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+		_listPanel.init (list,this,3,equipId);
+
 	}
 	public void initStone(JsonObject jo){//宝石系统
 		List<object> stones = jo["stones"] as List<object>;
@@ -229,8 +234,12 @@ public class EquipInfo :Observer {
 		PoolManager.getInstance ().addToPool (type,this);
 	}
 	public void OnChange(){//更换武器
-		PoolManager.getInstance ().addToPool (type,this);
-		BagManager.getInstance ().showEquipByType (kind);
+		List<JsonObject> list = BagManager.getInstance ().getEquipByType(kind);
+		ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
+		_listPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+		_listPanel.init (list,this,2);
+		//PoolManager.getInstance ().addToPool (type,this);
+		//BagManager.getInstance ().showEquipByType (kind);
 	}
 	public void OnFuMo(){//武器附魔
 	}

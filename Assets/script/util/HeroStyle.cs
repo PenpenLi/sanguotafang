@@ -77,7 +77,7 @@ public class HeroStyle : MonoBehaviour {//英雄形象类，通用性，实现�
 		data = jo;
 		if (skeletonGraphic != null) {
 			skeletonGraphic.gameObject.SetActive (false);
-			skeletonGraphic.transform.parent = null;
+			skeletonGraphic.transform.SetParent (null);
 		}
 		//skeletonGraphic.Clear ();
 		JsonObject staticdata = HeroManager.getInstance().getHeroStaticData(jo);

@@ -14,6 +14,7 @@ public class PoolManager {
 	public static string BAG_ITEM_YELLOW = "bagItem_yellow";
 
 	public static string RE_CONNECT= "RE_CONNECT";
+	public static string LIST_PANEL = "list_panel";
 
 	public static string HANDBOOK_ITEM = "handbook_";
 	public static string ICON1 = "green";
@@ -90,8 +91,8 @@ public class PoolManager {
 	public void addToPool(string _type,MonoBehaviour go){
 		if (go != null) {
 			
-			go.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
-			go.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+			//go.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+			//go.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			go.transform.SetParent (null);
 			go.gameObject.SetActive (false);
 			poolCacheDic [_type].Add (go);

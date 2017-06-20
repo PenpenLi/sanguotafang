@@ -1,7 +1,7 @@
 id,chapter,name,mapPath,monsters,towers,hp,drop,type
 0,所属章节,名字,地图路径,怪物表读取路径,塔读取的路径,关卡血量,掉落物品ID(id_数量_概率),战役难度
-1,1,平津,maps/01,data/wave/monster101,data/tower/tower001,9,101_100_1|1000_30_1,1
-2,1,长社,maps/01,data/wave/monster102,data/tower/tower001,9,101_100_1|1000_40_1,1
+1,1,平津,maps/01,data/wave/monster101,data/tower/tower001,9,101_100_1|1000_30_1|1001_3_1,1
+2,1,长社,maps/01,data/wave/monster102,data/tower/tower001,9,101_100_1|1000_40_1|1001_1_1,1
 3,1,南阳,maps/01,data/wave/monster103,data/tower/tower001,9,101_100_1|1000_50_1|3001_1_0.5,2
 4,1,西华关,maps/01,data/wave/monster104,data/tower/tower001,9,101_200_1|1000_60_1,1
 5,1,下邳,maps/01,data/wave/monster105,data/tower/tower001,9,101_300_1|1000_70_1,1

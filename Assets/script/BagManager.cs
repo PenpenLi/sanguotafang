@@ -97,11 +97,12 @@ public class BagManager{
         }
 		bagItemArr.Clear ();
     }
-    public void showEquipByType(string type)
+	public List<JsonObject> getEquipByType(string type)
     {
-        gamescene.onclickBtn(5);
-        _bagScene.onclickBtn(2);
-        Clear();
+        //gamescene.onclickBtn(5);
+        //_bagScene.onclickBtn(2);
+        //Clear();
+		List<JsonObject> list = new List<JsonObject> ();
 		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 			JsonObject jo = kvp.Value;
 
@@ -109,7 +110,7 @@ public class BagManager{
 			{
 				int heroId = int.Parse(jo["heroId"].ToString());
 				if (heroId > 0) {//被穿戴的装备不会在背包里面显示
-					_bagScene.add (jo,2);
+					list.Add (jo);
 				}
 			}
 		}
@@ -120,12 +121,43 @@ public class BagManager{
 			{
 				int heroId = int.Parse(jo["heroId"].ToString());
 				if (heroId == 0) {//被穿戴的装备不会在背包里面显示
-					_bagScene.add (jo,2);
+					list.Add (jo);
 				}
 			}
 		}
+		return list;
 
     }
+	public List<JsonObject> getItemsByType(string type){
+		List<JsonObject> list = new List<JsonObject> ();
+		if(type == "equip")
+		{
+			foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+				JsonObject jo = kvp.Value;
+				int heroId = int.Parse(jo["heroId"].ToString());
+				if (heroId > 0) {//被穿戴的装备不会在背包里面显示
+					list.Add (jo);
+				}
+			}
+			foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+				JsonObject jo = kvp.Value;
+				int heroId = int.Parse(jo["heroId"].ToString());
+				if (heroId == 0) {//被穿戴的装备不会在背包里面显示
+					list.Add (jo);
+				}
+			}
+		}
+		else
+		{
+			foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
+				if (type == kvp.Value["itemType"].ToString()) {
+					list.Add (kvp.Value);
+				}
+			}
+		}
+		return list;
+	}
     public void showItemByType(string type){
         Clear();
 		if(type == "equip")
@@ -247,16 +279,33 @@ public class BagManager{
 		//DataManager.playerData ["bag"] = data;
 		int itemId = int.Parse(data["itemId"].ToString());
 		int id = int.Parse(data["id"].ToString());
-		if (itemId > 8000) {//装备
-			equipArr[id] = data;
+		int count = int.Parse(data["count"].ToString());
+
+		if (count <= 0) {
+			if (itemId > 8000) {//装备
+				equipArr.Remove(id);
+			} else {
+				itemArr.Remove(id);
+			}
+			NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 		} else {
-			itemArr [id] = data;
+			if (!equipArr.ContainsKey (id) && !itemArr.ContainsKey (id)) {
+				NotificationManager.getInstance ().PostNotification (null, Message.BAG_ADD, data);
+			} else {
+				NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
+			}
+			if (itemId > 8000) {//装备
+				equipArr[id] = data;
+			} else {
+				itemArr [id] = data;
+			}
 		}
+
 		NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_LEVELUP,null);
 		//if (itemId == 100 || itemId == 101) {
-			NotificationManager.getInstance ().PostNotification (null,Message.MONEY_GOLD_UPDATE,null);
+		NotificationManager.getInstance ().PostNotification (null,Message.MONEY_GOLD_UPDATE,null);
 		//}
-		NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
+
 		//NotificationCenter.DefaultCenter ().PostNotification (null,"initBase",data);
 		//initData (data);
 	}

@@ -158,6 +158,16 @@ public class BagManager{
 		}
 		return list;
 	}
+	public List<JsonObject> getStoneByEquipId(int equipId){
+		List<JsonObject> list = new List<JsonObject> ();
+		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
+			if (equipId == int.Parse(kvp.Value["owerId"].ToString())) {
+				list.Add (kvp.Value);
+			}
+		}
+		return list;
+	}
     public void showItemByType(string type){
         Clear();
 		if(type == "equip")
@@ -298,6 +308,7 @@ public class BagManager{
 				equipArr[id] = data;
 			} else {
 				itemArr [id] = data;
+				NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_ADD_STONE,null);
 			}
 		}
 

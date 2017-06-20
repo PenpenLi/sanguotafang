@@ -91,8 +91,8 @@ public class PoolManager {
 	public void addToPool(string _type,MonoBehaviour go){
 		if (go != null) {
 			
-			//go.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
-			//go.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+			go.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+			go.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			go.transform.SetParent (null);
 			go.gameObject.SetActive (false);
 			poolCacheDic [_type].Add (go);

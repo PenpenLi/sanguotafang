@@ -161,7 +161,7 @@ public class BagPanel : Observer {
 		}
 
 
-		if (openType == 2) {//穿戴显示穿戴按钮
+		if (openType >= 2) {//穿戴显示穿戴按钮
 			useBtn.gameObject.SetActive (true);
 		}
 		BagManager.getInstance ().addItem (this);
@@ -194,6 +194,7 @@ public class BagPanel : Observer {
 			if (ListPanel._currentListPanel != null) {
 				JsonObject userMessage = new JsonObject();
 				userMessage.Add ("stoneId", data ["id"]);
+				userMessage.Add ("stonePos", ListPanel._currentListPanel.stonePos);
 				userMessage.Add ("equipId", ListPanel._currentListPanel.openitemId);
 				ServerManager.getInstance ().request("area.equipHandler.addStone", userMessage, (data)=>{
 					Debug.Log(data.ToString());

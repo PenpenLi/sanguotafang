@@ -9,7 +9,8 @@ public class Message {
 	public const int HERO_UPDATE = 10001;
 	public const int BAG_UPDATE = 20002;
 	public const int BAG_ADD = 20003;
-	public const int EQUIP_LEVELUP = 30003;
+	public const int EQUIP_LEVELUP = 30000;
+	public const int EQUIP_ADD_STONE = 30001;
 
 
 }

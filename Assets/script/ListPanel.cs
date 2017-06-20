@@ -11,6 +11,7 @@ public class ListPanel : MonoBehaviour {
 	private MonoBehaviour openFrom;
 	private int  openType;
 	public int openitemId;
+	public int stonePos = 0;
 	public static ListPanel _currentListPanel;
 	// Use this for initialization
 	void Awake () {
@@ -39,19 +40,21 @@ public class ListPanel : MonoBehaviour {
 		BagPanel bagItem = (BagPanel)PoolManager.getInstance ().getGameObject (PoolManager.BAG_ITEM + sd["color"].ToString());
 
 		bagItem.transform.SetParent(content);
-		//bagItem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+		bagItem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 		bagItem.init(data,openType);
 		//itemList.Add (bagItem);
 
 	}
-	public void init(List<JsonObject> list,MonoBehaviour _openFrom = null,int _openType = 0,int _openitemId = 0){
+	public void init(List<JsonObject> list,MonoBehaviour _openFrom = null,int _openType = 0,int _openitemId = 0,int _stonePos = 0){
 		_currentListPanel = this;
 		openFrom = _openFrom;
 		openType = _openType;
 		openitemId = _openitemId;
+		stonePos = _stonePos;
 		if (openFrom != null) {
 			openFrom.gameObject.SetActive (false);
 		}
+	
 		for (int i = 0; i < list.Count; i++)
 		{
 			addItem (list[i]);

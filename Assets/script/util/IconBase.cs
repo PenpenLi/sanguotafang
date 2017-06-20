@@ -34,7 +34,8 @@ public class IconBase : MonoBehaviour {
 			icon.sprite = (Resources.Load("icon/" + data["id"].ToString(), typeof(Sprite)) as Sprite);
 		}
 		if (jo.ContainsKey ("heroId")) {//英雄碎片
-			if (int.Parse (jo ["heroId"].ToString ()) > 0) {
+			int heroId = int.Parse (jo ["heroId"].ToString ());
+			if (int.Parse (jo ["heroId"].ToString ()) >= 6000) {
 				sub.gameObject.SetActive (true);
 			}
 		}

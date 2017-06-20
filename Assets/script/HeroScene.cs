@@ -233,7 +233,9 @@ public class HeroScene : Observer {
 			//BagManager.getInstance ().showEquipByType (type);
 			List<JsonObject> list = BagManager.getInstance ().getEquipByType(type);
 			ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
-			_listPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+			_listPanel.transform.SetParent (this.transform.parent.transform);
+			_listPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+			_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			_listPanel.init (list,null,2);
 		}
 

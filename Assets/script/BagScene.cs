@@ -94,7 +94,7 @@ public class BagScene : Observer {
 			showPanel ("7",bagTab);
 			break;
 		case 2:
-			showPanel ("equip",equipTab);
+			showPanel ("5",equipTab);
 			break;
 		case 3:
 			showPanel ("8",heroShardTab);//英雄碎片

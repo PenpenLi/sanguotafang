@@ -241,8 +241,9 @@ public class HeroScene : Observer {
 
 	}
 	public void onCallBack(JsonObject jo){
-		Debug.Log (jo.ToString());
-		string key = jo ["kind"].ToString ();
+		//Debug.Log (jo.ToString());
+
+		string key = BagManager.getInstance().getItemStaticData(jo) ["kind"].ToString ();
 		onClickEquip (key);
 	}
 	public void onClickEquip(string equipType){
@@ -321,12 +322,13 @@ public class HeroScene : Observer {
 		ArrayList equipArr = BagManager.getInstance ().getEquipByHeroId (heroId);
 		for(int i=0;i < equipArr.Count;i++){	
 			JsonObject jo = equipArr [i] as JsonObject;
-			string key = jo ["kind"].ToString ();
+			JsonObject sdjo =  BagManager.getInstance().getItemStaticData (jo);
+			string key = sdjo ["kind"].ToString ();
 			if (equips.ContainsKey (key)) {
 				Button equip = equips [key];
-				jo =  BagManager.getInstance().getItemStaticData (jo);
+
 				//equip.sprite = 
-				IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo["color"].ToString());
+				IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (sdjo["color"].ToString());
 				icon.init (jo).Func = new callBackFunc<JsonObject> (onCallBack);
 				//icon.Func = new callBackFunc<JsonObject> (onCallBack);
 				icon.transform.SetParent (equip.transform);
@@ -388,10 +390,10 @@ public class HeroScene : Observer {
 		//skeletonGraphic.startingAnimation = "attack";
 		//btn.interactable = false;
 		//技能
-		skillData skilldata = DataManager.getInstance().skillDic[int.Parse(staticdata["skill1"].ToString())];
-		skillName.text = skilldata.skillName;
+		JsonObject skilldata = DataManager.getInstance().skillDicJson[int.Parse(staticdata["skill1"].ToString())];
+		skillName.text = skilldata["name"].ToString();
 
-		skillIcon.image.sprite = Resources.Load(skilldata.skillIcon,typeof(Sprite)) as Sprite;
+		skillIcon.image.sprite = Resources.Load(skilldata["icon"].ToString(),typeof(Sprite)) as Sprite;
 		skillIcon.image.SetNativeSize ();
 
 		for(int i = 0;i < starArr.Count;i++){

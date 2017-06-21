@@ -105,10 +105,10 @@ public class handBookPanel : BagPanel {
 			//gameObject.SetActive (true);
 			spriteIndexEnd = 4;
 		} else if ("equip" == type) {
-			key1.text = DataManager.getInstance ().equipDicJson [0] ["attackValue"].ToString ();
-			key2.text = DataManager.getInstance ().equipDicJson [0] ["defenceValue"].ToString ();
-			key3.text = DataManager.getInstance ().equipDicJson [0] ["hpValue"].ToString ();
-			key4.text = DataManager.getInstance ().equipDicJson [0] ["heroLevel"].ToString ();
+			key1.text = DataManager.getInstance ().itemDicJson [0] ["attackValue"].ToString ();
+			key2.text = DataManager.getInstance ().itemDicJson [0] ["defenceValue"].ToString ();
+			key3.text = DataManager.getInstance ().itemDicJson [0] ["hpValue"].ToString ();
+			key4.text = DataManager.getInstance ().itemDicJson [0] ["heroLevel"].ToString ();
 
 			value1.text = jo ["attackValue"].ToString ();
 			value2.text = jo ["defenceValue"].ToString ();

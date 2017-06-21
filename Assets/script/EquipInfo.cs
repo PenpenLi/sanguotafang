@@ -118,13 +118,13 @@ public class EquipInfo :Observer {
 		int hp = int.Parse (data ["hpValue"].ToString ());
 		int defence = int.Parse (data ["defenceValue"].ToString ());
 		if( attack > 0){
-			shuxing += DataManager.getInstance ().equipDicJson [0] ["attackValue"].ToString () + "+" + data ["attackValue"].ToString ();
+			shuxing += DataManager.getInstance ().itemDicJson [0] ["attackValue"].ToString () + "+" + data ["attackValue"].ToString ();
 		}
 		if( hp > 0){
-			shuxing += "  " + DataManager.getInstance ().equipDicJson [0] ["hpValue"].ToString () + "+" + data ["hpValue"].ToString ();
+			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["hpValue"].ToString () + "+" + data ["hpValue"].ToString ();
 		}
 		if( defence > 0){
-			shuxing += "  " + DataManager.getInstance ().equipDicJson [0] ["defenceValue"].ToString () + "+" + data ["defenceValue"].ToString ();
+			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["defenceValue"].ToString () + "+" + data ["defenceValue"].ToString ();
 		}
 		itemShuXing.text = shuxing;
 
@@ -147,19 +147,11 @@ public class EquipInfo :Observer {
 		Id = int.Parse (data ["id"].ToString ());
 		//if (jo.ContainsKey ("staticdata")) {
 		jo = BagManager.getInstance ().getItemStaticData (jo);
-		for(int i=0;i < IconBaseArr.Count;i++){
-			//Button btn = equips [kvp.Key];
-			IconBase icon = IconBaseArr[i];
-			if (icon != null) {
 
-				PoolManager.getInstance ().addToPool (icon.type, icon);
-			}
-		}
-		IconBaseArr.Clear ();
 		//}
 		initBase(jo);
 		changeBtn.gameObject.SetActive (true);
-		int heroId = int.Parse(data["heroId"].ToString());
+		int heroId = int.Parse(data["owerId"].ToString());
 		if (heroId == 0 || openType == 0) {
 			changeBtn.gameObject.SetActive (false);
 		}
@@ -169,7 +161,7 @@ public class EquipInfo :Observer {
 	}
 	public void initSuit(JsonObject jo){//套装系统
 		JsonObject suit = DataManager.getInstance ().getSuitByEquip (jo);
-		int heroId = int.Parse(data["heroId"].ToString());
+		int heroId = int.Parse(data["owerId"].ToString());
 		int suitNum = 0;
 		if (suit != null) {
 			suitNum += 1;
@@ -180,7 +172,7 @@ public class EquipInfo :Observer {
 					bool isInt = Regex.IsMatch (value, @"^[+-]?\d*$");
 					if (isInt && heroId >0) {
 						
-						JsonObject equip = DataManager.getInstance ().equipDicJson [int.Parse(value)];
+						JsonObject equip = DataManager.getInstance ().itemDicJson [int.Parse(value)];
 						suitArr [kvp.Key].text = equip ["name"].ToString ();
 						if (kvp.Key == kind) {
 							suitArr [kvp.Key].color = DataManager.getInstance ().getColor (equip ["color"].ToString ());
@@ -242,22 +234,40 @@ public class EquipInfo :Observer {
 		_listPanel.init (list,this,3,Id,pos + 1);
 
 	}
+	public void onClickStone(JsonObject _data){
+		//stoneArr [pos];
+		ItemInfo _equipInfo = (ItemInfo)PoolManager.getInstance().getGameObject(PoolManager.ITEM_INFO);
+		_equipInfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+		_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+		_equipInfo.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+		_equipInfo.init (_data);
+
+	}
 	public void initStone(){//宝石系统
 		//List<object> stones = jo["stones"] as List<object>;
+		for(int i=0;i < IconBaseArr.Count;i++){
+			//Button btn = equips [kvp.Key];
+			IconBase icon = IconBaseArr[i];
+			if (icon != null) {
+
+				PoolManager.getInstance ().addToPool (icon.type, icon);
+			}
+		}
+		IconBaseArr.Clear ();
 		List<JsonObject> theEquipHaveStones = BagManager.getInstance ().getStoneByEquipId(Id);
 		for (int i = 0; i < stoneArr.Count; i++) {
 			stoneArr [i].gameObject.SetActive (i < pinzhi?true:false);
-			Button stoneKuang = stoneArr [i];
-			IconBase old_icon = stoneKuang.gameObject.GetComponent<IconBase> ();
-			if (old_icon) {
-				PoolManager.getInstance ().addToPool (old_icon.type, old_icon);
-			}
-			if (theEquipHaveStones.Count > i) {
+		}
+		for (int k = 0; k < theEquipHaveStones.Count; k++) {
+			JsonObject stoneData = theEquipHaveStones [k];
+			JsonObject jo = BagManager.getInstance ().getItemStaticData (stoneData);
+			int pos = int.Parse (stoneData ["pos"].ToString ());
+			if (pos > 0) {
 				
-				JsonObject jo = BagManager.getInstance ().getItemStaticData (theEquipHaveStones [i]);
+				Button stoneKuang = stoneArr [pos - 1];
 				//equip.sprite = 
 				IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
-				icon.init (jo);//.Func = new callBackFunc<JsonObject> (onCallBack);
+				icon.init (stoneData).Func = new callBackFunc<JsonObject> (onClickStone);
 				//icon.Func = new callBackFunc<JsonObject> (onClickStone);
 				icon.transform.SetParent (stoneKuang.transform);
 				icon.transform.localPosition = Vector3.zero;
@@ -275,8 +285,10 @@ public class EquipInfo :Observer {
 		List<JsonObject> list = BagManager.getInstance ().getEquipByType(kind);
 		ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
 		_listPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+		_listPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+		_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 		_listPanel.init (list,this,2);
-		//PoolManager.getInstance ().addToPool (type,this);
+		PoolManager.getInstance ().addToPool (type,this);
 		//BagManager.getInstance ().showEquipByType (kind);
 	}
 	public void OnFuMo(){//武器附魔

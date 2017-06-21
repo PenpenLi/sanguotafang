@@ -45,8 +45,10 @@ public class HandbookScene : MonoBehaviour {
 
 			}
 			if (btn == equipTab) { 
-				foreach(KeyValuePair<int,JsonObject> kvp in DataManager.getInstance().equipDicJson){
-					add(DataManager.getInstance().equipDicJson [kvp.Key]);
+				foreach(KeyValuePair<int,JsonObject> kvp in DataManager.getInstance().itemDicJson){
+					if (kvp.Key > 8000) {
+						add (DataManager.getInstance ().itemDicJson [kvp.Key]);
+					}
 				}
 				monsterTab.interactable = true;
 				heroTab.interactable = true;

@@ -27,7 +27,7 @@ public class DataManager {
 	public Dictionary<int, JsonObject> chapterDicJson;
 	public Dictionary<int, JsonObject> campaignDicJson;
 	public Dictionary<int, JsonObject> monsterDicJson;
-	public Dictionary<int, JsonObject> equipDicJson;
+	//public Dictionary<int, JsonObject> equipDicJson;
 	public Dictionary<int, JsonObject> itemDicJson;
 	public Dictionary<int, JsonObject> levelUpJson;
 	public Dictionary<int, JsonObject> starUpJson;
@@ -40,16 +40,16 @@ public class DataManager {
 		if(_dataManager == null){
 			_dataManager = new DataManager();
 			//初始化配置表们
-			_dataManager.initHeroData();
-			_dataManager.initSkillData();
-			_dataManager.initChapterData();
-			_dataManager.initMonsterData();
+			//_dataManager.initHeroData();
+			//_dataManager.initSkillData();
+			//_dataManager.initChapterData();
+			//_dataManager.initMonsterData();
 
             _dataManager.skillDicJson = _dataManager.getJson("data/skill", "\r\n");
             _dataManager.heroDicJson = _dataManager.getJson("data/hero", "\r\n");
             _dataManager.chapterDicJson = _dataManager.getJson("data/chapter", "\r\n");
             _dataManager.monsterDicJson = _dataManager.getJson("data/monster", "\r\n");
-			_dataManager.equipDicJson = _dataManager.getJson("data/equipment", "\r\n");
+			//_dataManager.equipDicJson = _dataManager.getJson("data/equipment", "\r\n");
             _dataManager.itemDicJson = _dataManager.getJson("data/item", "\r\n");
 			_dataManager.campaignDicJson = _dataManager.getJson("data/campaign", "\r\n");
 			_dataManager.levelUpJson = _dataManager.getJson("data/levelup", "\r\n");
@@ -58,7 +58,7 @@ public class DataManager {
 			_dataManager.soundJson = _dataManager.getJson("data/sound", "\r\n");
 			_dataManager.languageJson = _dataManager.getJson("data/language", "\r\n");
 			_dataManager.dataDic ["item"] = _dataManager.itemDicJson;
-			_dataManager.dataDic ["equipment"] = _dataManager.equipDicJson;
+			//_dataManager.dataDic ["equipment"] = _dataManager.equipDicJson;
 			_dataManager.dataDic ["chapter"] = _dataManager.chapterDicJson;
 			_dataManager.dataDic ["hero"] = _dataManager.heroDicJson;
 			_dataManager.dataDic ["skill"] = _dataManager.skillDicJson;
@@ -365,12 +365,12 @@ public class DataManager {
 
 	}
 	public JsonObject getItemDataById(int id){
-		if (id > 8000) {//装备
-			return equipDicJson[id];
-		} else {
+		//if (id > 8000) {//装备
+		//	return equipDicJson[id];
+		//} else {
 			return itemDicJson[id];
-		}
-		return null;
+		//}
+		//return null;
 	}
 	public JsonObject getSuitByEquip(JsonObject equip){
 		foreach (KeyValuePair<int,JsonObject> kvp in suitJson) {

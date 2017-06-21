@@ -16,40 +16,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`pomelo` /*!40100 DEFAULT CHARACTER SET 
 
 USE `pomelo`;
 
-/*Table structure for table `bag` */
-
-DROP TABLE IF EXISTS `bag`;
-
-CREATE TABLE `bag` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `playerId` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `items` varchar(5000) COLLATE utf8_unicode_ci NOT NULL DEFAULT '{}',
-  `itemCount` smallint(6) unsigned DEFAULT '8',
-  PRIMARY KEY (`id`),
-  KEY `INDEX_PLAYER_ID` (`playerId`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-/*Data for the table `bag` */
-
-/*Table structure for table `equip` */
-
-DROP TABLE IF EXISTS `equip`;
-
-CREATE TABLE `equip` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `playerId` bigint(20) unsigned NOT NULL,
-  `itemId` bigint(20) unsigned NOT NULL,
-  `heroId` smallint(6) unsigned NOT NULL,
-  `level` smallint(6) unsigned NOT NULL DEFAULT '1',
-  `starLevel` smallint(6) unsigned NOT NULL DEFAULT '0',
-  `stones` varchar(128) NOT NULL DEFAULT '0,0,0,0,0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000004 DEFAULT CHARSET=latin1;
-
-/*Data for the table `equip` */
-
-insert  into `equip`(`id`,`playerId`,`itemId`,`heroId`,`level`,`starLevel`,`stones`) values (1000000,1000000,8001,11,12,0,'0,0,0,0,0'),(1000001,1000000,8013,8,1,0,'0,0,0,0,0'),(1000002,1000000,8002,8,1,0,'0,0,0,0,0'),(1000003,1000000,8089,8,8,0,'0,0,0,0,0');
-
 /*Table structure for table `hero` */
 
 DROP TABLE IF EXISTS `hero`;
@@ -68,7 +34,7 @@ CREATE TABLE `hero` (
 
 /*Data for the table `hero` */
 
-insert  into `hero`(`id`,`heroId`,`playerId`,`heroLevel`,`heroJie`,`skillLevel`,`starLevel`) values (1000000,8,1000000,13,1,1,0),(1000001,9,1000000,11,1,1,0),(1000002,11,1000000,2,1,1,0);
+insert  into `hero`(`id`,`heroId`,`playerId`,`heroLevel`,`heroJie`,`skillLevel`,`starLevel`) values (1000000,8,1000000,17,1,1,0),(1000001,9,1000000,12,1,1,0),(1000002,11,1000000,2,1,1,0);
 
 /*Table structure for table `item` */
 
@@ -82,12 +48,14 @@ CREATE TABLE `item` (
   `itemType` smallint(6) unsigned NOT NULL DEFAULT '1',
   `owerId` bigint(20) unsigned NOT NULL DEFAULT '0',
   `pos` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `level` smallint(6) unsigned NOT NULL DEFAULT '1',
+  `starLevel` smallint(6) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000156 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1000158 DEFAULT CHARSET=latin1;
 
 /*Data for the table `item` */
 
-insert  into `item`(`id`,`playerId`,`itemId`,`count`,`itemType`,`owerId`,`pos`) values (1000000,1000000,101,43706,1,0,0),(1000001,1000000,1000,7190,7,0,0),(1000112,1000000,1001,1,2,1000001,1),(1000113,1000000,1002,1,2,1000003,1),(1000114,1000000,1003,1,2,1000000,1),(1000116,1000000,1004,1,2,1000002,1),(1000120,1000000,1001,1,2,0,0),(1000123,1000000,1001,1,2,0,0),(1000126,1000000,1001,1,2,0,0),(1000129,1000000,1001,1,2,0,0),(1000130,1000000,1001,1,2,0,0),(1000131,1000000,1001,1,2,0,0),(1000134,1000000,1001,1,2,0,0),(1000137,1000000,1001,1,2,0,0),(1000140,1000000,1001,1,2,0,0),(1000141,1000000,1001,1,2,0,0),(1000142,1000000,1001,1,2,0,0),(1000143,1000000,1001,1,2,0,0),(1000144,1000000,1001,1,2,0,0),(1000145,1000000,1001,1,2,0,0),(1000146,1000000,1001,1,2,0,0),(1000147,1000000,1001,1,2,0,0),(1000148,1000000,1001,1,2,0,0),(1000149,1000000,1001,1,2,0,0),(1000150,1000000,1001,1,2,0,0),(1000151,1000000,1001,1,2,0,0),(1000152,1000000,1001,1,2,0,0),(1000153,1000000,1001,1,2,0,0),(1000154,1000000,1001,1,2,0,0),(1000155,1000000,1001,1,2,0,0);
+insert  into `item`(`id`,`playerId`,`itemId`,`count`,`itemType`,`owerId`,`pos`,`level`,`starLevel`) values (1000000,1000000,101,56805,1,0,0,1,0),(1000001,1000000,1000,5990,7,0,0,1,0),(1000112,1000000,1001,1,2,0,0,1,0),(1000113,1000000,1002,1,2,1000157,1,65535,0),(1000114,1000000,1003,1,2,1000002,1,1,0),(1000116,1000000,1004,1,2,1000003,1,1,0),(1000120,1000000,1001,1,2,1000001,1,1,0),(1000123,1000000,1001,1,2,1000009,1,1,0),(1000126,1000000,1001,1,2,0,0,1,0),(1000129,1000000,1001,1,2,0,0,1,0),(1000130,1000000,1001,1,2,0,0,1,0),(1000131,1000000,1001,1,2,0,0,1,0),(1000134,1000000,1001,1,2,1000000,1,1,0),(1000137,1000000,1001,1,2,0,0,1,0),(1000140,1000000,1001,1,2,0,0,1,0),(1000141,1000000,1001,1,2,0,0,1,0),(1000142,1000000,1001,1,2,0,0,1,0),(1000143,1000000,1001,1,2,0,0,1,0),(1000144,1000000,1001,1,2,0,0,1,0),(1000145,1000000,1001,1,2,0,0,1,0),(1000146,1000000,1001,1,2,0,0,1,0),(1000147,1000000,1001,1,2,0,0,1,0),(1000148,1000000,1001,1,2,0,0,1,0),(1000149,1000000,1001,1,2,0,0,1,0),(1000150,1000000,1001,1,2,0,0,1,0),(1000151,1000000,1001,1,2,0,0,1,0),(1000152,1000000,1001,1,2,0,0,1,0),(1000153,1000000,1001,1,2,0,0,1,0),(1000154,1000000,1001,1,2,0,0,1,0),(1000155,1000000,1001,1,2,0,0,1,0),(1000156,1000000,8089,1,5,0,0,1,0),(1000157,1000000,8089,1,5,8,0,1,0);
 
 /*Table structure for table `name_role` */
 
@@ -142,7 +110,7 @@ CREATE TABLE `player` (
 
 /*Data for the table `player` */
 
-insert  into `player`(`id`,`userId`,`kindId`,`name`,`country`,`rank`,`level`,`experience`,`attackValue`,`defenceValue`,`hitRate`,`dodgeRate`,`walkSpeed`,`attackSpeed`,`hp`,`mp`,`maxHp`,`maxMp`,`areaId`,`x`,`y`,`kindName`,`skillPoint`,`chapter`,`gold`,`zuanshi`) values (1000000,1000000,'210','xiaojunzai',NULL,NULL,NULL,NULL,NULL,NULL,90,13,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'Angle',1,'{\"1\":1,\"2\":1,\"3\":1,\"6\":1}',100,0);
+insert  into `player`(`id`,`userId`,`kindId`,`name`,`country`,`rank`,`level`,`experience`,`attackValue`,`defenceValue`,`hitRate`,`dodgeRate`,`walkSpeed`,`attackSpeed`,`hp`,`mp`,`maxHp`,`maxMp`,`areaId`,`x`,`y`,`kindName`,`skillPoint`,`chapter`,`gold`,`zuanshi`) values (1000000,1000000,'210','xiaojunzai',NULL,NULL,NULL,NULL,NULL,NULL,90,13,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,'Angle',1,'{\"1\":1,\"2\":1,\"3\":1,\"6\":1,\"11\":1,\"20\":1}',100,0);
 
 /*Table structure for table `task` */
 

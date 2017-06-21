@@ -9,6 +9,7 @@ public class BagManager{
 	//private DictionaryEntry<int,Hero> _heroArr;
 	private Dictionary<int,JsonObject> itemArr;
 	private Dictionary<int,JsonObject> equipArr;
+	private Dictionary<int,JsonObject> stoneArr;
 	private ArrayList bagItemArr;
 	public BagScene _bagScene;
     private GameScene gamescene;
@@ -22,6 +23,7 @@ public class BagManager{
 		bagItemArr = new ArrayList ();
 		itemArr = new Dictionary<int, JsonObject> ();
 		equipArr = new Dictionary<int, JsonObject> ();
+		stoneArr = new Dictionary<int, JsonObject> ();
 		if(DataManager.playerData.ContainsKey("bag")){
 			JsonObject heroArr = (DataManager.playerData ["bag"]) as JsonObject;
 			if (heroArr != null) {
@@ -55,24 +57,22 @@ public class BagManager{
 
 			}
 		}
-		if (heroArr.ContainsKey ("equips")) {
-			objs = (heroArr ["equips"]) as List<object>;
-			for (int i = 0; i < objs.Count; i++) {
-				JsonObject jo = objs [i] as JsonObject;
-				//int itemid = int.Parse(jo["itemId"].ToString());
-				int id = int.Parse (jo ["id"].ToString ());
-				int count = int.Parse (jo ["count"].ToString ());
-				//JsonObject item = DataManager.getInstance ().equipDicJson [itemid] as JsonObject;
-				//jo ["staticdata"] = item;
-				if (count > 0) {
-					equipArr [id] = jo;
+		//equipArr = itemArr;
+		//if (heroArr.ContainsKey ("equips")) {
+			//objs = (heroArr ["equips"]) as List<object>;
+		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+			
+			int count = int.Parse (kvp.Value ["count"].ToString ());
+			if (count > 0) {
+				int itemtype = int.Parse(kvp.Value ["itemType"].ToString ());
+				int id = int.Parse (kvp.Value ["id"].ToString ());
+				if( itemtype == 5){
+					equipArr [id] = kvp.Value;
+				}else if(itemtype == 2){
+					stoneArr [id] = kvp.Value;
 				}
-
-				//item ["count"] = jo ["count"];
-				//item ["type"] = jo ["type"];
-				//Debug.Log (item.ToString());
-
 			}
+
 		}
 
 	}
@@ -103,18 +103,21 @@ public class BagManager{
         //_bagScene.onclickBtn(2);
         //Clear();
 		List<JsonObject> list = new List<JsonObject> ();
+		List<JsonObject> listNotEquip = new List<JsonObject> ();
 		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 			JsonObject jo = kvp.Value;
-
-			if(jo["kind"].ToString() == type)
+			JsonObject staticData = getItemStaticData (jo);
+			if(staticData["kind"].ToString() == type)
 			{
-				int heroId = int.Parse(jo["heroId"].ToString());
+				int heroId = int.Parse(jo["owerId"].ToString());
 				if (heroId > 0) {//被穿戴的装备不会在背包里面显示
 					list.Add (jo);
+				} else {
+					listNotEquip.Add (jo);
 				}
 			}
 		}
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		/**foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 			JsonObject jo = kvp.Value;
 
 			if(jo["kind"].ToString() == type)
@@ -124,13 +127,15 @@ public class BagManager{
 					list.Add (jo);
 				}
 			}
-		}
+		}**/
+		list.AddRange (listNotEquip);
 		return list;
 
     }
 	public List<JsonObject> getItemsByType(string type){
 		List<JsonObject> list = new List<JsonObject> ();
-		if(type == "equip")
+		List<JsonObject> listNotEquip = new List<JsonObject> ();
+		/**if(type == "equip")
 		{
 			foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 				JsonObject jo = kvp.Value;
@@ -148,19 +153,26 @@ public class BagManager{
 			}
 		}
 		else
-		{
+		{**/
 			foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
 				if (type == kvp.Value["itemType"].ToString()) {
-					list.Add (kvp.Value);
+					int owerId = int.Parse(kvp.Value["owerId"].ToString());
+					if (owerId > 0) {
+						list.Add (kvp.Value);
+					} else {
+						listNotEquip.Add (kvp.Value);
+					}
+
 				}
 			}
-		}
+		/**}**/
+		list.AddRange (listNotEquip);
 		return list;
 	}
 	public List<JsonObject> getStoneByEquipId(int equipId){
 		List<JsonObject> list = new List<JsonObject> ();
-		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+		foreach(KeyValuePair<int,JsonObject> kvp in stoneArr){
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
 			if (equipId == int.Parse(kvp.Value["owerId"].ToString())) {
 				list.Add (kvp.Value);
@@ -170,7 +182,11 @@ public class BagManager{
 	}
     public void showItemByType(string type){
         Clear();
-		if(type == "equip")
+		List<JsonObject> list = getItemsByType(type);
+		for (int i = 0; i < list.Count; i++) {
+			_bagScene.add (list[i]);
+		}
+		/**if(type == "equip")
         {
 			foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 				JsonObject jo = kvp.Value;
@@ -195,7 +211,7 @@ public class BagManager{
 					_bagScene.add (kvp.Value);
 				}
 			}
-        }
+        }**/
 
     }
 	public void showAll(){
@@ -204,9 +220,9 @@ public class BagManager{
 		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
 			_bagScene.add(kvp.Value);
 		}
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
-			_bagScene.add(kvp.Value);
-		}
+		//foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		//	_bagScene.add(kvp.Value);
+		//}
 		//}
 	}
 	public JsonObject getItemById(int id){
@@ -226,7 +242,7 @@ public class BagManager{
 	public ArrayList getEquipByHeroId(int heroid){
 		ArrayList arr = new ArrayList ();
 		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
-			if (int.Parse (kvp.Value ["heroId"].ToString ()) == heroid) {
+			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid) {
 				arr.Add (kvp.Value);
 			}
 		}
@@ -243,8 +259,10 @@ public class BagManager{
 	}
 	public JsonObject getEquipByHeroIdAndKind(int heroid,string kind){
 		JsonObject data = null;
+
 		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
-			if (int.Parse (kvp.Value ["heroId"].ToString ()) == heroid && kvp.Value ["kind"].ToString () == kind) {
+			JsonObject staticdata = getItemStaticData (kvp.Value);
+			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && staticdata ["kind"].ToString () == kind) {
 				data = kvp.Value;
 				break;
 			}
@@ -254,7 +272,7 @@ public class BagManager{
 	public JsonObject getEquipByHeroIdAndItemId(int heroid,int itemid){
 		JsonObject data = null;
 		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
-			if (int.Parse (kvp.Value ["heroId"].ToString ()) == heroid && int.Parse(kvp.Value ["itemId"].ToString ()) == itemid) {
+			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && int.Parse(kvp.Value ["itemId"].ToString ()) == itemid) {
 				data = kvp.Value;
 				break;
 			}
@@ -294,18 +312,21 @@ public class BagManager{
 		if (count <= 0) {
 			if (itemId > 8000) {//装备
 				equipArr.Remove(id);
+				itemArr.Remove(id);
 			} else {
 				itemArr.Remove(id);
+
 			}
 			NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 		} else {
-			if (!equipArr.ContainsKey (id) && !itemArr.ContainsKey (id)) {
+			if (!itemArr.ContainsKey (id)) {
 				NotificationManager.getInstance ().PostNotification (null, Message.BAG_ADD, data);
 			} else {
 				NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 			}
 			if (itemId > 8000) {//装备
 				equipArr[id] = data;
+				itemArr [id] = data;
 			} else {
 				itemArr [id] = data;
 				NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_ADD_STONE,null);
@@ -321,14 +342,17 @@ public class BagManager{
 		//initData (data);
 	}
 	public JsonObject getItemStaticData(JsonObject item){
-		int itemid = int.Parse (item ["itemId"].ToString ());
-		if (itemid > 8000) {//装备
-			if (DataManager.getInstance ().equipDicJson.ContainsKey (itemid))
-				return DataManager.getInstance ().equipDicJson [itemid];
-		} else {
-			if (DataManager.getInstance ().itemDicJson.ContainsKey (itemid))
-				return DataManager.getInstance ().itemDicJson [itemid];
+		if (item.ContainsKey ("itemId")) {
+			int itemid = int.Parse (item ["itemId"].ToString ());
+			//if (itemid > 8000) {//装备
+			//	if (DataManager.getInstance ().equipDicJson.ContainsKey (itemid))
+			//		return DataManager.getInstance ().equipDicJson [itemid];
+			//} else {
+				if (DataManager.getInstance ().itemDicJson.ContainsKey (itemid))
+					return DataManager.getInstance ().itemDicJson [itemid];
+			//}
+			//return item;
 		}
-		return null;
+		return item;
 	}
 }

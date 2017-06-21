@@ -27,11 +27,14 @@ public class IconBase : MonoBehaviour {
 	public IconBase init(JsonObject jo){
 		sub.gameObject.SetActive (false);
 		data = jo;
+		jo = BagManager.getInstance ().getItemStaticData (jo);
+
+
 		Func = null;
 		if (jo.ContainsKey ("icon")) {
-			icon.sprite = (Resources.Load("icon/" + data["icon"].ToString(), typeof(Sprite)) as Sprite);
+			icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
 		} else {
-			icon.sprite = (Resources.Load("icon/" + data["id"].ToString(), typeof(Sprite)) as Sprite);
+			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
 		}
 		if (jo.ContainsKey ("heroId")) {//英雄碎片
 			int heroId = int.Parse (jo ["heroId"].ToString ());

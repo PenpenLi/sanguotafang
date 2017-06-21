@@ -22,6 +22,7 @@ public class BagPanel : Observer {
 	public static BagPanel _demoPanel;
 	public bool isUpdate = false;
 	public int openType;
+	public int itemType;
 	void Awake(){
 		messageArr.Add (Message.BAG_UPDATE);
 		PoolManager.getInstance ().initPoolByType (PoolManager.BAG_ITEM + poolType,this,3);
@@ -74,7 +75,7 @@ public class BagPanel : Observer {
 		} else {
 			staticData = item;
 		}
-
+		itemType = int.Parse(staticData["itemType"].ToString());
 		//ico = (IconBase)PoolManager.getInstance ().getGameObject (staticdata["color"].ToString());
 		//ico.init (staticdata);
 		//ico.transform.SetParent (this.transform);
@@ -89,6 +90,25 @@ public class BagPanel : Observer {
 		//icon.sprite = ("icon/" + staticdata["icon"].ToString(), typeof(Sprite)) as Sprite);
 		icon.SetNativeSize();
 		name.text = staticData["name"].ToString();
+		info.text = staticData ["desc"].ToString ();
+		if (itemType == 5 || itemType == 2) {
+			
+			string shuxing = "";
+			int attack = int.Parse (data.ContainsKey("attackValue") ? data ["attackValue"].ToString () :staticData ["attackValue"].ToString ());
+			int hp = int.Parse (data.ContainsKey("hpValue") ? data ["hpValue"].ToString () :staticData ["hpValue"].ToString ());
+			int defence = int.Parse (data.ContainsKey("defenceValue") ? data ["defenceValue"].ToString () :staticData ["defenceValue"].ToString ());
+			if (attack > 0) {
+				shuxing += DataManager.getInstance ().itemDicJson [0] ["attackValue"].ToString () + "+" + attack.ToString ();
+			}
+			if (hp > 0) {
+				shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["hpValue"].ToString () + "+" + hp.ToString ();
+			}
+			if (defence > 0) {
+				shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["defenceValue"].ToString () + "+" + defence.ToString ();
+			}
+			info.text = shuxing;
+			//}
+		}
 		if (data.ContainsKey ("heroId")) {
 			int heroId = int.Parse (data ["heroId"].ToString ());
 			//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
@@ -96,23 +116,13 @@ public class BagPanel : Observer {
 				JsonObject herodata = DataManager.getInstance ().heroDicJson [heroId];
 				name.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
 			}
-			string shuxing = "";
-			int attack = int.Parse (data ["attackValue"].ToString ());
-			int hp = int.Parse (data ["hpValue"].ToString ());
-			int defence = int.Parse (data ["defenceValue"].ToString ());
-			if (attack > 0) {
-				shuxing += DataManager.getInstance ().equipDicJson [0] ["attackValue"].ToString () + "+" + data ["attackValue"].ToString ();
+		}
+		if (data.ContainsKey ("owerId")) {
+			JsonObject jo = BagManager.getInstance().getEquipById (int.Parse(data["owerId"].ToString()));
+			if (jo != null) {
+				jo = BagManager.getInstance ().getItemStaticData (jo);
+				name.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
 			}
-			if (hp > 0) {
-				shuxing += "  " + DataManager.getInstance ().equipDicJson [0] ["hpValue"].ToString () + "+" + data ["hpValue"].ToString ();
-			}
-			if (defence > 0) {
-				shuxing += "  " + DataManager.getInstance ().equipDicJson [0] ["defenceValue"].ToString () + "+" + data ["defenceValue"].ToString ();
-			}
-			info.text = shuxing;
-			//}
-		} else {
-			info.text = staticData["desc"].ToString();
 		}
 		if (data.ContainsKey ("level")) {
 			name.text = "Lv." + data ["level"].ToString () + " " + name.text;
@@ -168,7 +178,7 @@ public class BagPanel : Observer {
     }
 	public void OnClick(BaseEventData eventData){
 		JsonObject staticData = BagManager.getInstance().getItemStaticData(data);
-		if (staticData.ContainsKey ("itemType")) {
+		if (itemType != 5) {
 			ItemInfo _equipInfo = (ItemInfo)PoolManager.getInstance().getGameObject(PoolManager.ITEM_INFO);
 			_equipInfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 			_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);

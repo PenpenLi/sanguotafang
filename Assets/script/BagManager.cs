@@ -116,7 +116,7 @@ public class BagManager{
 			if(staticData["kind"].ToString() == type)
 			{
 				int heroId = int.Parse(jo["owerId"].ToString());
-				if (heroId > 0) {//被穿戴的装备不会在背包里面显示
+				if (heroId == 0) {//被穿戴的装备不会在背包里面显示
 					list.Add (jo);
 				} else {
 					listNotEquip.Add (jo);
@@ -184,7 +184,7 @@ public class BagManager{
 					if(isInUse)
 						continue;
 					}
-				if (owerId > 0) {
+				if (owerId == 0) {
 					list.Add (kvp.Value);
 				} else {
 					listNotEquip.Add (kvp.Value);

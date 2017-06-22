@@ -18,6 +18,9 @@ public class ItemInfo : MonoBehaviour {
 	public int itemType;
 	public int owerId;
 	public int pos;
+
+	public Button changeBtn;
+	public Button dumpBtn;
 	// Use this for initialization
 	void Awake () {
 		zhandouliPanel.gameObject.SetActive (false);
@@ -41,6 +44,21 @@ public class ItemInfo : MonoBehaviour {
 			_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			_listPanel.init (list,this,3,owerId,pos);
 			onClose ();
+		}
+
+	}
+	public void onDump(){
+		if (itemType == 2) {
+
+			JsonObject userMessage = new JsonObject();
+			userMessage.Add ("stoneId", int.Parse (data ["id"].ToString ()));
+			ServerManager.getInstance ().request("area.equipHandler.dumpStone", userMessage, (databack)=>{
+				Debug.Log(databack.ToString());
+				AudioManager.instance.playUnEquip();
+				onClose();
+
+			});
+			//onClose ();
 		}
 
 	}

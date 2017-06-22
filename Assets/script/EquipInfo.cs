@@ -159,23 +159,26 @@ public class EquipInfo :Observer {
 				if (suitArr.ContainsKey(kvp.Key)) {
 					string value = kvp.Value.ToString ();
 					bool isInt = Regex.IsMatch (value, @"^[+-]?\d*$");
-					if (isInt && heroId >0) {
+
+					if (isInt) {
 						
 						JsonObject equip = DataManager.getInstance ().itemDicJson [int.Parse(value)];
 						suitArr [kvp.Key].text = equip ["name"].ToString ();
-						if (kvp.Key == kind) {
-							suitArr [kvp.Key].color = DataManager.getInstance ().getColor (equip ["color"].ToString ());
-						} else {
-							JsonObject otherEquip = BagManager.getInstance ().getEquipByHeroIdAndItemId (heroId,int.Parse(value));
-
-							if (otherEquip != null) {
-								suitNum += 1;
-								JsonObject otherEquipStaticData = BagManager.getInstance ().getItemStaticData (otherEquip);
-								suitArr [kvp.Key].color = DataManager.getInstance ().getColor (otherEquipStaticData ["color"].ToString ());
+						if (heroId > 0) {
+							if (kvp.Key == kind) {
+								suitArr [kvp.Key].color = DataManager.getInstance ().getColor (equip ["color"].ToString ());
 							} else {
-								suitArr [kvp.Key].color = Color.gray;
-							}
+								JsonObject otherEquip = BagManager.getInstance ().getEquipByHeroIdAndItemId (heroId, int.Parse (value));
 
+								if (otherEquip != null) {
+									suitNum += 1;
+									JsonObject otherEquipStaticData = BagManager.getInstance ().getItemStaticData (otherEquip);
+									suitArr [kvp.Key].color = DataManager.getInstance ().getColor (otherEquipStaticData ["color"].ToString ());
+								} else {
+									suitArr [kvp.Key].color = Color.gray;
+								}
+
+							}
 						}
 					} else {
 						if (kvp.Key.IndexOf ("suit") >= 0) {

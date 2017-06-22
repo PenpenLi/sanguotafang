@@ -109,20 +109,24 @@ public class BagPanel : Observer {
 			info.text = shuxing;
 			//}
 		}
-		if (data.ContainsKey ("heroId")) {
-			int heroId = int.Parse (data ["heroId"].ToString ());
-			//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
-			if (heroId > 0) {
-				JsonObject herodata = DataManager.getInstance ().heroDicJson [heroId];
-				itemname.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
-			}
-		}
+
 		if (data.ContainsKey ("owerId")) {
-			JsonObject jo = BagManager.getInstance().getEquipById (int.Parse(data["owerId"].ToString()));
-			if (jo != null) {
-				jo = BagManager.getInstance ().getItemStaticData (jo);
-				itemname.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
+			int owerId = int.Parse (data ["owerId"].ToString ());
+			if (itemType == 5) {
+				
+				//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
+				if (owerId > 0) {
+					JsonObject herodata = DataManager.getInstance ().heroDicJson [owerId];
+					itemname.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
+				}
+			} else {
+				JsonObject jo = BagManager.getInstance().getEquipById (owerId);
+				if (jo != null) {
+					jo = BagManager.getInstance ().getItemStaticData (jo);
+					itemname.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
+				}
 			}
+
 		}
 		if (data.ContainsKey ("level") && itemType == 5) {
 			itemname.text = "Lv." + data ["level"].ToString () + " " + itemname.text;

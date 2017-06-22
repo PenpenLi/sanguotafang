@@ -33,21 +33,28 @@ public class ItemInfo : MonoBehaviour {
 	}
 	public void onChange(){
 		if (itemType == 2) {
+			
 			List<JsonObject> list = BagManager.getInstance ().getItemsByType("2");
 			ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
 			_listPanel.transform.SetParent (this.transform.parent.transform);
 			_listPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 			_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			_listPanel.init (list,this,3,owerId,pos);
+			onClose ();
 		}
+
 	}
 	public void init(JsonObject jo){
 		data = jo;
 		//if (jo.ContainsKey ("staticdata")) {
 		jo = BagManager.getInstance ().getItemStaticData (jo);
 		itemType = int.Parse (jo["itemType"].ToString());
-		owerId = int.Parse (data["owerId"].ToString());
-		pos = int.Parse (data["pos"].ToString());
+		owerId = 0;
+		pos = 0;
+		if (data.ContainsKey ("owerId")) {
+			owerId = int.Parse (data ["owerId"].ToString ());
+			pos = int.Parse (data ["pos"].ToString ());
+		}
 		doPanel.gameObject.SetActive (false);
 		if (itemType == 2) {
 			if (owerId > 0) {
@@ -68,7 +75,13 @@ public class ItemInfo : MonoBehaviour {
 		itemInfo.text = jo ["desc"].ToString ();
 
 		bg.sprite = (Resources.Load("all/hero_bg_" + jo["color"].ToString(), typeof(Sprite)) as Sprite);
-		itemShuLiang.text = "x" + data ["count"].ToString ();
+		if (itemType == 2) {
+			
+			itemShuLiang.text = DataManager.getInstance().updateShuXing (data);
+		} else {
+			itemShuLiang.text = "x" + data ["count"].ToString ();
+		}
+
 	}
 	public void onClose(){
 		PoolManager.getInstance ().addToPool (type,this);

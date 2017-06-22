@@ -58,8 +58,8 @@ public class SkillInfo : MonoBehaviour {
 		JsonObject userMessage = new JsonObject();
 		userMessage.Add ("heroId", data["heroId"]);
 		//userMessage.Add ("heroId", heroId);
-		ServerManager.getInstance ().request("area.playerHandler.skillUp", userMessage, (data)=>{
-			Debug.Log(data.ToString());
+		ServerManager.getInstance ().request("area.playerHandler.skillUp", userMessage, (databack)=>{
+			Debug.Log(databack.ToString());
 
 
 		});

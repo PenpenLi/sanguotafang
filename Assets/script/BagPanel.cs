@@ -10,7 +10,7 @@ public class BagPanel : Observer {
     public Text info;
     public Text count;
     public Text speed;
-    public Text name;
+    public Text itemname;
     public Text defence;
     public Text magic_defence;
     public Image icon;
@@ -51,7 +51,7 @@ public class BagPanel : Observer {
 							init (data,0);
 						} else {
 							data = _data;
-							PoolManager.getInstance ().addToPool(this.poolType,this);
+							PoolManager.getInstance ().addToPool(PoolManager.BAG_ITEM + this.poolType,this);
 						}
 
 					}
@@ -60,7 +60,7 @@ public class BagPanel : Observer {
 			}
 		}
 	}
-	public void init(JsonObject item,int _openType)
+	public void init(JsonObject item,int _openType = 0)
     {
 		
 		useBtn.gameObject.SetActive (false);
@@ -89,7 +89,7 @@ public class BagPanel : Observer {
 		openType = _openType;
 		//icon.sprite = ("icon/" + staticdata["icon"].ToString(), typeof(Sprite)) as Sprite);
 		icon.SetNativeSize();
-		name.text = staticData["name"].ToString();
+		itemname.text = staticData["name"].ToString();
 		info.text = staticData ["desc"].ToString ();
 		if (itemType == 5 || itemType == 2) {
 			
@@ -114,18 +114,18 @@ public class BagPanel : Observer {
 			//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
 			if (heroId > 0) {
 				JsonObject herodata = DataManager.getInstance ().heroDicJson [heroId];
-				name.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
+				itemname.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
 			}
 		}
 		if (data.ContainsKey ("owerId")) {
 			JsonObject jo = BagManager.getInstance().getEquipById (int.Parse(data["owerId"].ToString()));
 			if (jo != null) {
 				jo = BagManager.getInstance ().getItemStaticData (jo);
-				name.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
+				itemname.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
 			}
 		}
-		if (data.ContainsKey ("level")) {
-			name.text = "Lv." + data ["level"].ToString () + " " + name.text;
+		if (data.ContainsKey ("level") && itemType == 5) {
+			itemname.text = "Lv." + data ["level"].ToString () + " " + itemname.text;
 
 		}
 		//if (item.ContainsKey("color")) {
@@ -171,10 +171,10 @@ public class BagPanel : Observer {
 		}
 
 
-		if (openType >= 2) {//穿戴显示穿戴按钮
+		if (openType >= 2 || itemType == 2) {//穿戴显示穿戴按钮
 			useBtn.gameObject.SetActive (true);
 		}
-		BagManager.getInstance ().addItem (this);
+
     }
 	public void OnClick(BaseEventData eventData){
 		JsonObject staticData = BagManager.getInstance().getItemStaticData(data);
@@ -206,13 +206,30 @@ public class BagPanel : Observer {
 				userMessage.Add ("stoneId", data ["id"]);
 				userMessage.Add ("stonePos", ListPanel._currentListPanel.stonePos);
 				userMessage.Add ("equipId", ListPanel._currentListPanel.openitemId);
-				ServerManager.getInstance ().request("area.equipHandler.addStone", userMessage, (data)=>{
-					Debug.Log(data.ToString());
+				ServerManager.getInstance ().request("area.equipHandler.addStone", userMessage, (databack)=>{
+					Debug.Log(databack.ToString());
 					AudioManager.instance.playEquip();
 
 				});
 				ListPanel._currentListPanel.onClickCloseBtn ();
 			}
+		}else if (openType == 4) {//宝石合成选择
+			JsonObject sendMessage = new JsonObject();
+			sendMessage.Add ("stone", data);
+			sendMessage.Add ("pos", ListPanel._currentListPanel.stonePos);
+			NotificationManager.getInstance ().PostNotification (null,Message.HECHENG_ADD_STONE,sendMessage);
+			ListPanel._currentListPanel.onClickCloseBtn ();
+		}else if(itemType == 2){
+			StoneHeChengPanel _stoneHeChengPanel = (StoneHeChengPanel)PoolManager.getInstance().getGameObject(PoolManager.STONE_HECHENG_PANEL);
+			_stoneHeChengPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+			_stoneHeChengPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+			_stoneHeChengPanel.init ();
+			_stoneHeChengPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+
+			JsonObject sendMessage = new JsonObject();
+			sendMessage.Add ("stone", data);
+			sendMessage.Add ("pos", 0);
+			NotificationManager.getInstance ().PostNotification (null,Message.HECHENG_ADD_STONE,sendMessage);
 		}
 
 
@@ -222,8 +239,8 @@ public class BagPanel : Observer {
 		JsonObject userMessage = new JsonObject();
 		userMessage.Add ("id",data["id"]);
 		//userMessage.Add ("heroId", data.heroId);
-		ServerManager.getInstance ().request("area.playerHandler.useItem", userMessage, (data)=>{
-			Debug.Log(data.ToString());
+		ServerManager.getInstance ().request("area.playerHandler.useItem", userMessage, (databack)=>{
+			Debug.Log(databack.ToString());
 
 
 		});

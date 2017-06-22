@@ -13,10 +13,12 @@ public class ListPanel : MonoBehaviour {
 	public int openitemId;
 	public int stonePos = 0;
 	public static ListPanel _currentListPanel;
+	public List<BagPanel> BagPanelList;
 	// Use this for initialization
 	void Awake () {
 		itemList = new List<MonoBehaviour> ();
 		PoolManager.getInstance ().initPoolByType (type,this,1);
+		BagPanelList = new List<BagPanel> ();
 	}
 	void Start () {
 		
@@ -27,7 +29,16 @@ public class ListPanel : MonoBehaviour {
 		
 	}
 	public void onClickCloseBtn(){
-		BagManager.getInstance ().Clear ();
+		//BagManager.getInstance ().Clear ();
+		for (int i = 0; i < BagPanelList.Count; i++)
+		{
+			BagPanel go = BagPanelList[i];
+			if (go != null) {
+				//go.transform.SetParent(null);
+				PoolManager.getInstance ().addToPool (PoolManager.BAG_ITEM + go.poolType,go);
+			}
+		}
+		BagPanelList.Clear ();
 		if (openFrom != null) {
 			openFrom.gameObject.SetActive (true);
 		}
@@ -42,6 +53,7 @@ public class ListPanel : MonoBehaviour {
 		bagItem.transform.SetParent(content);
 		bagItem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 		bagItem.init(data,openType);
+		BagPanelList.Add (bagItem);
 		//itemList.Add (bagItem);
 
 	}

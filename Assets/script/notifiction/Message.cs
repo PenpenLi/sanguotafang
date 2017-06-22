@@ -12,5 +12,7 @@ public class Message {
 	public const int EQUIP_LEVELUP = 30000;
 	public const int EQUIP_ADD_STONE = 30001;
 
+	public const int HECHENG_ADD_STONE = 40000;
+
 
 }

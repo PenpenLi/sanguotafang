@@ -7,9 +7,10 @@ public class BagManager{
 
 	private static BagManager _bagManager;
 	//private DictionaryEntry<int,Hero> _heroArr;
-	private Dictionary<int,JsonObject> itemArr;
+	//private Dictionary<int,JsonObject> itemArr;
 	private Dictionary<int,JsonObject> equipArr;
 	private Dictionary<int,JsonObject> stoneArr;
+	private Dictionary<int,Dictionary<int,JsonObject>> allItemDic;
 	private ArrayList bagItemArr;
 	public BagScene _bagScene;
     private GameScene gamescene;
@@ -21,7 +22,8 @@ public class BagManager{
 	}
 	public BagManager(){
 		bagItemArr = new ArrayList ();
-		itemArr = new Dictionary<int, JsonObject> ();
+		allItemDic = new Dictionary<int, Dictionary<int, JsonObject>> ();
+		//itemArr = new Dictionary<int, JsonObject> ();
 		equipArr = new Dictionary<int, JsonObject> ();
 		stoneArr = new Dictionary<int, JsonObject> ();
 		if(DataManager.playerData.ContainsKey("bag")){
@@ -34,7 +36,7 @@ public class BagManager{
 		}
 	}
 	public void initData(JsonObject heroArr){
-		itemArr.Clear ();
+		//itemArr.Clear ();
 		equipArr.Clear ();
 		List<object> objs;
 		//JsonObject objss = (heroArr ["items"]) as JsonObject;
@@ -45,10 +47,14 @@ public class BagManager{
 				//int itemid = int.Parse(jo["itemId"].ToString());
 				int id = int.Parse (jo ["id"].ToString ());
 				int count = int.Parse (jo ["count"].ToString ());
+				int itemType = int.Parse (jo ["itemType"].ToString ());
 				//JsonObject item = DataManager.getInstance ().itemDicJson [itemid] as JsonObject;
 				//jo ["staticdata"] = item;
 				if (count > 0) {
-					itemArr [id] = jo;
+					if (!allItemDic.ContainsKey (itemType)) {
+						allItemDic [itemType] = new Dictionary<int, JsonObject> ();
+					}
+					allItemDic [itemType] [id] = jo;
 				}
 
 				//item ["count"] = jo ["count"];
@@ -60,7 +66,7 @@ public class BagManager{
 		//equipArr = itemArr;
 		//if (heroArr.ContainsKey ("equips")) {
 			//objs = (heroArr ["equips"]) as List<object>;
-		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+		/**foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
 			
 			int count = int.Parse (kvp.Value ["count"].ToString ());
 			if (count > 0) {
@@ -73,7 +79,7 @@ public class BagManager{
 				}
 			}
 
-		}
+		}**/
 
 	}
     public void setGameScene(GameScene _gamescene)
@@ -104,7 +110,7 @@ public class BagManager{
         //Clear();
 		List<JsonObject> list = new List<JsonObject> ();
 		List<JsonObject> listNotEquip = new List<JsonObject> ();
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
 			JsonObject jo = kvp.Value;
 			JsonObject staticData = getItemStaticData (jo);
 			if(staticData["kind"].ToString() == type)
@@ -132,7 +138,7 @@ public class BagManager{
 		return list;
 
     }
-	public List<JsonObject> getItemsByType(string type){
+	public List<JsonObject> getItemsByType(string type,int _itemId = 0,List<int> inUseList = null){
 		List<JsonObject> list = new List<JsonObject> ();
 		List<JsonObject> listNotEquip = new List<JsonObject> ();
 		/**if(type == "equip")
@@ -154,17 +160,37 @@ public class BagManager{
 		}
 		else
 		{**/
-			foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+		Dictionary<int,JsonObject> items = allItemDic [int.Parse(type)];
+		foreach(KeyValuePair<int,JsonObject> kvp in items){
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
-				if (type == kvp.Value["itemType"].ToString()) {
-					int owerId = int.Parse(kvp.Value["owerId"].ToString());
-					if (owerId > 0) {
-						list.Add (kvp.Value);
-					} else {
-						listNotEquip.Add (kvp.Value);
+				//if (type == kvp.Value["itemType"].ToString()) {
+				int owerId = int.Parse(kvp.Value["owerId"].ToString());
+				int itemId = int.Parse(kvp.Value["itemId"].ToString());
+				int id = int.Parse(kvp.Value["id"].ToString());
+				if (_itemId > 0) {
+					if (_itemId != itemId) {
+						continue;
 					}
-
 				}
+				if (inUseList !=  null) {
+					bool isInUse = false;
+					for (int i = 0; i < inUseList.Count; i++)
+					{
+						if (inUseList[i] == id) {
+						isInUse = true;
+							break;
+						}
+					}
+					if(isInUse)
+						continue;
+					}
+				if (owerId > 0) {
+					list.Add (kvp.Value);
+				} else {
+					listNotEquip.Add (kvp.Value);
+				}
+
+				//}
 			}
 		/**}**/
 		list.AddRange (listNotEquip);
@@ -172,7 +198,8 @@ public class BagManager{
 	}
 	public List<JsonObject> getStoneByEquipId(int equipId){
 		List<JsonObject> list = new List<JsonObject> ();
-		foreach(KeyValuePair<int,JsonObject> kvp in stoneArr){
+		Dictionary<int,JsonObject> items = allItemDic [2];
+		foreach(KeyValuePair<int,JsonObject> kvp in items){
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
 			if (equipId == int.Parse(kvp.Value["owerId"].ToString())) {
 				list.Add (kvp.Value);
@@ -215,33 +242,26 @@ public class BagManager{
 
     }
 	public void showAll(){
-        Clear();
+       // Clear();
         //if (bagItemArr.Count == 0){//
-		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
-			_bagScene.add(kvp.Value);
-		}
+		//foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
+		//	_bagScene.add(kvp.Value);
+		//}
 		//foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 		//	_bagScene.add(kvp.Value);
 		//}
 		//}
 	}
-	public JsonObject getItemById(int id){
-		//heroData hd2;
-		if (itemArr.ContainsKey (id)) {
-			return itemArr [id];
-		}
-		return null;
-	}
 	public JsonObject getEquipById(int id){
 		//heroData hd2;
-		if (equipArr.ContainsKey (id)) {
-			return equipArr [id];
+		if (allItemDic[5].ContainsKey (id)) {
+			return allItemDic[5] [id];
 		}
 		return null;
 	}
 	public ArrayList getEquipByHeroId(int heroid){
 		ArrayList arr = new ArrayList ();
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
 			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid) {
 				arr.Add (kvp.Value);
 			}
@@ -250,9 +270,11 @@ public class BagManager{
 	}
 	public JsonObject getItemByItemId(int itemid){
 		ArrayList arr = new ArrayList ();
-		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
-			if (int.Parse (kvp.Value ["itemId"].ToString ()) == itemid) {
-				return kvp.Value;
+		foreach(KeyValuePair<int,Dictionary<int,JsonObject>> kv in allItemDic){
+			foreach(KeyValuePair<int,JsonObject> kvp in kv.Value){
+				if (int.Parse (kvp.Value ["itemId"].ToString ()) == itemid) {
+					return kvp.Value;
+				}
 			}
 		}
 		return null;
@@ -260,7 +282,7 @@ public class BagManager{
 	public JsonObject getEquipByHeroIdAndKind(int heroid,string kind){
 		JsonObject data = null;
 
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
 			JsonObject staticdata = getItemStaticData (kvp.Value);
 			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && staticdata ["kind"].ToString () == kind) {
 				data = kvp.Value;
@@ -271,7 +293,7 @@ public class BagManager{
 	}
 	public JsonObject getEquipByHeroIdAndItemId(int heroid,int itemid){
 		JsonObject data = null;
-		foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
 			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && int.Parse(kvp.Value ["itemId"].ToString ()) == itemid) {
 				data = kvp.Value;
 				break;
@@ -286,6 +308,7 @@ public class BagManager{
 	public void showItemsByItemType(int type)
 	{
 		Clear();
+		Dictionary<int,JsonObject> itemArr = allItemDic [type];
 		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
 			//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
 			if (type == int.Parse(kvp.Value["itemType"].ToString())) {
@@ -293,50 +316,34 @@ public class BagManager{
 			}
 		}
 	}
-	public void removeItemById(int id){
-		if (itemArr.ContainsKey (id)){
-			itemArr.Remove (id);
-		}
-	}
-	public void removeEquipById(int id){
-		if (equipArr.ContainsKey (id)){
-			equipArr.Remove (id);
-		}
-	}
 	public void updateItemByServer(JsonObject data){
 		//DataManager.playerData ["bag"] = data;
 		int itemId = int.Parse(data["itemId"].ToString());
 		int id = int.Parse(data["id"].ToString());
 		int count = int.Parse(data["count"].ToString());
-
+		int itemType = int.Parse(data["itemType"].ToString());
 		if (count <= 0) {
-			if (itemId > 8000) {//装备
-				equipArr.Remove(id);
-				itemArr.Remove(id);
-			} else {
-				itemArr.Remove(id);
+			allItemDic[itemType].Remove(id);
 
-			}
 			NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 		} else {
-			if (!itemArr.ContainsKey (id)) {
+			if (!allItemDic[itemType].ContainsKey (id)) {
 				NotificationManager.getInstance ().PostNotification (null, Message.BAG_ADD, data);
 			} else {
 				NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 			}
-			if (itemId > 8000) {//装备
-				equipArr[id] = data;
-				itemArr [id] = data;
-			} else {
-				itemArr [id] = data;
-				NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_ADD_STONE,null);
+			allItemDic[itemType] [id] = data;
+			if (itemType == 2) {
+				//NotificationManager.getInstance ().PostNotification (null, Message.EQUIP_ADD_STONE, data);
+			}else if(itemType == 5){
+				NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_LEVELUP,data);
 			}
+
 		}
 
-		NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_LEVELUP,null);
-		//if (itemId == 100 || itemId == 101) {
-		NotificationManager.getInstance ().PostNotification (null,Message.MONEY_GOLD_UPDATE,null);
-		//}
+		if (itemType == 0 || itemType == 1) {
+			NotificationManager.getInstance ().PostNotification (null,Message.MONEY_GOLD_UPDATE,null);
+		}
 
 		//NotificationCenter.DefaultCenter ().PostNotification (null,"initBase",data);
 		//initData (data);

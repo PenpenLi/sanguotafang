@@ -376,7 +376,7 @@ public class DataManager {
 		foreach (KeyValuePair<int,JsonObject> kvp in suitJson) {
 			JsonObject jo = kvp.Value;
 			string kind = equip ["kind"].ToString ();
-			if (jo[kind].ToString() == equip ["id"].ToString ()) {
+			if (jo.ContainsKey(kind) && jo[kind].ToString() == equip ["id"].ToString ()) {
 				return jo;
 			}
 		}
@@ -485,5 +485,25 @@ public class DataManager {
 	     
 
 		return playerAnim;
+	}
+	public string updateShuXing(JsonObject data,int type = 0){
+		string shuxing = "";
+		int attack = data.ContainsKey("stoneAttackAdd") ? int.Parse (data ["attackValue"].ToString ()) + int.Parse (data ["stoneAttackAdd"].ToString ()) : int.Parse(data["attackValue"].ToString());
+		int hp = data.ContainsKey("stoneHpAdd") ? int.Parse (data ["hpValue"].ToString ()) + int.Parse (data ["stoneHpAdd"].ToString ()) : int.Parse(data["hpValue"].ToString());
+		int defence = data.ContainsKey("stoneDefenceAdd") ?int.Parse (data ["defenceValue"].ToString ()) + int.Parse (data ["stoneDefenceAdd"].ToString ()) : int.Parse(data["defenceValue"].ToString());
+		if( attack > 0){
+			shuxing += DataManager.getInstance ().itemDicJson [0] ["attackValue"].ToString () + "+" + attack.ToString();
+		}
+		if( hp > 0){
+			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["hpValue"].ToString () + "+" + hp.ToString();
+		}
+		if( defence > 0){
+			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["defenceValue"].ToString () + "+" + defence.ToString();
+		}
+		if (type != 0) {
+			return ((defence + hp + attack) * 5).ToString();
+		}
+		return shuxing;
+
 	}
 }

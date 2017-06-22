@@ -162,8 +162,8 @@ public class HeroScene : Observer {
 		if (data != null) {
 			JsonObject userMessage = new JsonObject();
 			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.playerHandler.levelUp", userMessage, (data)=>{
-				Debug.Log(data.ToString());
+			ServerManager.getInstance ().request("area.playerHandler.levelUp", userMessage, (databack)=>{
+				Debug.Log(databack.ToString());
 			});
 		}
 
@@ -172,8 +172,8 @@ public class HeroScene : Observer {
 		if (data != null) {
 			JsonObject userMessage = new JsonObject();
 			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.playerHandler.starUp", userMessage, (data)=>{
-				Debug.Log(data.ToString());
+			ServerManager.getInstance ().request("area.playerHandler.starUp", userMessage, (databack)=>{
+				Debug.Log(databack.ToString());
 			});
 		}
 
@@ -184,8 +184,8 @@ public class HeroScene : Observer {
 			JsonObject userMessage = new JsonObject();
 			userMessage.Add ("equipId", bp.data["id"]);
 			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.equipHandler.equip", userMessage, (data)=>{
-				Debug.Log(data.ToString());
+			ServerManager.getInstance ().request("area.equipHandler.equip", userMessage, (databack)=>{
+				Debug.Log(databack.ToString());
 				AudioManager.instance.playEquip();
 
 			});
@@ -207,8 +207,8 @@ public class HeroScene : Observer {
 			JsonObject userMessage = new JsonObject();
 			userMessage.Add ("equipType",type);//准备部位
 			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.equipHandler.unEquip", userMessage, (data)=>{
-				Debug.Log(data.ToString());
+			ServerManager.getInstance ().request("area.equipHandler.unEquip", userMessage, (databack)=>{
+				Debug.Log(databack.ToString());
 				AudioManager.instance.playUnEquip();
 
 			});

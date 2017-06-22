@@ -45,6 +45,7 @@ public class EquipInfo :Observer {
 	public Image stonePanel;
 	public int pinzhi = 1;
 	public bool isFlesh = false;
+	public int openType;
 	// Use this for initialization
 	void Awake () {
 		suitArr = new Dictionary<string, Text> ();
@@ -80,16 +81,18 @@ public class EquipInfo :Observer {
 			switch (nt.name) {
 			case Message.EQUIP_LEVELUP:
 				{
-					if (data != null) {
-						int id = int.Parse (data ["id"].ToString ());
-						data = BagManager.getInstance ().getEquipById (id);
-						initBase (BagManager.getInstance ().getItemStaticData (data));
-					}
+					//if (data != null) {
+					//	int id = int.Parse (data ["id"].ToString ());
+						data = nt.data as JsonObject;
+					//	data = BagManager.getInstance ().getEquipById (id);
+						init(data,openType);
+					//}
 				}
 				break;
 			case Message.EQUIP_ADD_STONE:
 				{
-					initStone ();
+					//data = nt.data as JsonObject;
+					//updateShuXing ();
 				}
 				break;
 			}
@@ -113,25 +116,10 @@ public class EquipInfo :Observer {
 		itemInfo.text = jo ["desc"].ToString ();
 
 		bg.sprite = (Resources.Load("all/hero_bg_" + jo["color"].ToString(), typeof(Sprite)) as Sprite);
-		string shuxing = "";
-		int attack = int.Parse (data ["attackValue"].ToString ());
-		int hp = int.Parse (data ["hpValue"].ToString ());
-		int defence = int.Parse (data ["defenceValue"].ToString ());
-		if( attack > 0){
-			shuxing += DataManager.getInstance ().itemDicJson [0] ["attackValue"].ToString () + "+" + data ["attackValue"].ToString ();
-		}
-		if( hp > 0){
-			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["hpValue"].ToString () + "+" + data ["hpValue"].ToString ();
-		}
-		if( defence > 0){
-			shuxing += "  " + DataManager.getInstance ().itemDicJson [0] ["defenceValue"].ToString () + "+" + data ["defenceValue"].ToString ();
-		}
-		itemShuXing.text = shuxing;
+	
 
-		equipFightPointer.text = ((defence + hp + attack) * 5).ToString();
-
-
-
+		itemShuXing.text = DataManager.getInstance().updateShuXing (data);
+		equipFightPointer.text = DataManager.getInstance().updateShuXing (data,1);
 		fumoBtn.gameObject.SetActive (true);
 		levelupBtn.gameObject.SetActive (true);
 
@@ -141,7 +129,8 @@ public class EquipInfo :Observer {
 		//附魔更新
 		updateBtn(fumoBtn,fumoNeedInfo,100,"level","equipFuMoNeed","levelUp");	
 	}
-	public void init(JsonObject jo,int openType){
+	public void init(JsonObject jo,int _openType){
+		openType = _openType;
 		//NotificationManager.getInstance ().AddObserver (this,"equip_levelup");
 		data = jo;
 		Id = int.Parse (data ["id"].ToString ());
@@ -298,8 +287,8 @@ public class EquipInfo :Observer {
 		userMessage.Add ("equipId", data["id"]);
 		//userMessage.Add ("heroId", heroId);
 
-		ServerManager.getInstance ().request("area.equipHandler.equipLevelUp", userMessage, (data)=>{
-			Debug.Log(data.ToString());
+		ServerManager.getInstance ().request("area.equipHandler.equipLevelUp", userMessage, (databack)=>{
+			Debug.Log(databack.ToString());
 			//isFlesh = true;
 
 		});

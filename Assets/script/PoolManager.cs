@@ -15,6 +15,7 @@ public class PoolManager {
 
 	public static string RE_CONNECT= "RE_CONNECT";
 	public static string LIST_PANEL = "list_panel";
+	public static string STONE_HECHENG_PANEL= "STONE_HECHENG_PANEL";
 
 	public static string HANDBOOK_ITEM = "handbook_";
 	public static string ICON1 = "green";

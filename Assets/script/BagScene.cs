@@ -51,6 +51,7 @@ public class BagScene : Observer {
 		bagItem.transform.SetParent(content);
 		bagItem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 		bagItem.init(cd,openType);
+		BagManager.getInstance ().addItem (bagItem);
 		/**
 		//Button btn;
 		if (content.childCount == 0)

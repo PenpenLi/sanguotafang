@@ -85,7 +85,7 @@ public class handBookPanel : BagPanel {
 			//monsterStyle.sprite = (Resources.Load(jo["style"].ToString(), typeof(Sprite)) as Sprite);
 			//monsterStyle.SetNativeSize();
 			//info.text = jo ["desc"].ToString ();
-			name.text = jo ["name"].ToString ();
+			itemname.text = jo ["name"].ToString ();
 			key1.text = DataManager.getInstance ().monsterDicJson [0] ["hp"].ToString ();
 			key2.text = DataManager.getInstance ().monsterDicJson [0] ["pr"].ToString ();
 			key3.text = DataManager.getInstance ().monsterDicJson [0] ["sr"].ToString ();
@@ -142,7 +142,7 @@ public class handBookPanel : BagPanel {
 			value4.text = jo ["attackSpeed"].ToString ();
 		}
 		info.text = jo ["desc"].ToString ();
-		name.text = jo ["name"].ToString ();
+		itemname.text = jo ["name"].ToString ();
 		id.text = " id:" + jo ["id"].ToString ();
         
     }

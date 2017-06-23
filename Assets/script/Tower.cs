@@ -28,7 +28,7 @@ public class Tower : MonoBehaviour {
     public Image range;
     public JsonObject hd;
 	public bool isInit = false;
-	public AudioSource attackMusic;
+	//public AudioSource attackMusic;
 	public int moveYsetoff = 0;
 	public bool spineFlipX = false;
 	public bool isCanPlayMP = false;
@@ -101,10 +101,10 @@ public class Tower : MonoBehaviour {
 		playScale ();
 		//heroStyle.timeScale = 10;
         //heroStyle.SetNativeSize ();
-		attackRange = int.Parse(data["attackRange"].ToString());
-		attackPingLv = 1.0f/float.Parse(data["attackSpeed"].ToString());
-		attackDamage = int.Parse(data["attack"].ToString());
-		skillId = int.Parse(data["skillId"].ToString());
+		attackRange = DataManager.getInstance().getHeroAttackRange(data);
+		attackPingLv = 1.0f/DataManager.getInstance().getHeroAttackSpeed(data);
+		attackDamage = DataManager.getInstance().getHeroDamage(data);//int.Parse(data["attack"].ToString());
+		skillId = int.Parse(HeroManager.getInstance().getHeroStaticData(data)["skill1"].ToString());
         float retio = attackRange * 2 / range.rectTransform.rect.width;
         range.transform.localScale = new Vector3(retio, retio, 0);
 
@@ -278,7 +278,7 @@ public class Tower : MonoBehaviour {
 		}**/
 	}
 	void Attack(){//普攻
-		attackMusic.Play();
+		//attackMusic.Play();
 		//heroStyle.timeScale = 3;
 		heroStyle.AnimationState.SetAnimation (0,"attack",false).timeScale = 5;
 		heroStyle.AnimationState.AddAnimation (0,"stand",true,0.0f).timeScale = 1;

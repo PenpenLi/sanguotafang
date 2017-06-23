@@ -101,9 +101,9 @@ public class ChapterScene : MonoBehaviour {
 		heroHeadList = new ArrayList ();
 		//ChapterManager.chapterId = 1;
 
-		chapterData chapterInfo = ChapterManager.getInstance ().getChapter ();
+		// chapterInfo = ChapterManager.getInstance ().chaperData;
 
-		bg.sprite = (Resources.Load (chapterInfo.chapterMap,typeof(Sprite)) as Sprite);
+		bg.sprite = (Resources.Load (ChapterManager.getInstance ().mapPath,typeof(Sprite)) as Sprite);
 		//bg.SetNativeSize ();
 
 		//屏幕适配,按宽度缩放
@@ -122,13 +122,13 @@ public class ChapterScene : MonoBehaviour {
 		//UGUIEventTrigger.Get (bg.gameObject).AddEventListener (EventTriggerType.PointerUp,OnClickUp);
 		//UGUIEventTrigger.Get (gameObject).AddEventListener (EventTriggerType.PointerUp,OnClickUp);
 		//UGUIEventTrigger.Get (bg.gameObject).AddEventListener (EventTriggerType.Move,OnMove);
-		MonsterManager.getInstance ().initMonsterData (chapterInfo.chapterMonster);
+		MonsterManager.getInstance ().initMonsterData (ChapterManager.getInstance ().monsterPath);
 
 		monsterArr = MonsterManager.getInstance ().getMonstersByBoShu (1,bg.transform);
 		frontTime = Time.time;
         //maskBg.gameObject.SetActive (false);
    
-        TowerManager.getInstance().initChapterTower(chapterInfo.chapterTower);
+		TowerManager.getInstance().initChapterTower(ChapterManager.getInstance ().towerPath);
 
 		Dictionary<int,JsonObject> heroarr = HeroManager.getInstance().getHeros();
         ArrayList towerarr = TowerManager.getInstance().getTowersList();
@@ -137,7 +137,7 @@ public class ChapterScene : MonoBehaviour {
 			JsonObject hd = kvp.Value;
 			string heroId = hd ["heroId"].ToString ();
             bool isInFight = false;
-            for (int j = 0; j < towerarr.Count; j++)
+            /**for (int j = 0; j < towerarr.Count; j++)
             {
                 Tower tower = (Tower)towerarr[j];
 				string towerHeroId = tower.hd["heroId"].ToString ();
@@ -146,7 +146,7 @@ public class ChapterScene : MonoBehaviour {
                     isInFight = true;
                     break;
                 }
-            }
+            }**/
             if (!isInFight)
             {
                 addHeroHead(hd);
@@ -202,6 +202,8 @@ public class ChapterScene : MonoBehaviour {
 		skillDamagesShowTime = 60;
 	}
 	public void showWinPanel(){
+		AudioManager.instance.Stop(12);
+		AudioManager.instance.Play (10);
 		Time.timeScale = 0;
 		winPanel.transform.localPosition = new Vector3(0,0,0);
 		winPanel.transform.SetSiblingIndex (1100);
@@ -229,14 +231,14 @@ public class ChapterScene : MonoBehaviour {
 		//iTween.Stop ();
 
 		JsonObject userMessage = new JsonObject();
-		userMessage.Add ("chapterId", ChapterManager.getInstance().getChapter().chapterId);
+		userMessage.Add ("campaignId", ChapterManager.getInstance().campaignId);
 		userMessage.Add ("chapterStar", ChapterManager.getInstance().getStar());
 		userMessage.Add ("chapterType", ChapterManager.getInstance().chapterType);
 		//if (LoginScene.pclient != null) {
-		ServerManager.getInstance ().request("area.playerHandler.upgradeChapter", userMessage, (data)=>{
-			Debug.Log(data.ToString());
-			DataManager.playerData ["chapter"] = data["chapter"];
-			dropitems = data["dropItems"] as List<object>;
+		ServerManager.getInstance ().request("area.playerHandler.upgradeChapter", userMessage, (databack)=>{
+			Debug.Log(databack.ToString());
+			DataManager.playerData ["chapter"] = databack["chapter"];
+			dropitems = databack["dropItems"] as List<object>;
 
 
 			
@@ -245,6 +247,8 @@ public class ChapterScene : MonoBehaviour {
 
 	}
 	public void showFailPanel(){
+		AudioManager.instance.Stop(12);
+		AudioManager.instance.Play (11);
 		Time.timeScale = 0;
 		failPanel.transform.localPosition = new Vector3(0,0,0);
 		failPanel.transform.SetSiblingIndex (1100);
@@ -363,26 +367,32 @@ public class ChapterScene : MonoBehaviour {
 			Tower tower = (Tower)arr [i];
 			//iTween.MoveBy(tower.body.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));
 		}
-		showWinPanel();//测试
+		AudioManager.instance.Play(12);
+		//showWinPanel();//测试
 
     }
 
 	public void onClickPause(int type){
 		if (type == 0) {
+			AudioManager.instance.Pause(12);
 			isGameStart = false;
 			Time.timeScale = 0;
 			pausePanel.gameObject.SetActive (true);
 			pausePanel.transform.SetSiblingIndex (1000);
 		} else if (type == 1) {
+			isGameStart = true;
+			Time.timeScale = 1;
 			pausePanel.gameObject.SetActive (false);
-			onClickStart ();
+			AudioManager.instance.UnPause(12);
+			//onClickStart ();
 		} else if (type == 2) {//胜利后继续下一关
 			//Time.timeScale = 1;
 			ChapterManager.getInstance().GotoNextChapterScene();
 		} else if (type == 3 || type == 4) {
+			
 			SceneManager.LoadScene ("GameScene");
 		}else if(type == 5){//重来
-			ChapterManager.getInstance().GotoChapterScene();
+			ChapterManager.getInstance().GotoChapterScene(ChapterManager.getInstance().campaignId);
 		}
 
 		
@@ -522,10 +532,12 @@ public class ChapterScene : MonoBehaviour {
 
 		if (dropitems != null) {
 			for (int i = 0; i < dropitems.Count; i++) {
-				JsonObject jo = dropitems[i] as JsonObject;
-				JsonObject staticdata = DataManager.getInstance().dataDic[jo["type"].ToString()][int.Parse(jo["id"].ToString())];
-				Text txt = (Text)rewardArr[i];
-				txt.text = staticdata["name"].ToString() + " x" + jo["count"].ToString();
+				if (rewardArr.Count > i) {
+					JsonObject jo = dropitems [i] as JsonObject;
+					JsonObject staticdata = DataManager.getInstance ().itemDicJson [int.Parse (jo ["id"].ToString ())];
+					Text txt = (Text)rewardArr [i];
+					txt.text = staticdata ["name"].ToString () + " x" + jo ["count"].ToString ();
+				}
 				//txt.transform.localScale = new Vector3 (0.0f, 0.0f, 0.0f);
 				//iTween.ScaleTo(txt.gameObject, iTween.Hash("y", 1.0f,"x", 1.0f,"z", 1.0f ,"delay", 0.0f,"time",0.5f));
 				//iTween.MoveFrom(txt.gameObject, new Vector3(-500.0f,txt.transform.localPosition.y,txt.transform.localPosition.z),0.5f);

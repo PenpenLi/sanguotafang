@@ -152,6 +152,45 @@ public class AudioManager
 	public void playMenuClick(){
 		Play(8);
 	}
+	public void Stop(int id)
+	{
+		Loom.QueueOnMainThread (() => {
+
+			if(soundCache.ContainsKey(id)){
+				AudioSource aso = soundCache[id];
+				if(aso != null){
+					soundCache[id].Stop();
+				}
+			}
+
+		});
+	}
+	public void Pause(int id)
+	{
+		Loom.QueueOnMainThread (() => {
+
+			if(soundCache.ContainsKey(id)){
+				AudioSource aso = soundCache[id];
+				if(aso != null){
+					soundCache[id].Pause();
+				}
+			}
+
+		});
+	}
+	public void UnPause(int id)
+	{
+		Loom.QueueOnMainThread (() => {
+
+			if(soundCache.ContainsKey(id)){
+				AudioSource aso = soundCache[id];
+				if(aso != null){
+					soundCache[id].UnPause();
+				}
+			}
+
+		});
+	}
 	public void Play(int id)
 	{
 		Loom.QueueOnMainThread (() => {

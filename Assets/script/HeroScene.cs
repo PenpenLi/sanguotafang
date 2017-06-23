@@ -301,11 +301,11 @@ public class HeroScene : Observer {
 		//JsonObject staticdata = data ["staticdata"] as JsonObject;
 		//JsonObject data = data ["data"] as JsonObject;
 		heroId = int.Parse (data ["heroId"].ToString ());
-		heroAttack.text = (int.Parse(data["attack"].ToString()) + int.Parse(data["suitAttackAdd"].ToString()) + int.Parse(data["equipAttackAdd"].ToString())).ToString();
+		heroAttack.text = DataManager.getInstance().getHeroDamage(data).ToString();
 		//heroAttackRange.text = data["attackRange"].ToString();
-		heroAttackSpeed.text = data["attackSpeed"].ToString();
-		heroHP.text = (int.Parse(data["hp"].ToString()) + int.Parse(data["suitHpAdd"].ToString()) + int.Parse(data["equipHpAdd"].ToString())).ToString();
-		heroDefence.text =(int.Parse(data["defence"].ToString()) + int.Parse(data["suitDefenceAdd"].ToString()) + int.Parse(data["equipDefenceAdd"].ToString())).ToString();
+		heroAttackSpeed.text = DataManager.getInstance().getHeroAttackSpeed(data).ToString();
+		heroHP.text = DataManager.getInstance().getHeroHp(data).ToString();
+		heroDefence.text =DataManager.getInstance().getHeroDefence(data).ToString();
 
 		//升星更新
 		updateBtn(shengxingBtn,shengxingNeedInfo,heroSharedId,"starLevel","starLevelUpNeed","levelUp");

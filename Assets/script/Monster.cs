@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using SimpleJson;
 public class Monster : MonoBehaviour {
 	public RawImage HP;
 	public RawImage HPbg;
@@ -22,7 +22,7 @@ public class Monster : MonoBehaviour {
 	private float movedt = 0.03f;
 	public int siblingIndex;
 	public Text yIndex;
-	private monsterData _monsterData;
+	private JsonObject _monsterData;
 	private Sprite[] sprites;
 	private int spriteIndex = 0;//序列帧索引
 	private int spriteIndexStart = 0;//序列帧某个动作起始帧
@@ -31,7 +31,7 @@ public class Monster : MonoBehaviour {
 	private float spriteChangeTime = 0.0f;//序列帧切换速度
 	private int currentDir = 0;
 	private Image body;
-	public AudioSource music;
+	//public AudioSource music;
 	public int currentState = 0;//怪物当前状态，0为正常，1为击晕
 	private float stunTime;//被击晕的时间点
 	private float stunDuration;//持续时间
@@ -102,7 +102,7 @@ public class Monster : MonoBehaviour {
 						setWalkDir ();
 					}
 				} else {
-					ChapterManager.getInstance ().changeLoveNum (_monsterData.monsterDamage);
+					ChapterManager.getInstance ().changeLoveNum (DataManager.getInstance().getJsonIntValue(_monsterData,"attack"));
 					onDead ();
 				}
 			}
@@ -192,24 +192,25 @@ public class Monster : MonoBehaviour {
 	}
 	public void init(string[] monsterInfo,int _siblingIndex){
 		
-		_monsterData = DataManager.getInstance().monsterDic[int.Parse(monsterInfo[1])];
+		_monsterData = DataManager.getInstance().monsterDicJson[int.Parse(monsterInfo[1])];
 		// 加载此文件下的所有资源
-		sprites = Resources.LoadAll<Sprite>(_monsterData.monsterStyle);
+		sprites = Resources.LoadAll<Sprite>(DataManager.getInstance().getJsonStringValue(_monsterData,"style"));
 		if (sprites.Length > 0) {
 			
 		}
-		Object spri = Resources.Load (_monsterData.monsterStyle);
+		//Object spri = Resources.Load (_monsterData.monsterStyle);
 		body = this.GetComponent<UnityEngine.UI.Image> ();
 		body.sprite = sprites[spriteIndex];
 		body.SetNativeSize ();
+		int monsterBaseHp = DataManager.getInstance ().getJsonIntValue (_monsterData, "hp");
 		if(ChapterManager.getInstance().chapterType == 0){
-			currentHP = beforChangeHP = maxHP = _monsterData.monsterHp + ChapterManager.getInstance().getChapter().chapterHpAdd1;
+			currentHP = beforChangeHP = maxHP = monsterBaseHp + ChapterManager.getInstance().chapterHpAdd1;
 		}else{
-			currentHP = beforChangeHP = maxHP = _monsterData.monsterHp + ChapterManager.getInstance().getChapter().chapterHpAdd2;
+			currentHP = beforChangeHP = maxHP = monsterBaseHp + ChapterManager.getInstance().chapterHpAdd2;
 		}
 
 		pathArr = DataManager.getInstance ().initChapterWaveData (monsterInfo[3]);
-		speed = (int)_monsterData.moveSpeed;
+		speed = DataManager.getInstance ().getJsonIntValue (_monsterData, "speed");
 		/**waveArr = DataManager.getInstance ().getData (monsterInfo[3], "\r\n");
 
 
@@ -245,7 +246,7 @@ public class Monster : MonoBehaviour {
 			waveIndex++;
 			setWalkDir ();
 		} else {
-			ChapterManager.getInstance ().changeLoveNum (_monsterData.monsterDamage);
+			ChapterManager.getInstance ().changeLoveNum (DataManager.getInstance ().getJsonIntValue (_monsterData, "attack"));
 			onDead ();
 		}
 	}
@@ -288,7 +289,7 @@ public class Monster : MonoBehaviour {
 		//arr.Add (stunDuration);
 		currentState = 1;
 		stunEffect = SkillManager.getInstance ().getSkillDemo (1000);
-		skillData sd = DataManager.getInstance ().skillDic [1000];
+		JsonObject sd = DataManager.getInstance ().skillDicJson [1000];
 
 		stunEffect.init (sd);
 		stunEffect.transform.SetParent (transform);
@@ -311,9 +312,11 @@ public class Monster : MonoBehaviour {
 		
 	}
 	public void attackByTowerSkill(Tower tower){
-		skillData skildata = DataManager.getInstance ().skillDic [tower.skillId];
-		if (skildata.attackDamage > 0) {
-			int damage = skildata.attackDamage + tower.attackDamage;//目前技能总伤害为：技能初始伤害+塔的伤害;
+		JsonObject skildata = DataManager.getInstance ().skillDicJson [tower.skillId];
+		int attackDamage = DataManager.getInstance ().getJsonIntValue (skildata,"attackDamage");
+		int stateDuration = DataManager.getInstance ().getJsonIntValue (skildata,"stateDuration");
+		if (attackDamage > 0) {
+			int damage = attackDamage + tower.attackDamage;//目前技能总伤害为：技能初始伤害+塔的伤害;
 			ChapterScene._chapterScene.changeSkillDamages(damage);
 			currentHP -= damage;
 			changHp ();
@@ -323,15 +326,15 @@ public class Monster : MonoBehaviour {
 			isDead = true;
 		} else {
 			
-			if (skildata.stateDuration > 3000) {//逆行
-				int t = skildata.stateDuration - 3000;
+			if (stateDuration > 3000) {//逆行
+				int t = stateDuration - 3000;
 				converse (t);
 								
-			}else if(skildata.stateDuration > 2000){//减速
-				int t = skildata.stateDuration - 2000;
+			}else if(stateDuration > 2000){//减速
+				int t = stateDuration - 2000;
 				speedReduction (t);
-			}else if(skildata.stateDuration > 1000){//眩晕
-				int t = skildata.stateDuration - 1000;
+			}else if(stateDuration > 1000){//眩晕
+				int t = stateDuration - 1000;
 				float chance = Random.Range (0.0f,10000.0f);
 				float d = 10000*t;//击晕的伪概率
 				if(chance <= d){
@@ -368,7 +371,7 @@ public class Monster : MonoBehaviour {
 		currentHP = 0;
 		isDead = true;
 		isWalk = false;
-		music.Play ();
+		AudioManager.instance.Play (9);
 		transform.SetParent (null);
 		//gameObject.SetActive (false);
 		MonsterManager.getInstance ().removeMonster (this);

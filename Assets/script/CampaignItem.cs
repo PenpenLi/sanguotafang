@@ -15,6 +15,7 @@ public class CampaignItem : MonoBehaviour {
 	public Button tiaozhanBtn;
 	public Image dropPanel;
 	private int chapterId;
+	private int campaignId;
 	private List<object> dropitems;
 	// Use this for initialization
 	void Awake(){
@@ -34,6 +35,7 @@ public class CampaignItem : MonoBehaviour {
 	public void init(JsonObject _cd,int _chapterId){
 		chapterId = _chapterId;
 		this.cd = _cd;
+		campaignId = int.Parse (cd ["id"].ToString ());
 		//chapterType = _chapterType;
 		chapterName.text = cd["name"].ToString();
 
@@ -85,19 +87,17 @@ public class CampaignItem : MonoBehaviour {
 		
 	}
 	public void onTiaoZhan(){
-		JsonObject userMessage = new JsonObject();
+		/**JsonObject userMessage = new JsonObject();
 		userMessage.Add ("chapterId", chapterId);
 		userMessage.Add ("campaignId", cd["id"]);
-		//userMessage.Add ("chapterStar", 3);
-		//if (LoginScene.pclient != null) {
 			ServerManager.getInstance ().request ("area.playerHandler.upgradeChapter", userMessage, (data) => {
 				Debug.Log (data.ToString ());
 				DataManager.playerData ["chapter"] = data["chapter"];
 			dropitems = data["dropItems"] as List<object>;
 			});
-		//}
+			**/
 		//ChapterManager.getInstance ().chapterType = chapterType;
-		//ChapterManager.getInstance().setChapterId(cd.chapterId);
-		//ChapterManager.getInstance().GotoChapterScene();
+		//ChapterManager.getInstance().setChapterId(campaignId);
+		ChapterManager.getInstance().GotoChapterScene(campaignId);
 	}
 }

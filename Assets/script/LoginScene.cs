@@ -21,6 +21,7 @@ public class LoginScene : MonoBehaviour {
 		LoginPanel.transform.localPosition = new Vector3(0,0,0);
 		createPlayPanel.transform.localPosition = new Vector3(0,0,0);
 		createPlayPanel.gameObject.SetActive (false);
+		PoolManager.getInstance ().clearPool ();
 	}
 	
 	// Update is called once per frame

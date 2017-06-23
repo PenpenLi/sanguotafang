@@ -19,12 +19,16 @@ public class BagPanel : Observer {
 	public JsonObject data;
 	private IconBase ico;
 	public string poolType;
-	public static BagPanel _demoPanel;
+	public static bool _demoPanel;
 	public bool isUpdate = false;
 	public int openType;
 	public int itemType;
 	void Awake(){
 		messageArr.Add (Message.BAG_UPDATE);
+		//if (!_demoPanel) {
+		//	_demoPanel = true;
+		//	DontDestroyOnLoad (GameObject.Instantiate (this));
+		//}
 		PoolManager.getInstance ().initPoolByType (PoolManager.BAG_ITEM + poolType,this,3);
 	}
     // Use this for initialization
@@ -75,7 +79,12 @@ public class BagPanel : Observer {
 		} else {
 			staticData = item;
 		}
-		itemType = int.Parse(staticData["itemType"].ToString());
+		if (item.ContainsKey ("itemType")) {
+			itemType = int.Parse(staticData["itemType"].ToString());
+		} else {
+			itemType = -1;
+		}
+
 		//ico = (IconBase)PoolManager.getInstance ().getGameObject (staticdata["color"].ToString());
 		//ico.init (staticdata);
 		//ico.transform.SetParent (this.transform);

@@ -66,7 +66,11 @@ public class ItemInfo : MonoBehaviour {
 		data = jo;
 		//if (jo.ContainsKey ("staticdata")) {
 		jo = BagManager.getInstance ().getItemStaticData (jo);
-		itemType = int.Parse (jo["itemType"].ToString());
+		if (jo.ContainsKey ("itemType")) {
+			itemType = int.Parse(jo["itemType"].ToString());
+		} else {
+			itemType = -1;
+		}
 		owerId = 0;
 		pos = 0;
 		if (data.ContainsKey ("owerId")) {
@@ -97,7 +101,11 @@ public class ItemInfo : MonoBehaviour {
 			
 			itemShuLiang.text = DataManager.getInstance().updateShuXing (data);
 		} else {
-			itemShuLiang.text = "x" + data ["count"].ToString ();
+			if (data.ContainsKey ("count")) {
+				itemShuLiang.text = "x" + data["count"].ToString();
+			} else {
+				itemShuLiang.text = "x1";
+			}
 		}
 
 	}

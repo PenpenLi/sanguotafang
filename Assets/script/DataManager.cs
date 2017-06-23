@@ -506,4 +506,38 @@ public class DataManager {
 		return shuxing;
 
 	}
+	public int getHeroDamage(JsonObject data){
+		int attack = int.Parse(data["attack"].ToString()) + int.Parse(data["suitAttackAdd"].ToString()) + int.Parse(data["equipAttackAdd"].ToString());
+		return attack;
+
+	}
+	public int getHeroHp(JsonObject data){
+		int hp = int.Parse(data["hp"].ToString()) + int.Parse(data["suitHpAdd"].ToString()) + int.Parse(data["equipHpAdd"].ToString());
+		return hp;
+
+	}
+	public int getHeroDefence(JsonObject data){
+		int defence = int.Parse (data ["defence"].ToString ()) + int.Parse (data ["suitDefenceAdd"].ToString ()) + int.Parse (data ["equipDefenceAdd"].ToString ());
+		return defence;
+
+	}
+	public float getHeroAttackSpeed(JsonObject data){
+		float attackSpeed = float.Parse (data ["attackSpeed"].ToString ()) + int.Parse (data ["suitAttackSpeedAdd"].ToString ()) + int.Parse (data ["equipAttackSpeedAdd"].ToString ());
+		return attackSpeed;
+
+	}
+	public int getHeroAttackRange(JsonObject data){
+		int attackRange = int.Parse (data ["attackRange"].ToString ()) + int.Parse (data ["suitAttackRangeAdd"].ToString ()) + int.Parse (data ["equipAttackRangeAdd"].ToString ());
+		return attackRange;
+
+	}
+	public int getJsonIntValue(JsonObject jo,string key){
+		return int.Parse (jo [key].ToString ());
+	}
+	public float getJsonFloatValue(JsonObject jo,string key){
+		return float.Parse (jo [key].ToString ());
+	}
+	public string getJsonStringValue(JsonObject jo,string key){
+		return jo [key].ToString ();
+	}
 }

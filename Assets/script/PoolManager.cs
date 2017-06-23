@@ -100,4 +100,7 @@ public class PoolManager {
 		}
 
 	}
+	public void clearPool(){//一般切换场景会触发
+		poolCacheDic.Clear();
+	}
 }

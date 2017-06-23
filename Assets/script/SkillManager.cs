@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using SimpleJson;
 public class SkillManager {
 	public static SkillManager _skillManager;
 	private Dictionary<int,skillData> skillDic;
@@ -18,8 +19,12 @@ public class SkillManager {
 	private ArrayList deleteSkillArr;
 	private Dictionary<int,ArrayList> skillAttackedMonsterArr;//被技能攻击过的怪物列表
 	private int skillId;
+	private int skillType;
+	private int attackRange;
+	private float attackInterval;
+	private int attackNum;
 	private Rect screenRect;
-	private skillData currentSkill;
+	private JsonObject currentSkill;
 	private Monster lockMonster;//技能类型为4的技能当前锁定的目标
 
 	public static SkillManager getInstance(){//获取单例
@@ -112,8 +117,11 @@ public class SkillManager {
 	public void addToCache(Skill skill){
 		skillCacheArr.Add (skill);
 	}
-	public skillData getSkillById(int skillid){
-		return DataManager.getInstance ().skillDic [skillid];
+	public JsonObject getSkillById(int skillid){
+		return DataManager.getInstance ().skillDicJson [skillid];
+	}
+	public int getSkillTypeById(int skillid){
+		return int.Parse(DataManager.getInstance ().skillDicJson [skillid]["skillType"].ToString());
 	}
 
 	public void OnMove(BaseEventData eventData){
@@ -130,11 +138,11 @@ public class SkillManager {
 		if (Time.timeScale == 0.0f && currentSkill != null) {
             //int skillType = getSkillById ();
             Vector3 _localP = ChapterScene._chapterScene.bg.transform.InverseTransformPoint(Input.mousePosition);
-            if (currentSkill.skillType == 2) {
+            if (skillType == 2) {
 				skill001.transform.localPosition = new Vector3 (skill001.transform.localPosition.x, _localP.y, 0);
 				MonsterManager.getInstance ().getMonstersByRect (skill001);
 				//MonsterManager.getInstance ().getMonstersByY (skill001.transform.position.y - 50,skill001.transform.position.y +50);
-			} else if(currentSkill.skillType == 1){
+			} else if(skillType == 1){
 				//skill001.transform.rotation
 				float  radian=Mathf.Atan2((_localP.y-skill001.transform.localPosition.y),(_localP.x-skill001.transform.localPosition.x));
 
@@ -144,7 +152,7 @@ public class SkillManager {
 				//MonsterManager.getInstance ().getMonstersByY (skill001.transform.position.y - 50,skill001.transform.position.y +50);
 				MonsterManager.getInstance ().getMonstersByRect (skill001);
 
-			}else if(currentSkill.skillType == 4){
+			}else if(skillType == 4){
 				skill004.transform.localPosition =_localP;
 
 				ArrayList arr = MonsterManager.getInstance ().getMonstersByRect (skill004,true,lockMonster);//只选取一个目标
@@ -153,7 +161,7 @@ public class SkillManager {
 				}
 
 				
-			}else if(currentSkill.skillType > 3){
+			}else if(skillType > 3){
 				
 				//MonsterManager.getInstance ().getMonstersByY (skill001.transform.position.y - 50,skill001.transform.position.y +50);
 				//MonsterManager.getInstance ().getMonstersByRect (skill001);
@@ -181,26 +189,30 @@ public class SkillManager {
 			return;
 		skillId = _skillId;
 		currentSkill = getSkillById (skillId);
+		skillType = DataManager.getInstance ().getJsonIntValue (currentSkill,"skillType");
+		attackRange = DataManager.getInstance ().getJsonIntValue (currentSkill, "attackRange");
+		attackNum = DataManager.getInstance ().getJsonIntValue (currentSkill, "attackNum");
+		attackInterval = DataManager.getInstance ().getJsonFloatValue (currentSkill, "attackInterval");
 		skillbg.transform.SetSiblingIndex (1000);
 		skillbg.gameObject.SetActive (true);
 		Time.timeScale = 0;
         Vector3 _localP= ChapterScene._chapterScene.bg.transform.InverseTransformPoint(Input.mousePosition);
 		skill003.transform.localPosition = new Vector3(0,0,0);
-		if(currentSkill.skillType <= 2){
+		if(skillType <= 2){
 			skill001.gameObject.SetActive (true);
 			skill001.transform.rotation = new Quaternion (0, 0, 0, 1);
 			RectTransform rectTransform = skill001.gameObject.GetComponent<RectTransform>();
-			rectTransform.sizeDelta = new Vector2(rectTransform.rect.width, currentSkill.attackRange);
+			rectTransform.sizeDelta = new Vector2(rectTransform.rect.width, attackRange);
 		}
-		if (currentSkill.skillType == 2) {
+		if (skillType == 2) {
 			
             float x =  - ChapterScene._chapterScene.bg.rectTransform.rect.width / 2;
 
             skill001.transform.localPosition = new Vector3 (x, _localP.y, 0);
-		} else if(currentSkill.skillType == 1){
+		} else if(skillType == 1){
 			skill001.transform.localPosition = tower.transform.localPosition;
-		} else if(currentSkill.skillType >= 3){
-			if (currentSkill.skillType == 4) {
+		} else if(skillType >= 3){
+			if (skillType == 4) {
 				skill004.gameObject.SetActive (true);
 			} else {
 				skill002.gameObject.SetActive (true);
@@ -210,10 +222,10 @@ public class SkillManager {
 
 				//skill002.transform.localScale = new Vector3 (scale,scale,scale);
 				skill002.transform.localPosition = tower.transform.localPosition;
-				if (currentSkill.skillType != 3) {
+				if (skillType != 3) {
 					skill003.gameObject.SetActive (true);
 					RectTransform rectTransform3 = skill003.gameObject.GetComponent<RectTransform>();
-					rectTransform3.sizeDelta = new Vector2(currentSkill.attackRange, currentSkill.attackRange);
+					rectTransform3.sizeDelta = new Vector2(attackRange, attackRange);
 					skill003.transform.localPosition = _localP;
 				}
 			}
@@ -240,7 +252,7 @@ public class SkillManager {
 		skilleffect.transform.SetParent (ChapterScene._chapterScene.bg.transform);
 		skilleffect.gameObject.SetActive (true);
 		skilleffect.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
-		if (currentSkill.skillType == 9) {
+		if (skillType == 9) {
 			skilleffect.transform.SetSiblingIndex (0);
 		} else {
 			skilleffect.transform.SetSiblingIndex (1100);
@@ -249,17 +261,18 @@ public class SkillManager {
 		skillAttackedMonsterArr[skillId] = new ArrayList();
 		skillAttackedMonsterArr [skillId].Add (tower);
 		skillAttackedMonsterArr [skillId].Add (skilleffect);
-		if(currentSkill.skillType >= 3){
+		skillAttackedMonsterArr [skillId].Add (skillType);
+		if(skillType >= 3){
             //skillEffect.transform.rotation = skill001.transform.rotation;
-			if (currentSkill.skillType == 4) {
+			if (skillType == 4) {
 				skilleffect.transform.position = skill004.transform.position;
 			} else {
 				skilleffect.transform.position = skill003.transform.position;
 			}
            
-			skillAttackedMonsterArr [skillId].Add (currentSkill.attackNum);
-			skillAttackedMonsterArr [skillId].Add (currentSkill.attackInterval);
-			skillAttackedMonsterArr [skillId].Add (currentSkill.attackInterval + 1.0f);
+			skillAttackedMonsterArr [skillId].Add (attackNum);
+			skillAttackedMonsterArr [skillId].Add (attackInterval);
+			skillAttackedMonsterArr [skillId].Add (attackInterval + 1.0f);
 		}else{
             skilleffect.transform.localRotation = skill001.transform.localRotation;
             skilleffect.transform.localPosition = skill001.transform.localPosition;
@@ -274,8 +287,8 @@ public class SkillManager {
 		foreach (KeyValuePair<int,ArrayList> kvp in skillAttackedMonsterArr) {
 			Skill skillEffect = (Skill)kvp.Value [1];
 			if (skillEffect != null) {
-				skillData skill = getSkillById (kvp.Key);
-				if (skill.skillType == 1 || skill.skillType == 2) {
+				int skilltype = (int)kvp.Value [2];
+				if (skilltype == 1 || skilltype == 2) {
 					skillEffect.transform.Translate (10, 0, 0);
 					//Vector3 _p = screenRect.InverseTransformPoint(skillEffect.transform.position);
 					if (!screenRect.Contains(skillEffect.transform.position)) {
@@ -287,17 +300,17 @@ public class SkillManager {
 						MonsterManager.getInstance ().getMonstersByRect2 (kvp.Value);
 					}
 
-				} else if(skill.skillType >= 3) {
-					int attackNum = (int)kvp.Value [2];
-					float attackInterval = (float)kvp.Value [3];
-					float time = (float)kvp.Value [4];
+				} else if(skilltype >= 3) {
+					int attackNum = (int)kvp.Value [3];
+					float attackInterval = (float)kvp.Value [4];
+					float time = (float)kvp.Value [5];
 					if (time > attackInterval && skillEffect.isCanAttack) {
-						kvp.Value [4] = 0.0f;
+						kvp.Value [5] = 0.0f;
 						if (attackNum > 0) {
 							ArrayList arr;
-							if (skill.skillType == 4) {
+							if (skilltype== 4) {
 								arr = MonsterManager.getInstance ().getMonstersByRect (skill004,true);
-							}else if (skill.skillType == 3) {
+							}else if (skilltype == 3) {
 								arr = MonsterManager.getInstance ().getMonstersBySkill (skill002);
 							} else {
 								arr = MonsterManager.getInstance ().getMonstersBySkill (skill003);
@@ -310,7 +323,7 @@ public class SkillManager {
 								}
 							}
 							attackNum--;
-							kvp.Value [2] = attackNum;
+							kvp.Value [3] = attackNum;
 						} else {
 							if (skillEffect.isPalyOne) {
 								skillEffect.gameObject.SetActive (false);
@@ -322,7 +335,7 @@ public class SkillManager {
 						}
 					} else {
 						time += Time.fixedDeltaTime;
-						kvp.Value [4] = time;
+						kvp.Value [5] = time;
 					}
 
 

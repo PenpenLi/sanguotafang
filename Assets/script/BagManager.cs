@@ -140,7 +140,7 @@ public class BagManager{
     }
 	public List<JsonObject> getItemsByType(string type,int _itemId = 0,List<int> inUseList = null){
 		List<JsonObject> list = new List<JsonObject> ();
-		List<JsonObject> listNotEquip = new List<JsonObject> ();
+
 		/**if(type == "equip")
 		{
 			foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
@@ -160,30 +160,32 @@ public class BagManager{
 		}
 		else
 		{**/
-		Dictionary<int,JsonObject> items = allItemDic [int.Parse(type)];
-		foreach(KeyValuePair<int,JsonObject> kvp in items){
+		int key = int.Parse (type);
+		if (allItemDic.ContainsKey (key)) {
+			List<JsonObject> listNotEquip = new List<JsonObject> ();
+			Dictionary<int,JsonObject> items = allItemDic [int.Parse (type)];
+			foreach (KeyValuePair<int,JsonObject> kvp in items) {
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
 				//if (type == kvp.Value["itemType"].ToString()) {
-				int owerId = int.Parse(kvp.Value["owerId"].ToString());
-				int itemId = int.Parse(kvp.Value["itemId"].ToString());
-				int id = int.Parse(kvp.Value["id"].ToString());
+				int owerId = int.Parse (kvp.Value ["owerId"].ToString ());
+				int itemId = int.Parse (kvp.Value ["itemId"].ToString ());
+				int id = int.Parse (kvp.Value ["id"].ToString ());
 				if (_itemId > 0) {
 					if (_itemId != itemId) {
 						continue;
 					}
 				}
-				if (inUseList !=  null) {
+				if (inUseList != null) {
 					bool isInUse = false;
-					for (int i = 0; i < inUseList.Count; i++)
-					{
-						if (inUseList[i] == id) {
-						isInUse = true;
+					for (int i = 0; i < inUseList.Count; i++) {
+						if (inUseList [i] == id) {
+							isInUse = true;
 							break;
 						}
 					}
-					if(isInUse)
+					if (isInUse)
 						continue;
-					}
+				}
 				if (owerId == 0) {
 					list.Add (kvp.Value);
 				} else {
@@ -192,8 +194,9 @@ public class BagManager{
 
 				//}
 			}
-		/**}**/
-		list.AddRange (listNotEquip);
+			/**}**/
+			list.AddRange (listNotEquip);
+		}
 		return list;
 	}
 	public List<JsonObject> getStoneByEquipId(int equipId){

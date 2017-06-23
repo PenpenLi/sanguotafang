@@ -69,7 +69,7 @@ public class StoneHeChengPanel : Observer {
 		}
 	}
 	public void init(){
-		
+		AudioManager.instance.Play (8);
 	}
 	public void setHeChengStone(int stoneId){
 		if (stoneId > 0) {

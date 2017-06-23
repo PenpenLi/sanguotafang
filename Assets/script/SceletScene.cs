@@ -42,13 +42,32 @@ public class SceletScene : MonoBehaviour {
 		}
 		chapterItem.init(DataManager.getInstance ().chapterDicJson [chapterId]);
 		float delay = 0.0f;
-		foreach (KeyValuePair<int,JsonObject> kvp in DataManager.getInstance().campaignDicJson) {
-			JsonObject jo = kvp.Value;
-			if (int.Parse (jo ["id"].ToString ()) > 0) {
-				if (jo ["chapter"].ToString () == _chapterId) {
-					addChapter (kvp.Value,delay);
-					delay += 0.05f;
+		int campaignid = 0;
+		if (DataManager.playerData.ContainsKey ("chapter")) {
+			int chaid = int.Parse(DataManager.playerData ["chapter"].ToString());
+
+			foreach (KeyValuePair<int,JsonObject> kvp in DataManager.getInstance().campaignDicJson) {
+				JsonObject jo = kvp.Value;
+				int id = int.Parse (jo ["id"].ToString ());
+				if (id > 0 && chaid >= id) {
+					if (jo ["chapter"].ToString () == _chapterId) {
+						addChapter (kvp.Value, delay);
+						delay += 0.05f;
+						if (id > campaignid) {
+							campaignid = id;
+						}
+					}
 				}
+			}
+		}
+		if (DataManager.getInstance ().campaignDicJson.ContainsKey (campaignid + 1)) {
+			JsonObject jo = DataManager.getInstance ().campaignDicJson[campaignid + 1];
+			if (jo ["chapter"].ToString () == _chapterId) {
+				addChapter (jo,delay);
+				delay += 0.05f;
+				//if (id > campaignid) {
+				//	campaignid = id;
+				//}
 			}
 		}
 
@@ -161,8 +180,8 @@ public class SceletScene : MonoBehaviour {
 			Debug.Log(data.ToString());
 		});**/
 		//ChapterManager.getInstance ().chapterType = chapterType;
-		ChapterManager.getInstance().setChapterId(cd.chapterId);
-        ChapterManager.getInstance().GotoChapterScene();
+		//ChapterManager.getInstance().setChapterId(cd.chapterId);
+        //ChapterManager.getInstance().GotoChapterScene();
         
 
 	}

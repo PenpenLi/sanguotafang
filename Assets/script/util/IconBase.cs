@@ -12,7 +12,7 @@ public class IconBase : MonoBehaviour {
 	public callBackFunc<JsonObject> Func;
 
 	void Awake () {
-		
+		//DontDestroyOnLoad (this);
 		PoolManager.getInstance ().initPoolByType (type,this,5);
 	}
 	// Use this for initialization

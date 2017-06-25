@@ -10,7 +10,7 @@ id,name,icon,style,desc,attackRange,attackSpeed,attack,skill1,skill2,pinzhi,hpAd
 8,许褚,6011,xuchu,嗯哼！,85,1,65,106,,2,26,5,0,864,0,blue,6011,7
 9,孙尚香,6012,sunshangxiang,刘皇叔乃当世之英才,85,1,35,108,,2,25,4,0,578,0,blue,6012,8
 10,赵云,heroIcon/110,zhaoyun,外事不决问周宇，内事不决问张昭,85,1,70,109,,2,25,6,0,563,0,yellow,0,9
-11,夏侯惇,6013,xiahoudun,独眼龙又咋滴~哼！！,85,1,45,109,,2,25,6,0,563,10,blue,6013,10
+11,夏侯惇,6013,xiahoudun,独眼龙又咋滴~哼！！,85,1,45,100,,2,25,6,0,563,10,blue,6013,10
 12,关羽,6001,guanyu,买绿豆，上好的绿豆~,85,1,75,111,,3,30,6,0,705,0,yellow,6001,11
 13,庞统,HeroIcon/guanyu,pangtong,买绿豆，上好的绿豆~,85,1,75,111,,3,30,6,0,705,0,yellow,0,11
 14,小乔,HeroIcon/guanyu,xiaoqiao,买绿豆，上好的绿豆~,85,1,75,111,,3,30,6,0,705,0,yellow,0,11

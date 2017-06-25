@@ -43,8 +43,9 @@ public class SceletScene : MonoBehaviour {
 		chapterItem.init(DataManager.getInstance ().chapterDicJson [chapterId]);
 		float delay = 0.0f;
 		int campaignid = 0;
+		int chaid = int.Parse(DataManager.playerData ["chapter"].ToString());
 		if (DataManager.playerData.ContainsKey ("chapter")) {
-			int chaid = int.Parse(DataManager.playerData ["chapter"].ToString());
+			
 
 			foreach (KeyValuePair<int,JsonObject> kvp in DataManager.getInstance().campaignDicJson) {
 				JsonObject jo = kvp.Value;
@@ -60,8 +61,8 @@ public class SceletScene : MonoBehaviour {
 				}
 			}
 		}
-		if (DataManager.getInstance ().campaignDicJson.ContainsKey (campaignid + 1)) {
-			JsonObject jo = DataManager.getInstance ().campaignDicJson[campaignid + 1];
+		if (DataManager.getInstance ().campaignDicJson.ContainsKey (chaid + 1)) {
+			JsonObject jo = DataManager.getInstance ().campaignDicJson[chaid + 1];
 			if (jo ["chapter"].ToString () == _chapterId) {
 				addChapter (jo,delay);
 				delay += 0.05f;

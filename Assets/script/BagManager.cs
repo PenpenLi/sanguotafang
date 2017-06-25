@@ -109,21 +109,21 @@ public class BagManager{
         //_bagScene.onclickBtn(2);
         //Clear();
 		List<JsonObject> list = new List<JsonObject> ();
-		List<JsonObject> listNotEquip = new List<JsonObject> ();
-		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
-			JsonObject jo = kvp.Value;
-			JsonObject staticData = getItemStaticData (jo);
-			if(staticData["kind"].ToString() == type)
-			{
-				int heroId = int.Parse(jo["owerId"].ToString());
-				if (heroId == 0) {//被穿戴的装备不会在背包里面显示
-					list.Add (jo);
-				} else {
-					listNotEquip.Add (jo);
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_EQUIP)) {
+			List<JsonObject> listNotEquip = new List<JsonObject> ();
+			foreach (KeyValuePair<int,JsonObject> kvp in allItemDic[IconBase.ITEM_TYPE_EQUIP]) {
+				JsonObject jo = kvp.Value;
+				JsonObject staticData = getItemStaticData (jo);
+				if (staticData ["kind"].ToString () == type) {
+					int heroId = int.Parse (jo ["owerId"].ToString ());
+					if (heroId == 0) {//被穿戴的装备不会在背包里面显示
+						list.Add (jo);
+					} else {
+						listNotEquip.Add (jo);
+					}
 				}
 			}
-		}
-		/**foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
+			/**foreach(KeyValuePair<int,JsonObject> kvp in equipArr){
 			JsonObject jo = kvp.Value;
 
 			if(jo["kind"].ToString() == type)
@@ -134,7 +134,8 @@ public class BagManager{
 				}
 			}
 		}**/
-		list.AddRange (listNotEquip);
+			list.AddRange (listNotEquip);
+		}
 		return list;
 
     }
@@ -201,20 +202,22 @@ public class BagManager{
 	}
 	public List<JsonObject> getStoneByEquipId(int equipId){
 		List<JsonObject> list = new List<JsonObject> ();
-		Dictionary<int,JsonObject> items = allItemDic [2];
-		foreach(KeyValuePair<int,JsonObject> kvp in items){
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_STONE)) {
+			Dictionary<int,JsonObject> items = allItemDic [IconBase.ITEM_TYPE_STONE];
+			foreach (KeyValuePair<int,JsonObject> kvp in items) {
 				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
-			if (equipId == int.Parse(kvp.Value["owerId"].ToString())) {
-				list.Add (kvp.Value);
+				if (equipId == int.Parse (kvp.Value ["owerId"].ToString ())) {
+					list.Add (kvp.Value);
+				}
 			}
 		}
 		return list;
 	}
-    public void showItemByType(string type){
+    public void showItemByType(string type,int openType = 0){
         Clear();
 		List<JsonObject> list = getItemsByType(type);
 		for (int i = 0; i < list.Count; i++) {
-			_bagScene.add (list[i]);
+			_bagScene.add (list[i],openType);
 		}
 		/**if(type == "equip")
         {
@@ -257,16 +260,20 @@ public class BagManager{
 	}
 	public JsonObject getEquipById(int id){
 		//heroData hd2;
-		if (allItemDic[5].ContainsKey (id)) {
-			return allItemDic[5] [id];
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_EQUIP)) {
+			if (allItemDic [IconBase.ITEM_TYPE_EQUIP].ContainsKey (id)) {
+				return allItemDic [IconBase.ITEM_TYPE_EQUIP] [id];
+			}
 		}
 		return null;
 	}
 	public ArrayList getEquipByHeroId(int heroid){
 		ArrayList arr = new ArrayList ();
-		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
-			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid) {
-				arr.Add (kvp.Value);
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_EQUIP)) {
+			foreach (KeyValuePair<int,JsonObject> kvp in allItemDic[IconBase.ITEM_TYPE_EQUIP]) {
+				if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid) {
+					arr.Add (kvp.Value);
+				}
 			}
 		}
 		return arr;
@@ -284,22 +291,25 @@ public class BagManager{
 	}
 	public JsonObject getEquipByHeroIdAndKind(int heroid,string kind){
 		JsonObject data = null;
-
-		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
-			JsonObject staticdata = getItemStaticData (kvp.Value);
-			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && staticdata ["kind"].ToString () == kind) {
-				data = kvp.Value;
-				break;
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_EQUIP)) {
+			foreach (KeyValuePair<int,JsonObject> kvp in allItemDic[IconBase.ITEM_TYPE_EQUIP]) {
+				JsonObject staticdata = getItemStaticData (kvp.Value);
+				if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && staticdata ["kind"].ToString () == kind) {
+					data = kvp.Value;
+					break;
+				}
 			}
 		}
 		return data;
 	}
 	public JsonObject getEquipByHeroIdAndItemId(int heroid,int itemid){
 		JsonObject data = null;
-		foreach(KeyValuePair<int,JsonObject> kvp in allItemDic[5]){
-			if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && int.Parse(kvp.Value ["itemId"].ToString ()) == itemid) {
-				data = kvp.Value;
-				break;
+		if (allItemDic.ContainsKey (IconBase.ITEM_TYPE_EQUIP)) {
+			foreach (KeyValuePair<int,JsonObject> kvp in allItemDic[IconBase.ITEM_TYPE_EQUIP]) {
+				if (int.Parse (kvp.Value ["owerId"].ToString ()) == heroid && int.Parse (kvp.Value ["itemId"].ToString ()) == itemid) {
+					data = kvp.Value;
+					break;
+				}
 			}
 		}
 		return data;
@@ -311,11 +321,13 @@ public class BagManager{
 	public void showItemsByItemType(int type)
 	{
 		Clear();
-		Dictionary<int,JsonObject> itemArr = allItemDic [type];
-		foreach(KeyValuePair<int,JsonObject> kvp in itemArr){
-			//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
-			if (type == int.Parse(kvp.Value["itemType"].ToString())) {
-				_bagScene.add (kvp.Value);
+		if (allItemDic.ContainsKey (type)) {
+			Dictionary<int,JsonObject> itemArr = allItemDic [type];
+			foreach (KeyValuePair<int,JsonObject> kvp in itemArr) {
+				//JsonObject staticdata = kvp.Value ["staticdata"] as JsonObject;
+				if (type == int.Parse (kvp.Value ["itemType"].ToString ())) {
+					_bagScene.add (kvp.Value);
+				}
 			}
 		}
 	}
@@ -330,21 +342,24 @@ public class BagManager{
 
 			NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 		} else {
+			if(!allItemDic.ContainsKey(itemType))
+				allItemDic [itemType] = new Dictionary<int, JsonObject> ();
 			if (!allItemDic[itemType].ContainsKey (id)) {
+				
 				NotificationManager.getInstance ().PostNotification (null, Message.BAG_ADD, data);
 			} else {
 				NotificationManager.getInstance ().PostNotification (null,Message.BAG_UPDATE,data);
 			}
 			allItemDic[itemType] [id] = data;
-			if (itemType == 2) {
+			if (itemType == IconBase.ITEM_TYPE_STONE) {
 				//NotificationManager.getInstance ().PostNotification (null, Message.EQUIP_ADD_STONE, data);
-			}else if(itemType == 5){
+			}else if(itemType == IconBase.ITEM_TYPE_EQUIP){
 				NotificationManager.getInstance ().PostNotification (null,Message.EQUIP_LEVELUP,data);
 			}
 
 		}
 
-		if (itemType == 0 || itemType == 1) {
+		if (itemType == IconBase.ITEM_TYPE_YUANBAO || itemType == IconBase.ITEM_TYPE_YINBI) {
 			NotificationManager.getInstance ().PostNotification (null,Message.MONEY_GOLD_UPDATE,null);
 		}
 

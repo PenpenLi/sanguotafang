@@ -36,12 +36,18 @@ public class EquipInfo :Observer {
 	public Dictionary<string,Text> suitArr;
 	public Image suitPanel;
 	public List<Button> stoneArr;
+	public Dictionary<string,Button> equipArr;
 	public List<IconBase> IconBaseArr;
 	public Button stone0;
 	public Button stone1;
 	public Button stone2;
 	public Button stone3;
 	public Button stone4;
+
+	public Button equip0;
+	public Button equip1;
+	public Button equip2;
+	public Button equip3;
 	public Image stonePanel;
 	public int pinzhi = 1;
 	public bool isFlesh = false;
@@ -50,6 +56,7 @@ public class EquipInfo :Observer {
 	void Awake () {
 		suitArr = new Dictionary<string, Text> ();
 		stoneArr = new List<Button> ();
+		equipArr = new Dictionary<string, Button> ();
 		IconBaseArr = new List<IconBase> ();
 		suitArr ["weapon"] = weapon;
 		suitArr ["armor"] = armor;
@@ -64,6 +71,11 @@ public class EquipInfo :Observer {
 		stoneArr.Add (stone2);
 		stoneArr.Add (stone3);
 		stoneArr.Add (stone4);
+
+		equipArr ["weapon"] = equip0;
+		equipArr ["armor"] = equip1;
+		equipArr ["shoes"] = equip2;
+		equipArr ["amulet"] = equip3;
 		messageArr.Add (Message.EQUIP_LEVELUP);
 		messageArr.Add (Message.EQUIP_ADD_STONE);
 		PoolManager.getInstance ().initPoolByType (type,this,1);
@@ -111,7 +123,11 @@ public class EquipInfo :Observer {
 		}
 		icon.SetNativeSize();
 		pinzhi = DataManager.getInstance ().getPinZhi(jo ["color"].ToString ());
-		itemName.text = "Lv."+data ["level"].ToString () + " " + jo ["name"].ToString ();
+		if (data.ContainsKey ("level")) {
+			itemName.text = "Lv." + data ["level"].ToString () + " " + jo ["name"].ToString ();
+		} else {
+			itemName.text = jo ["name"].ToString ();
+		}
 		itemName.color = DataManager.getInstance ().getColor (jo ["color"].ToString ());
 		itemInfo.text = jo ["desc"].ToString ();
 
@@ -123,11 +139,7 @@ public class EquipInfo :Observer {
 		fumoBtn.gameObject.SetActive (true);
 		levelupBtn.gameObject.SetActive (true);
 
-		//升星更新
-		updateBtn(levelupBtn,levelUpNeedInfo,101,"level","equipLevelUpNeed","levelUp");	
-
-		//附魔更新
-		updateBtn(fumoBtn,fumoNeedInfo,100,"level","equipFuMoNeed","levelUp");	
+			
 	}
 	public void init(JsonObject jo,int _openType){
 		openType = _openType;
@@ -139,18 +151,39 @@ public class EquipInfo :Observer {
 
 		//}
 		initBase(jo);
-		changeBtn.gameObject.SetActive (true);
-		int heroId = int.Parse(data["owerId"].ToString());
-		if (heroId == 0 || openType == 0) {
-			changeBtn.gameObject.SetActive (false);
-		}
+		for(int i=0;i < IconBaseArr.Count;i++){
+			//Button btn = equips [kvp.Key];
+			IconBase icon = IconBaseArr[i];
+			if (icon != null) {
 
+				PoolManager.getInstance ().addToPool (icon.type, icon);
+			}
+		}
+		IconBaseArr.Clear ();
 		initSuit (jo);
 		initStone ();
+		if(_openType > 0){
+			doPanel.gameObject.SetActive(true);
+		}else{
+			doPanel.gameObject.SetActive(false);
+		}
+		if(doPanel.isActiveAndEnabled){
+			changeBtn.gameObject.SetActive (true);
+			int heroId = int.Parse(data["owerId"].ToString());
+			if (heroId == 0 || openType == 0) {
+				changeBtn.gameObject.SetActive (false);
+			}
+
+			//升星更新
+			updateBtn(levelupBtn,levelUpNeedInfo,101,"level","equipLevelUpNeed","levelUp");	
+
+			//附魔更新
+			updateBtn(fumoBtn,fumoNeedInfo,100,"level","equipFuMoNeed","levelUp");
+		}
 	}
 	public void initSuit(JsonObject jo){//套装系统
 		JsonObject suit = DataManager.getInstance ().getSuitByEquip (jo);
-		int heroId = int.Parse(data["owerId"].ToString());
+
 		int suitNum = 0;
 		if (suit != null) {
 			suitNum += 1;
@@ -164,6 +197,21 @@ public class EquipInfo :Observer {
 						
 						JsonObject equip = DataManager.getInstance ().itemDicJson [int.Parse(value)];
 						suitArr [kvp.Key].text = equip ["name"].ToString ();
+						///////////////////////////////////////////////////
+						Button stoneKuang = equipArr [kvp.Key];
+						//equip.sprite = 
+						IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
+						icon.init (equip).Func = new callBackFunc<JsonObject> (onClickStone);
+						//icon.Func = new callBackFunc<JsonObject> (onClickStone);
+						icon.transform.SetParent (stoneKuang.transform);
+						icon.transform.localPosition = Vector3.zero;
+						icon.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+						IconBaseArr.Add (icon);
+						/////////////////////////////////////////
+						int heroId = 0;
+						if (data.ContainsKey ("owerId")) {
+							heroId = int.Parse (data ["owerId"].ToString ());
+						}
 						if (heroId > 0) {
 							if (kvp.Key == kind) {
 								suitArr [kvp.Key].color = DataManager.getInstance ().getColor (equip ["color"].ToString ());
@@ -201,6 +249,7 @@ public class EquipInfo :Observer {
 					}
 				}
 			}
+			suitArr ["name"].text += "[" + suitNum.ToString () + "/4]";
 			suitArr["name"].color =suitArr [kind].color;
 			if (suitNum == 2) {
 				suitArr ["suit2"].color = Color.green;
@@ -218,12 +267,14 @@ public class EquipInfo :Observer {
 	}
 	public void onClickStoneBtn(int pos){
 		//stoneArr [pos];
-		List<JsonObject> list = BagManager.getInstance ().getItemsByType("2");
-		ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
-		_listPanel.transform.SetParent (this.transform.parent.transform);
-		_listPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
-		_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
-		_listPanel.init (list,this,3,Id,pos + 1);
+		if (openType > 0) {
+			List<JsonObject> list = BagManager.getInstance ().getItemsByType ("2");
+			ListPanel _listPanel = (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
+			_listPanel.transform.SetParent (this.transform.parent.transform);
+			_listPanel.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+			_listPanel.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+			_listPanel.init (list, this, 3, Id, pos + 1);
+		}
 
 	}
 	public void onClickStone(JsonObject _data){
@@ -237,34 +288,29 @@ public class EquipInfo :Observer {
 	}
 	public void initStone(){//宝石系统
 		//List<object> stones = jo["stones"] as List<object>;
-		for(int i=0;i < IconBaseArr.Count;i++){
-			//Button btn = equips [kvp.Key];
-			IconBase icon = IconBaseArr[i];
-			if (icon != null) {
 
-				PoolManager.getInstance ().addToPool (icon.type, icon);
-			}
-		}
-		IconBaseArr.Clear ();
-		List<JsonObject> theEquipHaveStones = BagManager.getInstance ().getStoneByEquipId(Id);
+
 		for (int i = 0; i < stoneArr.Count; i++) {
 			stoneArr [i].gameObject.SetActive (i < pinzhi?true:false);
 		}
-		for (int k = 0; k < theEquipHaveStones.Count; k++) {
-			JsonObject stoneData = theEquipHaveStones [k];
-			JsonObject jo = BagManager.getInstance ().getItemStaticData (stoneData);
-			int pos = int.Parse (stoneData ["pos"].ToString ());
-			if (pos > 0) {
+		if (openType > 0) {
+			List<JsonObject> theEquipHaveStones = BagManager.getInstance ().getStoneByEquipId (Id);
+			for (int k = 0; k < theEquipHaveStones.Count; k++) {
+				JsonObject stoneData = theEquipHaveStones [k];
+				JsonObject jo = BagManager.getInstance ().getItemStaticData (stoneData);
+				int pos = int.Parse (stoneData ["pos"].ToString ());
+				if (pos > 0) {
 				
-				Button stoneKuang = stoneArr [pos - 1];
-				//equip.sprite = 
-				IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
-				icon.init (stoneData).Func = new callBackFunc<JsonObject> (onClickStone);
-				//icon.Func = new callBackFunc<JsonObject> (onClickStone);
-				icon.transform.SetParent (stoneKuang.transform);
-				icon.transform.localPosition = Vector3.zero;
-				icon.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
-				IconBaseArr.Add (icon);
+					Button stoneKuang = stoneArr [pos - 1];
+					//equip.sprite = 
+					IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
+					icon.init (stoneData).Func = new callBackFunc<JsonObject> (onClickStone);
+					//icon.Func = new callBackFunc<JsonObject> (onClickStone);
+					icon.transform.SetParent (stoneKuang.transform);
+					icon.transform.localPosition = Vector3.zero;
+					icon.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+					IconBaseArr.Add (icon);
+				}
 			}
 		}
 	}

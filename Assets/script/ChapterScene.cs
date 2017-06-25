@@ -40,8 +40,8 @@ public class ChapterScene : MonoBehaviour {
 	private float gameTimes;//游戏进行了多长时间
 
     public Transform content;
-	public Image heroHeadDemo;
-	public Image dragObject;
+	//public Image heroHeadDemo;
+	public IconBase dragObject;
     public Rect rect;
 	private ArrayList heroHeadList;
 	private bool isInDrag;
@@ -272,11 +272,12 @@ public class ChapterScene : MonoBehaviour {
     public void addHeroHead(JsonObject herodata)
     {
 			string heroId = herodata ["heroId"].ToString();
-			string heroName = HeroManager.getInstance ().getHeroStaticData (herodata)["name"].ToString ();
+		JsonObject heroStaticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
+		string heroName = heroStaticdata["name"].ToString ();
 				
-		for (int i = 0; i < heroHeadList.Count; i++)
+		/**for (int i = 0; i < heroHeadList.Count; i++)
 		{
-			Image btn2 = (Image)heroHeadList [i];
+			IconBase btn2 = (IconBase)heroHeadList [i];
 
 			if (btn2.name == heroId) {
 				btn2.gameObject.SetActive (true);
@@ -285,26 +286,24 @@ public class ChapterScene : MonoBehaviour {
 			}
 		}
 		Image btn;
-		heroHeadDemo.gameObject.SetActive (true);
+		**/
 
-        if (content.childCount == 0)
-        {
-			heroHeadDemo.transform.FindChild("Text").GetComponent<Text>().text = heroName;
-			//heroHeadDemo.GetComponent<Image>().sprite = (Resources.Load ("heroIcon/204", typeof(Sprite)) as Sprite);
-            heroHeadDemo.transform.SetParent(content);
-            btn = heroHeadDemo;
-            //OnChangeHero(herodata, heroHeadDemo);
-        }
-        else
-        {
-			btn = (Image)GameObject.Instantiate(heroHeadDemo, heroHeadDemo.transform.position, heroHeadDemo.transform.rotation);
-            //btn.interactable = true;
-			btn.transform.FindChild("Text").GetComponent<Text>().text = heroName;
 
-            btn.transform.SetParent (content);
-        }
-		btn.name = heroId;
-        heroHeadList.Add(btn);
+		//heroHeadDemo.gameObject.SetActive (true);
+
+		IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (heroStaticdata["color"].ToString());
+		/**if (num > i) {
+				icon = dropIconArray [i];
+				index++;
+			} else {
+				icon = (IconBase)PoolManager.getInstance ().getGameObject (jo["color"].ToString());
+			}**/
+		icon.init (heroStaticdata);//.Func = new callBackFunc<JsonObject>(onClickDropItem);
+		icon.transform.SetParent (content);
+		//icon.transform.localScale = new Vector3 (0.5f,0.5f,0.5f);
+		//icon.transform.localPosition = new Vector3 (xoffset,0,0);
+		icon.name = heroId;
+		heroHeadList.Add(icon);
         //btn.onClick.AddListener(delegate () {
             //this.OnChangeHero(herodata, btn);
 			//Debug.Log ("asfdasfa");
@@ -389,7 +388,7 @@ public class ChapterScene : MonoBehaviour {
 			//Time.timeScale = 1;
 			ChapterManager.getInstance().GotoNextChapterScene();
 		} else if (type == 3 || type == 4) {
-			
+			PoolManager.getInstance ().clearPool ();
 			SceneManager.LoadScene ("GameScene");
 		}else if(type == 5){//重来
 			ChapterManager.getInstance().GotoChapterScene(ChapterManager.getInstance().campaignId);
@@ -579,10 +578,11 @@ public class ChapterScene : MonoBehaviour {
 		} else {
 			if (!isGameStart) {
 				for (int i = 0; i < heroHeadList.Count; i++) {
-					Image btn = (Image)heroHeadList [i];
+					IconBase btn = (IconBase)heroHeadList [i];
 					if (btn.isActiveAndEnabled) {
 						Vector3 _p2 = btn.transform.InverseTransformPoint (Input.mousePosition);
-						bool b = btn.rectTransform.rect.Contains (_p2);
+						Image im = btn.gameObject.GetComponent<Image> ();
+						bool b = im.rectTransform.rect.Contains (_p2);
 						if (b) {
 							dragObject = btn;
 							//dragObject.transform.SetParent (bg.transform);

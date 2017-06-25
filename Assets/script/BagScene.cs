@@ -12,7 +12,7 @@ public class BagScene : Observer {
 	public Button heroShardTab;
 	public Button equipShardTab;
 	public Button stoneTab;
-	public string curType;
+	public int curType;
 	void Awake(){
 		messageArr.Add (Message.BAG_ADD);
 		BagManager.getInstance ()._bagScene = this;
@@ -33,7 +33,7 @@ public class BagScene : Observer {
 			case Message.BAG_ADD:
 				{
 					JsonObject _data = (JsonObject)nt.data;
-					if (curType == _data ["itemType"].ToString ()) {
+					if (curType == int.Parse(_data ["itemType"].ToString ())) {
 						add (_data);
 					}
 				}
@@ -75,36 +75,36 @@ public class BagScene : Observer {
 		//});
 		**/
 	}
-	void showPanel(string str,Button btn){
+	void showPanel(int _type,Button btn){
 		//if (btn.interactable)
         {
-			curType = str;
+			curType = _type;
             if (btn != bagTab) {bagTab.interactable = true; }
 			if (btn != equipTab) {equipTab.interactable = true; }
 			if (btn != heroShardTab) {heroShardTab.interactable = true; }
 			if (btn != equipShardTab) {equipShardTab.interactable = true; }
 			if (btn != stoneTab) {stoneTab.interactable = true; }
             btn.interactable = false;
-			BagManager.getInstance ().showItemByType (str);
+			BagManager.getInstance ().showItemByType (_type.ToString(),1);
         }
 		
 	}
 	public void onclickBtn(int type){
 		switch (type) {
 		case 1:
-			showPanel ("7",bagTab);
+			showPanel (IconBase.ITEM_TYPE_EXP,bagTab);
 			break;
 		case 2:
-			showPanel ("5",equipTab);
+			showPanel (IconBase.ITEM_TYPE_EQUIP,equipTab);
 			break;
 		case 3:
-			showPanel ("8",heroShardTab);//英雄碎片
+			showPanel (IconBase.ITEM_TYPE_HEROSUB,heroShardTab);//英雄碎片
 			break;
 		case 4:
-			showPanel ("9",equipShardTab);//碎片
+			showPanel (IconBase.ITEM_TYPE_EQUIPSUB,equipShardTab);//碎片
 			break;
 		case 5:
-			showPanel ("2",stoneTab);//宝石
+			showPanel (IconBase.ITEM_TYPE_STONE,stoneTab);//宝石
 			break;
 		default:
 			break;

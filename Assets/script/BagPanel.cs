@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 public class BagPanel : Observer {
     public Text info;
     public Text count;
+	public Text level;
     public Text speed;
     public Text itemname;
     public Text defence;
@@ -118,38 +119,54 @@ public class BagPanel : Observer {
 			info.text = shuxing;
 			//}
 		}
+			
+		if (data.ContainsKey ("level") && itemType == IconBase.ITEM_TYPE_EQUIP) {
+			//int _lv = int.Parse (data ["level"].ToString ());
+			level.text = "Lv." + data ["level"].ToString ();
 
-		if (data.ContainsKey ("owerId")) {
-			int owerId = int.Parse (data ["owerId"].ToString ());
-			if (itemType == 5) {
-				
-				//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
-				if (owerId > 0) {
-					JsonObject herodata = DataManager.getInstance ().heroDicJson [owerId];
-					itemname.text = staticData ["name"].ToString () + "(" + herodata ["name"].ToString () + ")";
-				}
-			} else {
-				JsonObject jo = BagManager.getInstance().getEquipById (owerId);
-				if (jo != null) {
-					jo = BagManager.getInstance ().getItemStaticData (jo);
-					itemname.text = staticData ["name"].ToString () + "(" + jo ["name"].ToString () + ")";
-				}
-			}
-
-		}
-		if (data.ContainsKey ("level") && itemType == 5) {
-			itemname.text = "Lv." + data ["level"].ToString () + " " + itemname.text;
-
+		} else {
+			level.text = "";
 		}
 		//if (item.ContainsKey("color")) {
 		//name.color = DataManager.getInstance().getColor(staticdata["color"].ToString());
 		//} else {
 		//	name.color = DataManager.getInstance().getColor("");
 		//}
-		if (item.ContainsKey ("count")) {
-			count.text = item["count"].ToString();
+		count.text = "";
+		if (itemType == IconBase.ITEM_TYPE_EQUIP || itemType == IconBase.ITEM_TYPE_STONE) {
+			count.gameObject.SetActive (data.ContainsKey ("owerId"));
+			if (data.ContainsKey ("owerId")) {
+				int owerId = int.Parse (data ["owerId"].ToString ());
+				if (owerId > 0) {
+					count.gameObject.SetActive (true);
+					if (itemType == IconBase.ITEM_TYPE_EQUIP) {
+
+						//if (heroId == 0) {//被穿戴的装备不会在背包里面显示
+
+						JsonObject herodata = DataManager.getInstance ().heroDicJson [owerId];
+						count.text = herodata ["name"].ToString ();
+					
+					} else if (itemType == IconBase.ITEM_TYPE_STONE){
+						JsonObject jo = BagManager.getInstance ().getEquipById (owerId);
+						if (jo != null) {
+							JsonObject josd = BagManager.getInstance ().getItemStaticData (jo);
+							count.text = josd ["name"].ToString ();
+						}
+						owerId = int.Parse (jo ["owerId"].ToString ());
+						if (owerId > 0) {
+							JsonObject herodata = DataManager.getInstance ().heroDicJson [owerId];
+							count.text += "(" + herodata ["name"].ToString () + ")";
+						}
+					}
+				}
+
+			}
 		} else {
-			count.text = "1";
+			
+			count.gameObject.SetActive (true);
+			if (item.ContainsKey ("count")) {
+				count.text = "x" + item ["count"].ToString ();
+			} 
 		}
 
 		//info.text = staticData["desc"].ToString();
@@ -184,9 +201,16 @@ public class BagPanel : Observer {
 		}
 
 
-		if (openType >= 2 || itemType == 2) {//穿戴显示穿戴按钮
-			useBtn.gameObject.SetActive (true);
+		if (openType >= 2) {//穿戴显示穿戴按钮
+			//if (itemType == IconBase.ITEM_TYPE_EQUIP) {
+				useBtn.gameObject.SetActive (true);
+			//}
+		} else {
+			if (itemType == IconBase.ITEM_TYPE_STONE) {
+				hechengBtn.gameObject.SetActive (true);
+			}
 		}
+
 
     }
 	public void OnClick(BaseEventData eventData){
@@ -201,7 +225,7 @@ public class BagPanel : Observer {
 			EquipInfo _equipInfo = (EquipInfo)PoolManager.getInstance().getGameObject(PoolManager.EQUIP_INFO);
 			_equipInfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 			_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
-			_equipInfo.init (data,0);
+			_equipInfo.init (data,openType);
 			_equipInfo.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 		}
 
@@ -226,13 +250,29 @@ public class BagPanel : Observer {
 				});
 				ListPanel._currentListPanel.onClickCloseBtn ();
 			}
-		}else if (openType == 4) {//宝石合成选择
+		}
+		/**else if (openType == 4) {//宝石合成选择
 			JsonObject sendMessage = new JsonObject();
 			sendMessage.Add ("stone", data);
 			sendMessage.Add ("pos", ListPanel._currentListPanel.stonePos);
 			NotificationManager.getInstance ().PostNotification (null,Message.HECHENG_ADD_STONE,sendMessage);
 			ListPanel._currentListPanel.onClickCloseBtn ();
-		}else if(itemType == 2){
+		}**/
+
+
+        //this.transform.SetParent(HeroManager.getInstance().heroscene.selectKind.transform);
+    }
+	public void onHeroShardHeCheng(){
+		if (itemType == IconBase.ITEM_TYPE_HEROSUB || itemType == IconBase.ITEM_TYPE_EQUIPSUB) {
+			JsonObject userMessage = new JsonObject ();
+			userMessage.Add ("id", data ["id"]);
+			//userMessage.Add ("heroId", data.heroId);
+			ServerManager.getInstance ().request ("area.playerHandler.useItem", userMessage, (databack) => {
+				Debug.Log (databack.ToString ());
+
+
+			});
+		}else if(itemType == IconBase.ITEM_TYPE_STONE){
 			StoneHeChengPanel _stoneHeChengPanel = (StoneHeChengPanel)PoolManager.getInstance().getGameObject(PoolManager.STONE_HECHENG_PANEL);
 			_stoneHeChengPanel.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 			_stoneHeChengPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
@@ -244,18 +284,5 @@ public class BagPanel : Observer {
 			sendMessage.Add ("pos", 0);
 			NotificationManager.getInstance ().PostNotification (null,Message.HECHENG_ADD_STONE,sendMessage);
 		}
-
-
-        //this.transform.SetParent(HeroManager.getInstance().heroscene.selectKind.transform);
-    }
-	public void onHeroShardHeCheng(){
-		JsonObject userMessage = new JsonObject();
-		userMessage.Add ("id",data["id"]);
-		//userMessage.Add ("heroId", data.heroId);
-		ServerManager.getInstance ().request("area.playerHandler.useItem", userMessage, (databack)=>{
-			Debug.Log(databack.ToString());
-
-
-		});
 	}
 }

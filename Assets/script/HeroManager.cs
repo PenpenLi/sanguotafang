@@ -92,7 +92,7 @@ public class HeroManager {
 		int heroid = int.Parse (hero ["heroId"].ToString ());
 		if(DataManager.getInstance ().heroDicJson.ContainsKey(heroid))
 			return DataManager.getInstance ().heroDicJson[heroid];
-		return null;
+		return hero;
 	}
 	public void updateHeroByServer(JsonObject herodata){
 		updateData (herodata);

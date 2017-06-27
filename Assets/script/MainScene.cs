@@ -70,4 +70,17 @@ public class MainScene : Observer {
 
 
     }
+	public void onClick(int _type){
+		switch (_type) {
+		case 1:
+			PHBPanel _phbPanel = (PHBPanel)PoolManager.getInstance ().getGameObject (PoolManager.PHB_PANEL);
+			_phbPanel.transform.SetParent (this.transform.parent.transform);
+			_phbPanel.onClickBtn (1);
+			break;
+		case 2:
+			break;
+		default:
+			break;
+		}
+	}
 }

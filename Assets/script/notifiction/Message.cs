@@ -14,5 +14,7 @@ public class Message {
 
 	public const int HECHENG_ADD_STONE = 40000;
 
+	public const int PAIHANGBANG_DATA_FROM_SERVER = 50000;
+
 
 }

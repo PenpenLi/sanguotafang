@@ -16,7 +16,8 @@ public class PoolManager {
 	public static string RE_CONNECT= "RE_CONNECT";
 	public static string LIST_PANEL = "list_panel";
 	public static string STONE_HECHENG_PANEL= "STONE_HECHENG_PANEL";
-
+	public static string PHB_PANEL= "phb_panel";
+	public static string PHB_4= "phb_4";
 	public static string HANDBOOK_ITEM = "handbook_";
 	public static string ICON1 = "green";
 	public static string ICON2 = "blue";
@@ -45,9 +46,12 @@ public class PoolManager {
 	public void initPoolByType(string type,MonoBehaviour _gameobject,int num){
 		if (!poolCacheDic.ContainsKey (type)) {
 			//if (gameobject == null) {
+
 			ArrayList poolArrayList = new ArrayList ();
 			poolCacheDic [type] = poolArrayList;
 			//gameobject = _gameobject;
+			_gameobject.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+			_gameobject.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			_gameobject.transform.SetParent(null);
 			_gameobject.gameObject.SetActive (false);
 			poolArrayList.Add (_gameobject);

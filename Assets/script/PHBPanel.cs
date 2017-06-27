@@ -62,6 +62,8 @@ public class PHBPanel : Observer {
 					}else{
 						PHBItem _phbitem = (PHBItem)PoolManager.getInstance().getGameObject(PoolManager.PHB_4);
 						_phbitem.transform.SetParent(content);
+						_phbitem.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+						_phbitem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 						_phbitem.intiData(i+1,d);
 						PHBItemList.Add(_phbitem);
 					}

@@ -75,6 +75,8 @@ public class MainScene : Observer {
 		case 1:
 			PHBPanel _phbPanel = (PHBPanel)PoolManager.getInstance ().getGameObject (PoolManager.PHB_PANEL);
 			_phbPanel.transform.SetParent (this.transform.parent.transform);
+			_phbPanel.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
+			_phbPanel.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
 			_phbPanel.onClickBtn (1);
 			break;
 		case 2:

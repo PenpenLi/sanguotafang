@@ -1,31 +1,22 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using TFSG;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using SimpleJson;
-using Spine.Unity;
-using Spine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-public delegate void callBackFunc<JsonObject>(JsonObject jo);
-public class HeroScene : Observer {
-    //public UnityEngine.UI.Image bg;
-    // Use this for initialization
+public class OtherInfoPanel : MonoBehaviour {
+	public static OtherInfoPanel _Current;
+	public string type;
 	public Transform content;
-	public Button heroHeadDemo;
-	//public Image heroStyle;
 	public Text heroBB;
-    public Button weapon;
-    public Button Armor;
-    public Button Shoes;
-    public Button Amulet;
-    public Button selectKind;
+	public Button weapon;
+	public Button Armor;
+	public Button Shoes;
+	public Button Amulet;
+	public Button selectKind;
 
-	public Button shengxingBtn;
-	public Button shengjiBtn;
-    public Text heroAttack;
+	//public Button shengxingBtn;
+	//public Button shengjiBtn;
+	public Text heroAttack;
 	//public Text heroAttackRange;
 	public Text heroAttackSpeed;
 	public Text heroHP;
@@ -55,14 +46,12 @@ public class HeroScene : Observer {
 	public ArrayList equipedList;
 
 	public JsonObject staticdata;
+	public Dictionary<int, JsonObject> HeroArr;
+	public Dictionary<int, JsonObject> ItemArr;
 	//public JsonObject data;
 	void Awake () {
-		messageArr.Add (Message.HERO_UPDATE);
-		HeroManager.getInstance().heroscene = this;
-	}
-	void Start () {
-        //屏幕适配,按宽度缩放
-		Debug.Log("进入英雄界面");
+		//messageArr.Add (Message.HERO_UPDATE);
+		//HeroManager.getInstance().heroscene = this;
 		equips = new Dictionary<string, Button> ();
 		equips ["weapon"] = weapon;
 		equips ["armor"] = Armor;
@@ -74,15 +63,23 @@ public class HeroScene : Observer {
 		starArr.Add (star2);
 		starArr.Add (star3);
 		starArr.Add (star4);
-        //content.rect.width = 600;
-       
+		//content.rect.width = 600;
 
-        heroHeadList = new ArrayList();
+
+		heroHeadList = new ArrayList();
+
+		skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
+		if (_Current == null) {
+			_Current = this;
+		}
+	}
+	public void initData (JsonObject playerData) {
+		Debug.Log("进入其他玩家信息界面");
 		Dictionary<int,JsonObject> heroarr = HeroManager.getInstance().getHeros();
 		int index = 0;
 		foreach(KeyValuePair<int,JsonObject> kvp in heroarr)
-        {
-			
+		{
+
 			addHero (kvp.Value);
 			if(index == 0){
 				OnChangeHero (kvp.Value);
@@ -91,136 +88,16 @@ public class HeroScene : Observer {
 		}
 		//HeroStyle.heroarr = HeroManager.getInstance ().getHerosArrayList ();
 		skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
-    }
-	
+
+	}
+
 	// Update is called once per frame
 	void Update () {
-		if (notificationQueue.Count > 0) {
-			Notification nt = notificationQueue [0];
-			notificationQueue.RemoveAt (0);
-			switch (nt.name) {
-			case Message.HERO_UPDATE:
-				{
-					isUpdate = false;
-					JsonObject _data = (JsonObject)nt.data;
-					if (data != null) {
-						int updateheroId = int.Parse(_data["heroId"].ToString());
-						int curheroId = int.Parse(data["heroId"].ToString());
-						if (updateheroId == curheroId) {
-							data = _data;
-							isUpdate = true;
-						}
-						//HeroStyle.heroarr = HeroManager.getInstance ().getHerosArrayList ();
-					} else {
-						data = _data;
-						isUpdate = true;
-					}
-					if (isUpdate) {
-						isUpdate = false;
-						updateHero (data);
-					}
-				}
-				break;
-			}
-		}
-	}
-	public void updateBtn(Button btn,Text txt,int itemid,string level,string need,string dataDicName){
-		JsonObject item = BagManager.getInstance ().getItemByItemId (itemid);
-		int nextLevel = int.Parse(data[level].ToString()) + 1;
-		if (DataManager.getInstance ().dataDic[dataDicName].ContainsKey (nextLevel)) {
-			
-			JsonObject jo8 = DataManager.getInstance ().dataDic[dataDicName][nextLevel];
-			int haveNum = 0;
-			int needNum = int.Parse (jo8 [need].ToString ());
-			if (needNum > 0) {
-				btn.gameObject.SetActive (true);
-				if (item != null) {
-					haveNum = int.Parse (item ["count"].ToString ());
-					txt.text = item ["count"].ToString () + "/" + jo8 [need].ToString ();
-				} else {
-					haveNum = 0;
-					txt.text = "0/" + jo8 [need].ToString ();
-				}
-				if (haveNum < needNum) {
-					//btn.interactable = false;
-					txt.color = Color.red;
-				} else {
-					//btn.interactable = true;
-					txt.color = Color.white;
-				}
-			} else {
-				btn.gameObject.SetActive (false);
-			}
-				
-		} else {
-			btn.gameObject.SetActive (false);
-		}
+
 	}
 	public void onClickHeroHead(int heroId){
-        
-		
-	}
-	public void onClickLevelUp(){
-		if (data != null) {
-			JsonObject userMessage = new JsonObject();
-			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.playerHandler.levelUp", userMessage, (databack)=>{
-				Debug.Log(databack.ToString());
-			});
-		}
 
-	}
-	public void onClickStarUp(){//升星
-		if (data != null) {
-			JsonObject userMessage = new JsonObject();
-			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.playerHandler.starUp", userMessage, (databack)=>{
-				Debug.Log(databack.ToString());
-			});
-		}
 
-	}
-	public void onEquip(BagPanel bp){//英雄装备武器
-		if (data != null) {
-			
-			JsonObject userMessage = new JsonObject();
-			userMessage.Add ("equipId", bp.data["id"]);
-			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.equipHandler.equip", userMessage, (databack)=>{
-				Debug.Log(databack.ToString());
-				AudioManager.instance.playEquip();
-
-			});
-			if (ListPanel._currentListPanel != null) {
-				ListPanel._currentListPanel.onClickCloseBtn ();
-			}
-			//BagManager.getInstance ().getGameScene ().onclickBtn (2);
-
-			//selectKind.GetComponent<Image> ().sprite = bp.icon.sprite;
-			//bp.transform.SetParent (null);
-			//BagManager.getInstance ().addToPool (bp);
-
-		}
-	}
-
-	public void onUnEquip(string type){//英雄卸下武器
-		if (data != null) {
-
-			JsonObject userMessage = new JsonObject();
-			userMessage.Add ("equipType",type);//准备部位
-			userMessage.Add ("heroId", heroId);
-			ServerManager.getInstance ().request("area.equipHandler.unEquip", userMessage, (databack)=>{
-				Debug.Log(databack.ToString());
-				AudioManager.instance.playUnEquip();
-
-			});
-			//ListPanel _ListPanel = BagManager.getInstance ().getGameScene ().gameObject.GetComponent<ListPanel> ();
-
-			//selectKind.GetComponent<Image> ().sprite = bp.icon.sprite;
-			//bp.transform.SetParent (null);
-			//BagManager.getInstance ().addToPool (bp);
-
-		}
 	}
 	public void openBagByType(string type){
 		JsonObject equip = BagManager.getInstance ().getEquipByHeroIdAndKind (heroId, type);
@@ -230,15 +107,6 @@ public class HeroScene : Observer {
 			_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 			_equipInfo.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
 			_equipInfo.init (equip,1);
-			//onUnEquip(type);
-		} else {
-			//BagManager.getInstance ().showEquipByType (type);
-			List<JsonObject> list = BagManager.getInstance ().getEquipByType(type);
-			ListPanel _listPanel= (ListPanel)PoolManager.getInstance ().getGameObject (PoolManager.LIST_PANEL);
-			_listPanel.transform.SetParent (this.transform.parent.transform);
-			_listPanel.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
-			_listPanel.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
-			_listPanel.init (list,null,2);
 		}
 
 	}
@@ -252,49 +120,26 @@ public class HeroScene : Observer {
 		openBagByType (equipType);
 		selectKind = equips[equipType];
 	}
-    public void onClickBack()
-    {
-        SceneManager.LoadScene("MainScene");
-    }
 	public void onClickHead(JsonObject d){
 		OnChangeHero(d);
 	}
 	public void addHero(JsonObject herodata){
-		
+
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
 		IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (staticdata["color"].ToString());
 		icon.init (herodata).Func = new callBackFunc<JsonObject> (onClickHead);
-		//icon.init (equip).Func = new callBackFunc<JsonObject> (onClickStone);
 		icon.transform.SetParent (content);
 		//icon.transform.localScale = new Vector3 (0.5f,0.5f,0.5f);
 		icon.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
-		Button btn = icon.GetComponent<Button> ();
-		/**string name = staticdata ["name"].ToString ();
-		if (content.childCount == 0) {
-			heroHeadDemo.transform.FindChild ("Text").GetComponent<Text>().text = name;
-			heroHeadDemo.transform.SetParent (content.transform);
-			btn = heroHeadDemo;
-			OnChangeHero(herodata,heroHeadDemo);
-		} else {
-			btn = (Button)GameObject.Instantiate (heroHeadDemo,heroHeadDemo.transform.position,heroHeadDemo.transform.rotation,heroHeadDemo.transform.parent);
-			btn.interactable = true;
-			btn.transform.FindChild ("Text").GetComponent<Text>().text = name;
-
-			//btn.transform.SetParent (content.transform);
-		}**/
-		heroHeadList.Add (btn);
-		//btn.onClick.AddListener(delegate() {
-		//	JsonObject data = herodata;
-		//
-		//
-		//});
+		//Button btn = icon.GetComponent<Button> ();
+		heroHeadList.Add (icon);
 
 	}
 	public void updateHero(JsonObject herodata){
 		//if (data == null || herodata.heroId == data.heroId) {
-			//data = herodata;
-			staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
-			data =herodata;
+		//data = herodata;
+		staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
+		data =herodata;
 		for(int i=0;i < equipedList.Count;i++){
 			//Button btn = equips [kvp.Key];
 			IconBase icon = (IconBase)equipedList[i];
@@ -314,11 +159,11 @@ public class HeroScene : Observer {
 		heroDefence.text =DataManager.getInstance().getHeroDefence(data).ToString();
 
 		//升星更新
-		updateBtn(shengxingBtn,shengxingNeedInfo,heroSharedId,"starLevel","starLevelUpNeed","levelUp");
+		//updateBtn(shengxingBtn,shengxingNeedInfo,heroSharedId,"starLevel","starLevelUpNeed","levelUp");
 
 
 		//升级更新
-		updateBtn(shengjiBtn,shengjiNeedInfo,1000,"level","needExpPoint","levelUp");
+		//updateBtn(shengjiBtn,shengjiNeedInfo,1000,"level","needExpPoint","levelUp");
 
 
 		heroPingFen.text = (int.Parse(heroAttack.text) * 8 + int.Parse(heroDefence.text) * 5 + (int.Parse(heroAttackSpeed.text) * 6)).ToString();
@@ -357,6 +202,30 @@ public class HeroScene : Observer {
 
 
 	}
+	public void onClose(){
+		for(int i=0;i < heroHeadList.Count;i++){
+			//Button btn = equips [kvp.Key];
+			IconBase icon = (IconBase)heroHeadList[i];
+			if (icon != null) {
+
+				PoolManager.getInstance ().addToPool (icon.type, icon);
+			}
+		}
+		heroHeadList.Clear ();
+		for(int i=0;i < equipedList.Count;i++){
+			//Button btn = equips [kvp.Key];
+			IconBase icon = (IconBase)equipedList[i];
+			if (icon != null) {
+
+				PoolManager.getInstance ().addToPool (icon.type, icon);
+			}
+		}
+		equipedList.Clear ();
+		this.gameObject.SetActive (false);
+		this.transform.SetParent (null);
+		HeroManager.getInstance().initData(DataManager.playerData);
+		BagManager.getInstance().initData(DataManager.playerData);
+	}
 	public void OnClick(){
 		//if (type == 1) {
 		//}
@@ -367,26 +236,19 @@ public class HeroScene : Observer {
 		skillinfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 
 	}
-	public void OnClickUp(BaseEventData eventData){
-		
-
-	}
-	public void fresh(){
-		OnChangeHero (data);
-	}
 	public void OnChangeHero(JsonObject herodata){
-		if (herodata == null || heroHeadList == null)
+		if (herodata == null)
 			return;
-        selectKind = null;
+		selectKind = null;
 		staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
 		data = herodata;
 		//heroStyle.sprite = Resources.Load(staticdata["style"].ToString(),typeof(Sprite)) as Sprite;
 		//heroStyle.SetNativeSize ();
 
-		for (int i = 0; i < heroHeadList.Count; i++) {
-			Button btn2 = (Button)heroHeadList[i];
-			btn2.interactable = true;
-		}
+		//for (int i = 0; i < heroHeadList.Count; i++) {
+		//	Button btn2 = (Button)heroHeadList[i];
+		//	btn2.interactable = true;
+		//}
 		//if (skeletonAnimation != null && skeletonAnimation.isActiveAndEnabled) {
 		//	skeletonAnimation.transform.parent = null;
 		//	skeletonAnimation.gameObject.SetActive (false);

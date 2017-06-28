@@ -9,7 +9,7 @@ using Spine.Unity;
 public class HeroManager {
 	private static HeroManager _heroManager;
     public HeroScene heroscene;
-	private Dictionary<string,SkeletonGraphic> spinePool;
+	public Dictionary<string,SkeletonGraphic> spinePool;
 	private Dictionary<int,JsonObject> HeroArr;
 
 	public static HeroManager getInstance(){//获取单例
@@ -22,8 +22,23 @@ public class HeroManager {
 	public HeroManager(){
 		spinePool = new Dictionary<string, SkeletonGraphic> ();
 		HeroArr = new Dictionary<int, JsonObject> ();
-		if(DataManager.playerData.ContainsKey("heros")){
-			List<object> joList = DataManager.playerData ["heros"] as List<object>;
+
+        //初始的三位英雄，每位玩家都有
+
+        /**addHero(DataManager.getInstance().heroDic[2]);
+        addHero(DataManager.getInstance().heroDic[3]);
+        addHero(DataManager.getInstance().heroDic[4]);
+		addHero(DataManager.getInstance().heroDic[5]);
+		addHero(DataManager.getInstance().heroDic[6]);
+		addHero(DataManager.getInstance().heroDic[7]);
+		addHero(DataManager.getInstance().heroDic[8]);
+		addHero(DataManager.getInstance().heroDic[9]);
+		addHero(DataManager.getInstance().heroDic[10]);**/
+    }
+	public void initData(JsonObject playerData){
+		HeroArr.Clear ();
+		if(playerData.ContainsKey("heros")){
+			List<object> joList = playerData ["heros"] as List<object>;
 			//JsonArray heroArr = (DataManager.playerData ["heros"]) as JsonArray;
 			//Debug.Log (heroStr);
 			//heroStr = heroStr.Substring (1,heroStr.Length -2);
@@ -39,20 +54,9 @@ public class HeroManager {
 
 			}
 
-			
-		}
-        //初始的三位英雄，每位玩家都有
 
-        /**addHero(DataManager.getInstance().heroDic[2]);
-        addHero(DataManager.getInstance().heroDic[3]);
-        addHero(DataManager.getInstance().heroDic[4]);
-		addHero(DataManager.getInstance().heroDic[5]);
-		addHero(DataManager.getInstance().heroDic[6]);
-		addHero(DataManager.getInstance().heroDic[7]);
-		addHero(DataManager.getInstance().heroDic[8]);
-		addHero(DataManager.getInstance().heroDic[9]);
-		addHero(DataManager.getInstance().heroDic[10]);**/
-    }
+		}
+	}
 
 	public JsonObject getHeroById(int heroid){
 		//heroData hd2;
@@ -78,15 +82,7 @@ public class HeroManager {
 	}
 	public void updateData(JsonObject hero){
 		int heroid = int.Parse (hero ["heroId"].ToString ());
-		//JsonObject _herodata = getHeroById(heroid);
-		//if (_herodata == null) {
-			//_herodata = new JsonObject ();
-			//_herodata["staticdata"] = DataManager.getInstance ().heroDicJson[heroid];
-		//	addHero (hero);
-		//}
-		//_herodata ["data"] = hero;
 		HeroArr[heroid] = hero;
-		//return hero;
 	}
 	public JsonObject getHeroStaticData(JsonObject hero){
 		int heroid = int.Parse (hero ["heroId"].ToString ());

@@ -26,43 +26,45 @@ public class BagManager{
 		//itemArr = new Dictionary<int, JsonObject> ();
 		equipArr = new Dictionary<int, JsonObject> ();
 		stoneArr = new Dictionary<int, JsonObject> ();
-		if(DataManager.playerData.ContainsKey("bag")){
-			JsonObject heroArr = (DataManager.playerData ["bag"]) as JsonObject;
-			if (heroArr != null) {
-				initData (heroArr);
-			}
 
-
-		}
 	}
-	public void initData(JsonObject heroArr){
+	public void initData(JsonObject playerData){
 		//itemArr.Clear ();
+		allItemDic.Clear();
 		equipArr.Clear ();
 		List<object> objs;
 		//JsonObject objss = (heroArr ["items"]) as JsonObject;
-		if(heroArr.ContainsKey ("items")){
-			objs = (heroArr ["items"]) as List<object>;
-			for(int i = 0; i < objs.Count; i++) {
-				JsonObject jo = objs [i] as JsonObject;
-				//int itemid = int.Parse(jo["itemId"].ToString());
-				int id = int.Parse (jo ["id"].ToString ());
-				int count = int.Parse (jo ["count"].ToString ());
-				int itemType = int.Parse (jo ["itemType"].ToString ());
-				//JsonObject item = DataManager.getInstance ().itemDicJson [itemid] as JsonObject;
-				//jo ["staticdata"] = item;
-				if (count > 0) {
-					if (!allItemDic.ContainsKey (itemType)) {
-						allItemDic [itemType] = new Dictionary<int, JsonObject> ();
+		if(playerData.ContainsKey("bag")){
+			JsonObject heroArr = (playerData ["bag"]) as JsonObject;
+			if (heroArr != null) {
+				if(heroArr.ContainsKey ("items")){
+					objs = (heroArr ["items"]) as List<object>;
+					for(int i = 0; i < objs.Count; i++) {
+						JsonObject jo = objs [i] as JsonObject;
+						//int itemid = int.Parse(jo["itemId"].ToString());
+						int id = int.Parse (jo ["id"].ToString ());
+						int count = int.Parse (jo ["count"].ToString ());
+						int itemType = int.Parse (jo ["itemType"].ToString ());
+						//JsonObject item = DataManager.getInstance ().itemDicJson [itemid] as JsonObject;
+						//jo ["staticdata"] = item;
+						if (count > 0) {
+							if (!allItemDic.ContainsKey (itemType)) {
+								allItemDic [itemType] = new Dictionary<int, JsonObject> ();
+							}
+							allItemDic [itemType] [id] = jo;
+						}
+
+						//item ["count"] = jo ["count"];
+						//item ["type"] = jo ["type"];
+						//Debug.Log (item.ToString());
+
 					}
-					allItemDic [itemType] [id] = jo;
 				}
-
-				//item ["count"] = jo ["count"];
-				//item ["type"] = jo ["type"];
-				//Debug.Log (item.ToString());
-
 			}
+
+
 		}
+
 		//equipArr = itemArr;
 		//if (heroArr.ContainsKey ("equips")) {
 			//objs = (heroArr ["equips"]) as List<object>;

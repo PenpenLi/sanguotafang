@@ -98,7 +98,7 @@ public class BagPanel : Observer {
 		}
 		openType = _openType;
 		//icon.sprite = ("icon/" + staticdata["icon"].ToString(), typeof(Sprite)) as Sprite);
-		icon.SetNativeSize();
+		//icon.SetNativeSize();
 		itemname.text = staticData["name"].ToString();
 		info.text = staticData ["desc"].ToString ();
 		if (itemType == 5 || itemType == 2) {

@@ -51,20 +51,21 @@ public class PHBPanel : Observer {
 			ServerManager.getInstance ().request("connector.roleHandler.getPaiHangBang", userMessage, (databack)=>{
 				Debug.Log(databack.ToString());
 				List<object> joList = databack["data"] as List<object>;
+				int phb_type = int.Parse(databack["type"].ToString());
 				for (int i = 0; i < joList.Count; i++) {
 					JsonObject d = joList[i] as JsonObject;
 					if(i == 0){
-						phb_1.intiData(i+1,d);
+						phb_1.intiData(i+1,d,phb_type);
 					}else if(i == 1){
-						phb_2.intiData(i+1,d);
+						phb_2.intiData(i+1,d,phb_type);
 					}else if(i == 2){
-						phb_3.intiData(i+1,d);
+						phb_3.intiData(i+1,d,phb_type);
 					}else{
 						PHBItem _phbitem = (PHBItem)PoolManager.getInstance().getGameObject(PoolManager.PHB_4);
 						_phbitem.transform.SetParent(content);
 						_phbitem.transform.localPosition = new Vector3 (0.0f, 0.0f, 0.0f);
 						_phbitem.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
-						_phbitem.intiData(i+1,d);
+						_phbitem.intiData(i+1,d,phb_type);
 						PHBItemList.Add(_phbitem);
 					}
 

@@ -316,6 +316,15 @@ public class EquipInfo :Observer {
 	}
 	public void onClose(){
 		AudioManager.instance.playCloseClick ();
+		for(int i=0;i < IconBaseArr.Count;i++){
+			//Button btn = equips [kvp.Key];
+			IconBase icon = IconBaseArr[i];
+			if (icon != null) {
+
+				PoolManager.getInstance ().addToPool (icon.type, icon);
+			}
+		}
+		IconBaseArr.Clear ();
 		//NotificationManager.getInstance ().RemoveObserver (this,"equip_levelup");
 		PoolManager.getInstance ().addToPool (type,this);
 	}

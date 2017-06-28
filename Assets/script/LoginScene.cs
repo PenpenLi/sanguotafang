@@ -142,6 +142,8 @@ public class LoginScene : MonoBehaviour {
 						Debug.Log("角色名已经被占用!!");
 				}else{
 					DataManager.playerData = data;//["curPlayer"] as JsonObject;
+					HeroManager.getInstance().initData(DataManager.playerData);
+					BagManager.getInstance().initData(DataManager.playerData);
 					isCanLogin = 1;
 					ServerManager.getInstance().onUpgrade();
 				}

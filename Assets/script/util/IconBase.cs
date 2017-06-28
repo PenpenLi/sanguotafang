@@ -39,6 +39,9 @@ public class IconBase : MonoBehaviour {
 		count.gameObject.SetActive (false);
 		data = jo;
 		jo = BagManager.getInstance ().getItemStaticData (jo);
+		if (!jo.ContainsKey ("icon")) {
+			jo = HeroManager.getInstance ().getHeroStaticData (jo);
+		}
 		if (jo.ContainsKey ("itemType")) {
 			itemType = int.Parse (jo ["itemType"].ToString ());
 		}
@@ -55,7 +58,7 @@ public class IconBase : MonoBehaviour {
 				sub.gameObject.SetActive (true);
 			}
 		}
-		icon.SetNativeSize();
+		//icon.SetNativeSize();
 		setCount ("count","x",1);
 		if (itemType == 5) {
 			setCount ("level", "Lv.");

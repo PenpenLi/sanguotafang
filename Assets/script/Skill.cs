@@ -19,9 +19,13 @@ public class Skill : MonoBehaviour {
 	public bool isCanAttack = false;
 	public int startAttackIndex;
 	public int shakeScreenNum;
+	public string type = "skill";
 	// Use this for initialization
+	void Awake () {
+		PoolManager.getInstance ().initPoolByType (type,this,10);
+	}
 	void Start () {
-		SkillManager.getInstance().setSkillDemo (this);
+		//SkillManager.getInstance().setSkillDemo (this);
 
 	}
 	void FixedUpdate(){

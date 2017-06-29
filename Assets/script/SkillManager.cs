@@ -85,7 +85,7 @@ public class SkillManager {
 	}
 	public Skill getSkillDemo(int skillId){
 		//Skill skill;
-		if (skillCacheArr.Count > 0) {
+		/**if (skillCacheArr.Count > 0) {
 			bool b = false;
 			for(int i=0;i < skillCacheArr.Count;i++){
 				Skill skill1 = (Skill)skillCacheArr [i];
@@ -113,9 +113,12 @@ public class SkillManager {
 		//skill.transform.rotation = new Quaternion (0, 0, 0, 1);//纠正旋转
 		//skill.gameObject.SetActive (true);
 		return null;
+		**/
+		return (Skill)PoolManager.getInstance ().getGameObject ("skill");
 	}
 	public void addToCache(Skill skill){
-		skillCacheArr.Add (skill);
+		//skillCacheArr.Add (skill);
+		PoolManager.getInstance().addToPool(skill.type,skill);
 	}
 	public JsonObject getSkillById(int skillid){
 		return DataManager.getInstance ().skillDicJson [skillid];
@@ -293,8 +296,8 @@ public class SkillManager {
 					//Vector3 _p = screenRect.InverseTransformPoint(skillEffect.transform.position);
 					if (!screenRect.Contains(skillEffect.transform.position)) {
 						deleteSkillArr.Add(kvp.Key);
-						skillEffect.gameObject.SetActive (false);
-						skillCacheArr.Remove (skillEffect);
+						//skillEffect.gameObject.SetActive (false);
+						//skillCacheArr.Remove (skillEffect);
 						addToCache (skillEffect);
 					} else {
 						MonsterManager.getInstance ().getMonstersByRect2 (kvp.Value);
@@ -326,7 +329,7 @@ public class SkillManager {
 							kvp.Value [3] = attackNum;
 						} else {
 							if (skillEffect.isPalyOne) {
-								skillEffect.gameObject.SetActive (false);
+								//skillEffect.gameObject.SetActive (false);
 								//skillCacheArr.Remove (skillEffect);
 								addToCache (skillEffect);
 								deleteSkillArr.Add (kvp.Key);

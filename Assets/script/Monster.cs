@@ -372,8 +372,16 @@ public class Monster : MonoBehaviour {
 		isDead = true;
 		isWalk = false;
 		AudioManager.instance.Play (9);
-		transform.SetParent (null);
+
 		//gameObject.SetActive (false);
+
+
+		SimpleSkill _simpleSkill = (SimpleSkill)PoolManager.getInstance ().getGameObject ("simple_skill");
+		_simpleSkill.init ("skill2/dead_red");
+		_simpleSkill.transform.SetParent (this.transform.parent.transform);
+		_simpleSkill.transform.localPosition = this.transform.localPosition;
+
+		transform.SetParent (null);
 		MonsterManager.getInstance ().removeMonster (this);
 		MonsterManager.getInstance ().addToCachePool (this);//放进回收池
 

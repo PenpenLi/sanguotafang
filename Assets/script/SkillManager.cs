@@ -165,15 +165,15 @@ public class SkillManager {
 				
 				//MonsterManager.getInstance ().getMonstersByY (skill001.transform.position.y - 50,skill001.transform.position.y +50);
 				//MonsterManager.getInstance ().getMonstersByRect (skill001);
-				float  radian=Mathf.Atan2((_localP.y-skill002.transform.localPosition.y),(_localP.x-skill002.transform.localPosition.x));
+				//float  radian=Mathf.Atan2((_localP.y-skill002.transform.localPosition.y),(_localP.x-skill002.transform.localPosition.x));
 
-				float f=(float)(radian*180/3.14);
-				Debug.Log(radian + "   " + f);
-				skill002.transform.localRotation = Quaternion.AngleAxis (f, Vector3.forward);
-				float dis = Vector3.Distance(_localP, skill002.transform.localPosition);
-				if (dis <= skill002.rectTransform.rect.width/2) {
+				//float f=(float)(radian*180/3.14);
+				//Debug.Log(radian + "   " + f);
+				//skill002.transform.localRotation = Quaternion.AngleAxis (f, Vector3.forward);
+				//float dis = Vector3.Distance(_localP, skill002.transform.localPosition);
+				//if (dis <= skill002.rectTransform.rect.width/2) {
 					skill003.transform.position = Input.mousePosition;
-				}
+				//}
 				MonsterManager.getInstance ().getMonstersByRect (skill003);
 
 			}
@@ -218,7 +218,7 @@ public class SkillManager {
 				skill002.gameObject.SetActive (true);
 
 				RectTransform rectTransform2 = skill002.gameObject.GetComponent<RectTransform>();
-				rectTransform2.sizeDelta = new Vector2(tower.attackRange*2, tower.attackRange *2);
+				rectTransform2.sizeDelta = new Vector2(tower.attackRange*20, tower.attackRange *20);
 
 				//skill002.transform.localScale = new Vector3 (scale,scale,scale);
 				skill002.transform.localPosition = tower.transform.localPosition;

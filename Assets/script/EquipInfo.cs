@@ -201,7 +201,11 @@ public class EquipInfo :Observer {
 						Button stoneKuang = equipArr [kvp.Key];
 						//equip.sprite = 
 						IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
-						icon.init (equip).Func = new callBackFunc<JsonObject> (onClickStone);
+						if (openType > 0) {
+							icon.init (equip).Func = new callBackFunc<JsonObject> (onClickStone);
+						} else {
+							icon.init (equip);
+						}
 						//icon.Func = new callBackFunc<JsonObject> (onClickStone);
 						icon.transform.SetParent (stoneKuang.transform);
 						icon.transform.localPosition = Vector3.zero;
@@ -293,7 +297,7 @@ public class EquipInfo :Observer {
 		for (int i = 0; i < stoneArr.Count; i++) {
 			stoneArr [i].gameObject.SetActive (i < pinzhi?true:false);
 		}
-		if (openType > 0) {
+		//if (openType > 0) {
 			List<JsonObject> theEquipHaveStones = BagManager.getInstance ().getStoneByEquipId (Id);
 			for (int k = 0; k < theEquipHaveStones.Count; k++) {
 				JsonObject stoneData = theEquipHaveStones [k];
@@ -304,7 +308,11 @@ public class EquipInfo :Observer {
 					Button stoneKuang = stoneArr [pos - 1];
 					//equip.sprite = 
 					IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo ["color"].ToString ());
-					icon.init (stoneData).Func = new callBackFunc<JsonObject> (onClickStone);
+					if (openType > 0) {
+						icon.init (stoneData).Func = new callBackFunc<JsonObject> (onClickStone);
+					} else {
+						icon.init (stoneData);
+					}
 					//icon.Func = new callBackFunc<JsonObject> (onClickStone);
 					icon.transform.SetParent (stoneKuang.transform);
 					icon.transform.localPosition = Vector3.zero;
@@ -312,7 +320,7 @@ public class EquipInfo :Observer {
 					IconBaseArr.Add (icon);
 				}
 			}
-		}
+		//}
 	}
 	public void onClose(){
 		AudioManager.instance.playCloseClick ();

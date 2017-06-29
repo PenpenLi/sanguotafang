@@ -37,6 +37,7 @@ public class IconBase : MonoBehaviour {
 	public IconBase init(JsonObject jo){
 		sub.gameObject.SetActive (false);
 		count.gameObject.SetActive (false);
+		itemType = 0;
 		data = jo;
 		jo = BagManager.getInstance ().getItemStaticData (jo);
 		if (!jo.ContainsKey ("icon")) {
@@ -60,7 +61,7 @@ public class IconBase : MonoBehaviour {
 		}
 		//icon.SetNativeSize();
 		setCount ("count","x",1);
-		if (itemType == 5) {
+		if (itemType == 5 || itemType == 0) {
 			setCount ("level", "Lv.");
 		}
 		return this;

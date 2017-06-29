@@ -8,12 +8,12 @@ public class OtherInfoPanel : MonoBehaviour {
 	public string type;
 	public Transform content;
 	public Text heroBB;
+	public Text tip;
 	public Button weapon;
 	public Button Armor;
 	public Button Shoes;
 	public Button Amulet;
 	public Button selectKind;
-
 	//public Button shengxingBtn;
 	//public Button shengjiBtn;
 	public Text heroAttack;
@@ -48,6 +48,7 @@ public class OtherInfoPanel : MonoBehaviour {
 	public JsonObject staticdata;
 	public Dictionary<int, JsonObject> HeroArr;
 	public Dictionary<int, JsonObject> ItemArr;
+	public Dictionary<int, JsonObject> otherPlayerDataCacheArr;
 	//public JsonObject data;
 	void Awake () {
 		//messageArr.Add (Message.HERO_UPDATE);
@@ -64,7 +65,7 @@ public class OtherInfoPanel : MonoBehaviour {
 		starArr.Add (star3);
 		starArr.Add (star4);
 		//content.rect.width = 600;
-
+		otherPlayerDataCacheArr = new Dictionary<int, JsonObject>();
 
 		heroHeadList = new ArrayList();
 
@@ -73,21 +74,33 @@ public class OtherInfoPanel : MonoBehaviour {
 			_Current = this;
 		}
 	}
-	public void initData (JsonObject playerData) {
+	public void initData (JsonObject playerdata,int heroId = 0) {
 		Debug.Log("进入其他玩家信息界面");
+
+		tip.text = playerdata["name"].ToString();
 		Dictionary<int,JsonObject> heroarr = HeroManager.getInstance().getHeros();
 		int index = 0;
-		foreach(KeyValuePair<int,JsonObject> kvp in heroarr)
-		{
-
-			addHero (kvp.Value);
-			if(index == 0){
-				OnChangeHero (kvp.Value);
+		if (heroId > 0) {
+			if (heroarr.ContainsKey (heroId)) {
+				JsonObject hero = heroarr [heroId];
+				addHero (hero);
+				OnChangeHero (hero);
 			}
-			index++;
+		} else {
+			foreach(KeyValuePair<int,JsonObject> kvp in heroarr)
+			{
+
+				addHero (kvp.Value);
+				if(index == 0){
+					OnChangeHero (kvp.Value);
+				}
+				index++;
+			}
+			skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
 		}
+
 		//HeroStyle.heroarr = HeroManager.getInstance ().getHerosArrayList ();
-		skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
+
 
 	}
 
@@ -106,7 +119,7 @@ public class OtherInfoPanel : MonoBehaviour {
 			_equipInfo.transform.SetParent (this.transform.parent.transform);
 			_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 			_equipInfo.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
-			_equipInfo.init (equip,1);
+			_equipInfo.init (equip,0);
 		}
 
 	}

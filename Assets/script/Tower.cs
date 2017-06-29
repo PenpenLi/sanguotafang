@@ -117,7 +117,7 @@ public class Tower : MonoBehaviour {
 		currentMP += mp;
 		//int damage = beforChangeHP- currentHP;//用于显示伤害数字
 		//ChapterScene._chapterScene.playJumpHp(damage,new Vector3(transform.position.x,transform.position.y + 40,transform.position.z));
-
+		isCanPlayMP = true;
 		//beforChangeHP = currentHP;
 		currentMP = currentMP > 100.0f ? 100.0f : currentMP;
 		float xscale = (float)currentMP / 100.0f;

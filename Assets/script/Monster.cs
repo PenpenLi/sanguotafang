@@ -47,12 +47,20 @@ public class Monster : MonoBehaviour {
 	public ArrayList pathArr;
 	private int pathNum;
 	private bool isConverse = false;
+	public defence attackedDefence;
+	public int attackRange = 200;//攻击范围
+	private float attackPingLv = 1.0f;//攻击平率
+	private float frontTime = 0.0f;
+	public string type = "monster";
+	void Awake () {
+		PoolManager.getInstance ().initPoolByType (type,this,5);
+	}
 	// Use this for initialization
 	void Start () {
 		StateArr = new ArrayList ();
 		siblingIndex = transform.GetSiblingIndex();
 		yIndex.text = siblingIndex.ToString ();
-		MonsterManager.getInstance().setMonsterDemo(this);
+		//MonsterManager.getInstance().setMonsterDemo(this);
 		yIndex.gameObject.SetActive (false);
 		HPbg.gameObject.SetActive (false);
 	}
@@ -74,7 +82,7 @@ public class Monster : MonoBehaviour {
 		if (isWalk) {
 			if (dt >= movedt) {
 				dt = dt - movedt;
-			/**dt = dt - movedt;
+				/**dt = dt - movedt;
 			if (moveNum <= 0) {
 				oldtWave = currentWave;
 				setWaveData ();    
@@ -102,7 +110,7 @@ public class Monster : MonoBehaviour {
 						setWalkDir ();
 					}
 				} else {
-					ChapterManager.getInstance ().changeLoveNum (DataManager.getInstance().getJsonIntValue(_monsterData,"attack"));
+					ChapterManager.getInstance ().changeLoveNum (DataManager.getInstance ().getJsonIntValue (_monsterData, "attack"));
 					onDead ();
 				}
 			}
@@ -110,22 +118,19 @@ public class Monster : MonoBehaviour {
 			dt = dt + Time.deltaTime;
 
 
-			if (sprites.Length > 1) {
-				if (spriteChangeTime > spriteChangeSpeed){
-					spriteChangeTime = 0;
-					if (spriteIndexEnd > spriteIndex) {
-						body.sprite = sprites [spriteIndex];
-						body.SetNativeSize ();
-						spriteIndex++;
-					} else {
-						spriteIndex = spriteIndexStart;
-					}
-				}
-			}
-			spriteChangeTime += Time.fixedDeltaTime;
+
 			//}
 
+		} else {
+			if (attackedDefence != null) {
+				if (Time.time - frontTime > attackPingLv) {
+					frontTime = Time.time;
+						onAttack ();
+	
+				}
+			}
 		}
+
 		if (currentState > 0) {
 			//for (int i = 0; i < StateArr.Count; i++) {
 				//ArrayList arr = (ArrayList)StateArr [i];
@@ -171,7 +176,19 @@ public class Monster : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-
+		if (sprites.Length > 1) {
+			if (spriteChangeTime > spriteChangeSpeed){
+				spriteChangeTime = 0;
+				if (spriteIndexEnd > spriteIndex) {
+					body.sprite = sprites [spriteIndex];
+					body.SetNativeSize ();
+					spriteIndex++;
+				} else {
+					spriteIndex = spriteIndexStart;
+				}
+			}
+		}
+		spriteChangeTime += Time.fixedDeltaTime;
 	}
 	public void setWalkDir(){
 		if (currentDir == 1) {
@@ -367,6 +384,21 @@ public class Monster : MonoBehaviour {
 		arr.Add (stunEffect);**/
 		//StateArr.Add (arr);
 	}
+	public void onAttacked(){
+
+	}
+	public void onAttack(){//怪物攻击防御塔
+		if (attackedDefence != null) {
+			if (attackedDefence.hit (1)) {
+				isWalk = true;
+			}
+		}
+	}
+	public void onStopToAttack(defence df){
+		isWalk = false;
+		attackedDefence = df;
+		//df.hit (1);
+	}
 	public void onDead(){
 		currentHP = 0;
 		isDead = true;
@@ -375,15 +407,15 @@ public class Monster : MonoBehaviour {
 
 		//gameObject.SetActive (false);
 
+		PoolManager.getInstance ().addToPool (this.type,this);
+		//SimpleSkill _simpleSkill = (SimpleSkill)PoolManager.getInstance ().getGameObject ("simple_skill");
+		//_simpleSkill.init ("skill2/dead_red");
+		//_simpleSkill.transform.SetParent (this.transform.parent.transform);
+		//_simpleSkill.transform.localPosition = this.transform.localPosition;
 
-		SimpleSkill _simpleSkill = (SimpleSkill)PoolManager.getInstance ().getGameObject ("simple_skill");
-		_simpleSkill.init ("skill2/dead_red");
-		_simpleSkill.transform.SetParent (this.transform.parent.transform);
-		_simpleSkill.transform.localPosition = this.transform.localPosition;
-
-		transform.SetParent (null);
-		MonsterManager.getInstance ().removeMonster (this);
-		MonsterManager.getInstance ().addToCachePool (this);//放进回收池
+		//transform.SetParent (null);
+		//MonsterManager.getInstance ().removeMonster (this);
+		//MonsterManager.getInstance ().addToCachePool (this);//放进回收池
 
 
 	}

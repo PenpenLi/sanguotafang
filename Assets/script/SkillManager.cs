@@ -158,9 +158,9 @@ public class SkillManager {
 			}else if(skillType == 4){
 				skill004.transform.localPosition =_localP;
 
-				ArrayList arr = MonsterManager.getInstance ().getMonstersByRect (skill004,true,lockMonster);//只选取一个目标
+				List<Monster> arr = MonsterManager.getInstance ().getMonstersByRect (skill004,true,lockMonster);//只选取一个目标
 				if (arr.Count > 0) {
-					lockMonster= (Monster)arr[0];
+					lockMonster= arr[0];
 				}
 
 				
@@ -310,7 +310,7 @@ public class SkillManager {
 					if (time > attackInterval && skillEffect.isCanAttack) {
 						kvp.Value [5] = 0.0f;
 						if (attackNum > 0) {
-							ArrayList arr;
+							List<Monster> arr;
 							if (skilltype== 4) {
 								arr = MonsterManager.getInstance ().getMonstersByRect (skill004,true);
 							}else if (skilltype == 3) {
@@ -320,7 +320,7 @@ public class SkillManager {
 							}
 
 							for (var j = 0; j < arr.Count; j++) {
-								Monster enemy = (Monster)arr [j];
+								Monster enemy = arr [j];
 								if (enemy.currentHP > 0) {
 									enemy.attackByTowerSkill ((Tower)kvp.Value [0]);
 								}

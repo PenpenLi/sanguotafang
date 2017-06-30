@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using SimpleJson;
 public class SimpleSkill : MonoBehaviour {
 	private Sprite[] sprites;
@@ -20,8 +21,12 @@ public class SimpleSkill : MonoBehaviour {
 	public int startAttackIndex;
 	public int shakeScreenNum = 0;
 	public string type = "simple_skill";
+	public Monster monster;
+	public List<Vector3> pathArr;
+	public int waveIndex =0;
 	// Use this for initialization
 	void Awake () {
+		pathArr = new List<Vector3> ();
 		PoolManager.getInstance ().initPoolByType (type,this,10);
 	}
 	void Start () {
@@ -50,6 +55,20 @@ public class SimpleSkill : MonoBehaviour {
 				}
 			}
 			spriteChangeTime += Time.fixedDeltaTime;
+
+			if (pathArr.Count > waveIndex) {
+				transform.localPosition = pathArr [waveIndex];
+				waveIndex++;
+
+			} else {
+				PoolManager.getInstance ().addToPool (this.type, this);
+				if (monster != null) {
+					if (monster.currentHP > 0) {
+						monster.currentHP -= 5;
+						monster.changHp ();
+					}
+				}
+			}
 		}
 
 	}
@@ -62,10 +81,31 @@ public class SimpleSkill : MonoBehaviour {
 			AudioManager.instance.Play (soundId);
 		}
 	}
-	public void init(string skillpath){
+	public void init(string skillpath,Monster _monster = null){
+		pathArr.Clear ();
+		waveIndex = 0;
 		isPalyOne = false;
 		spriteIndex = 0;
 		spriteIndexStart = 0;
+		monster = null;
+		if (_monster != null) {
+			monster = _monster;
+			Vector3 pos = this.transform.localPosition;
+			Vector3 mosterPos = monster.transform.localPosition;
+			double distance = DataManager.getInstance().GetDistance (pos, mosterPos);
+			int moveNum = (int)(System.Math.Abs(distance)/10);
+			float movex = (mosterPos.x - pos.x) / moveNum;
+			float movey = (mosterPos.y - pos.y) / moveNum;
+			for (int i = 0; i < moveNum; i++) {
+
+				//Array pos2 = new float[3];
+				pos.x +=movex;
+				pos.y +=movey;
+				Vector3 Wave = new Vector3 (pos.x, pos.y, pos.z);
+				//Wave.z = oldtWave.z;
+				pathArr.Add (Wave);
+			}
+		}
 		// 加载此文件下的所有资源
 		sprites = Resources.LoadAll<Sprite>( skillpath);
 		img = this.GetComponent<UnityEngine.UI.Image> ();

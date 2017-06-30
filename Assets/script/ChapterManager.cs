@@ -30,7 +30,7 @@ public class ChapterManager {
 	}
 
 	public ChapterManager(){
-		
+		setChapterId (1);
 		//chapterList = DataManager.getInstance ().getData ("data/chapter","\r\n");
 	}
 	public void setChapterId(int _campaignId){

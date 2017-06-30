@@ -7,8 +7,8 @@ public class MonsterManager {
 	private string[][] monsterList;
 	private static MonsterManager _monsterManager;
 	private Monster _monsterDemo;
-	private ArrayList monsterCacheArr;//对象池
-	public ArrayList activeMonsterArr;//激活的怪物
+	private List<Monster> monsterCacheArr;//对象池
+	public List<Monster> activeMonsterArr;//激活的怪物
 	public static MonsterManager getInstance(){//获取单例
 		if(_monsterManager == null){
 			_monsterManager = new MonsterManager();
@@ -18,13 +18,13 @@ public class MonsterManager {
 
 	public MonsterManager(){
 		
-		activeMonsterArr = new ArrayList ();
+		activeMonsterArr = new List<Monster> ();
 		//foreach (Monster p in list)
 		//monsterData = new Dictionary<int, ArrayList>();
 	}
 	public void setMonsterDemo(Monster _monster){
 		if (_monsterDemo == null) {
-			monsterCacheArr = new ArrayList ();
+			monsterCacheArr = new List<Monster> ();
 			_monsterDemo = _monster;
 			monsterCacheArr.Add (_monsterDemo);
 			for(int k =0;k < 10; k++){
@@ -51,17 +51,18 @@ public class MonsterManager {
 		monsterCacheArr.Add(_monster);
 	}
 	public Monster getMonster(bool isFromCache){
-		if (!isFromCache) {
+		return (Monster)PoolManager.getInstance ().getGameObject ("monster");
+		/**if (!isFromCache) {
 			return (Monster)GameObject.Instantiate (_monsterDemo, _monsterDemo.transform.position, _monsterDemo.transform.rotation);
 		} else {
 			if (monsterCacheArr.Count > 0) {
-				Monster _monster = (Monster)monsterCacheArr [0];
+				Monster _monster = monsterCacheArr [0];
 				monsterCacheArr.RemoveAt (0);
 				return _monster;
 			} else {
 				return (Monster)GameObject.Instantiate (_monsterDemo, _monsterDemo.transform.position, _monsterDemo.transform.rotation);
 			}
-		}
+		}**/
 
 	}
 	public void initMonsterData(string monsterPath){
@@ -99,7 +100,7 @@ public class MonsterManager {
 		ArrayList arrs = new ArrayList();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy = activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 				float distance = Vector3.Distance (tower.transform.localPosition,enemy.transform.localPosition);
 
@@ -129,7 +130,7 @@ public class MonsterManager {
 		ArrayList arrs = new ArrayList();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy = activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 				float y= enemy.transform.position.y;
 				if (y1 <= y && y2 >= y) {
@@ -146,7 +147,7 @@ public class MonsterManager {
 		ArrayList arrs = new ArrayList();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy = activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 					enemy.transform.SetSiblingIndex(index);
 	
@@ -154,11 +155,11 @@ public class MonsterManager {
 		}
 		return arrs;
 	}
-	public ArrayList getMonstersByRect(Image _image,bool isChooseOne = false,Monster lockMonster = null){//群攻或单攻根据攻击范围选取monster
-		ArrayList arrs = new ArrayList();
+	public List<Monster> getMonstersByRect(Image _image,bool isChooseOne = false,Monster lockMonster = null){//群攻或单攻根据攻击范围选取monster
+		List<Monster> arrs = new List<Monster>();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy = activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 				
 				//float y= enemy.transform.position.y;
@@ -181,11 +182,11 @@ public class MonsterManager {
 		}
 		return arrs;
 	}
-	public ArrayList getMonstersBySkill(Image _image){//群攻或单攻根据攻击范围选取monster
-		ArrayList arrs = new ArrayList();
+	public List<Monster> getMonstersBySkill(Image _image){//群攻或单攻根据攻击范围选取monster
+		List<Monster> arrs = new List<Monster>();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy = activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 
 				//float y= enemy.transform.position.y;
@@ -199,11 +200,11 @@ public class MonsterManager {
 		return arrs;
 	}
 
-	public ArrayList getMonstersByRect2(ArrayList list){//群攻或单攻根据攻击范围选取monster
-		ArrayList arrs = new ArrayList();
+	public void getMonstersByRect2(ArrayList list){//群攻或单攻根据攻击范围选取monster
+		//List<Monster> arrs = new List<Monster>();
 		//Monster enemy;
 		for (var j = 0; j < activeMonsterArr.Count; j++) {
-			Monster enemy = (Monster)activeMonsterArr[j];
+			Monster enemy =activeMonsterArr[j];
 			if (enemy != null && enemy.currentHP > 0) {
 
 				//float y= enemy.transform.position.y;
@@ -212,13 +213,13 @@ public class MonsterManager {
 				if (_image.attackRange.Contains(_p) && !list.Contains(enemy)) {
 					if(enemy.currentHP > 0){
 						enemy.attackByTowerSkill ((Tower)list [0]);
-						arrs.Add (enemy);
+						//arrs.Add (enemy);
 					}
 					list.Add (enemy);
 				}
 			}
 		}
-		return arrs;
+		//return arrs;
 	}
 	 
 }

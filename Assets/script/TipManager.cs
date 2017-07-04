@@ -33,7 +33,6 @@ public class TipManager {
 
 			if(objPrefab == null){
 				objPrefab = GameObject.Instantiate((GameObject)Resources.Load("tip"));
-
 			}
 
 			objPrefab.transform.SetParent(Loom.Current.transform);

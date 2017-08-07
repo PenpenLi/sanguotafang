@@ -19,9 +19,13 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	void OnEnable(){
-		GameObject objPrefab = GameObject.Instantiate((GameObject)Resources.Load("shibing"));
-		objPrefab.transform.SetParent(transform.parent);
-		objPrefab.transform.localPosition = new Vector3 (0.0f,0.0f,-317.0f);
+		//GameObject objPrefab = GameObject.Instantiate((GameObject)Resources.Load("shibing"));
+		//objPrefab.transform.SetParent(transform.parent);
+		//objPrefab.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+		Monster3D _monster3D = (Monster3D)PoolManager.getInstance().getGameObject("Monster3D");
+		_monster3D.transform.SetParent(transform.parent);
+		_monster3D.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+		_monster3D.init (null);
 	}
 	
 	// Update is called once per frame

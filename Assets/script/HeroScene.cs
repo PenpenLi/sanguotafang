@@ -15,7 +15,7 @@ public class HeroScene : Observer {
     // Use this for initialization
 	public Transform content;
 	public Button heroHeadDemo;
-	//public Image heroStyle;
+	public Image heroStyle;
 	public Text heroBB;
     public Button weapon;
     public Button Armor;
@@ -36,13 +36,16 @@ public class HeroScene : Observer {
 	public Image panel;
 	public Dictionary<string,Button> equips;
 
-	public HeroStyle skeletonGraphic;
+	//public HeroStyle skeletonGraphic;
 	public RawImage star1;
 	public RawImage star2;
 	public RawImage star3;
 	public RawImage star4;
 	private ArrayList starArr;
-	public Button skillIcon;
+	public Button skill1;
+	public Button skill2;
+	public Button skill3;
+	public Button skill4;
 	public Text skillName;
 	public Vector3 pos1;
 	public Text heroName;
@@ -53,7 +56,7 @@ public class HeroScene : Observer {
 	public int heroId = 0;
 	//public Image skillInfoPanel;
 	public ArrayList equipedList;
-
+	public ArrayList skillList;
 	public JsonObject staticdata;
 	//public JsonObject data;
 	void Awake () {
@@ -70,10 +73,16 @@ public class HeroScene : Observer {
 		equips ["amulet"] = Amulet;
 		equipedList = new ArrayList ();
 		starArr = new ArrayList ();
+		skillList = new ArrayList ();
 		starArr.Add (star1);
 		starArr.Add (star2);
 		starArr.Add (star3);
 		starArr.Add (star4);
+		/////////////////////////////////////
+		skillList.Add (skill1);
+		skillList.Add (skill2);
+		skillList.Add (skill3);
+		skillList.Add (skill4);
         //content.rect.width = 600;
        
 
@@ -90,7 +99,7 @@ public class HeroScene : Observer {
 			index++;
 		}
 		//HeroStyle.heroarr = HeroManager.getInstance ().getHerosArrayList ();
-		skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
+		//skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
     }
 	
 	// Update is called once per frame
@@ -244,9 +253,17 @@ public class HeroScene : Observer {
 	}
 	public void onCallBack(JsonObject jo){
 		//Debug.Log (jo.ToString());
+		if (jo.ContainsKey ("skillType")) {
+			SkillInfo skillinfo = (SkillInfo)PoolManager.getInstance().getGameObject(PoolManager.SKILL_INFO);
 
-		string key = BagManager.getInstance().getItemStaticData(jo) ["kind"].ToString ();
-		onClickEquip (key);
+			skillinfo.init (data);
+			skillinfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
+			skillinfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
+		} else {
+			string key = BagManager.getInstance().getItemStaticData(jo) ["kind"].ToString ();
+			onClickEquip (key);
+		}
+
 	}
 	public void onClickEquip(string equipType){
 		openBagByType (equipType);
@@ -380,8 +397,8 @@ public class HeroScene : Observer {
         selectKind = null;
 		staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
 		data = herodata;
-		//heroStyle.sprite = Resources.Load(staticdata["style"].ToString(),typeof(Sprite)) as Sprite;
-		//heroStyle.SetNativeSize ();
+		heroStyle.sprite = Resources.Load("hero/" + staticdata["style"].ToString(),typeof(Sprite)) as Sprite;
+		heroStyle.SetNativeSize ();
 
 		for (int i = 0; i < heroHeadList.Count; i++) {
 			Button btn2 = (Button)heroHeadList[i];
@@ -391,16 +408,27 @@ public class HeroScene : Observer {
 		//	skeletonAnimation.transform.parent = null;
 		//	skeletonAnimation.gameObject.SetActive (false);
 		//}
-		skeletonGraphic.init(herodata);
+		//skeletonGraphic.init(herodata);
 
 		//skeletonGraphic.startingAnimation = "attack";
 		//btn.interactable = false;
 		//技能
-		JsonObject skilldata = DataManager.getInstance().skillDicJson[int.Parse(staticdata["skill1"].ToString())];
-		skillName.text = skilldata["name"].ToString();
+		for (int i = 1; i <= 4; i++) {
+			JsonObject skilldata = DataManager.getInstance().skillDicJson[int.Parse(staticdata["skill" + i.ToString()].ToString())];
+			//skillName.text = skilldata["name"].ToString();
+			Button skill = (Button)skillList[i-1];
+			skill.image.sprite = Resources.Load(skilldata["icon"].ToString(),typeof(Sprite)) as Sprite;
+			skill.image.SetNativeSize ();
+			IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (skilldata["color"].ToString());
+			icon.init (skilldata).Func = new callBackFunc<JsonObject> (onCallBack);
+			//icon.Func = new callBackFunc<JsonObject> (onCallBack);
+			icon.transform.SetParent (skill.transform);
+			icon.transform.localPosition = Vector3.zero;
+			icon.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+			//iTween.ScaleTo(icon.gameObject, iTween.Hash("y", 0.5f,"x", 0.5f,"z", 0.5f ,"delay", 0.0f,"time",0.5f));
+			//skill.gameObject.SetActive (true);
+		}
 
-		skillIcon.image.sprite = Resources.Load(skilldata["icon"].ToString(),typeof(Sprite)) as Sprite;
-		skillIcon.image.SetNativeSize ();
 
 		for(int i = 0;i < starArr.Count;i++){
 			RawImage star = (RawImage)starArr [i];

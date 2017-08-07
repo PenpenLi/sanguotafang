@@ -49,7 +49,12 @@ public class IconBase : MonoBehaviour {
 
 		Func = null;
 		if (jo.ContainsKey ("icon")) {
-			icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
+			if (jo.ContainsKey ("skillType")) {
+				icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
+			} else {
+				icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
+			}
+
 		} else {
 			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
 		}

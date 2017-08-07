@@ -66,7 +66,7 @@ public class ChapterManager {
 		PoolManager.getInstance ().clearPool ();
 		setChapterId (_campaignId);
 
-        SceneManager.LoadScene("scene3D");
+        SceneManager.LoadScene("ChapterScene2");
 
 		//loveNum = cd.chapterLoveNum;
     }

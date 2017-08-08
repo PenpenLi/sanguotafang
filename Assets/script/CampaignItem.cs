@@ -98,6 +98,6 @@ public class CampaignItem : MonoBehaviour {
 			**/
 		//ChapterManager.getInstance ().chapterType = chapterType;
 		//ChapterManager.getInstance().setChapterId(campaignId);
-		ChapterManager.getInstance().GotoChapterScene(campaignId);
+		ChapterManager2.getInstance().GotoChapterScene(campaignId);
 	}
 }

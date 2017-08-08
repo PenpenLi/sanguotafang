@@ -17,3 +17,5 @@ id,name,style,hp,monsterType,pr,sr,speed,moveType,desc,attack
 14,盗贼头目,monster/daozeitoumu,60,1,0,5,1,1,对法术攻击有一定的抵抗能力,1
 15,莽夫,monster/mangfu,60,1,0,5,1,1,对法术攻击有一定的抵抗能力,1
 16,关羽,monster/guanyu,600,1,0,5,1,1,对法术攻击有一定的抵抗能力,5
+17,贪婪的毒章鱼,monster/duzhangyu,1000,1,0,0,1,1,传说中最low的怪物。。,50
+18,魔化的巨型章鱼,monster/mohuazhangyu,3000,1,0,0,1,1,传说中最low的怪物。。,100

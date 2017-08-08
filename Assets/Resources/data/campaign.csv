@@ -1,12 +1,12 @@
 id,chapter,name,mapPath,monsters,towers,hp,drop,type
 0,所属章节,名字,地图路径,怪物表读取路径,塔读取的路径,关卡血量,掉落物品ID(id_数量_概率),战役难度
-1,1,平津,maps/01,data/wave/monster101,data/tower/tower001,9,101_100_1|1000_30_1|1001_3_1,1
-2,1,长社,maps/01,data/wave/monster102,data/tower/tower001,9,101_100_1|1000_40_1|1001_1_1,1
-3,1,南阳,maps/01,data/wave/monster103,data/tower/tower001,9,101_100_1|1000_50_1|3001_1_0.5,2
-4,1,西华关,maps/01,data/wave/monster104,data/tower/tower001,9,101_200_1|1000_60_1,1
-5,1,下邳,maps/01,data/wave/monster105,data/tower/tower001,9,101_300_1|1000_70_1,1
-6,1,广宗大营,maps/01,data/wave/monster106,data/tower/tower001,9,101_400_1|1000_80_1|3013_1_0.1,2
-7,1,宛城 ,maps/01,data/wave/monster107,data/tower/tower001,9,101_500_1|1000_90_1|6001_1_0.1,3
+1,1,平津,maps/001,data/pve/monster101,data/tower/tower001,9,101_100_1|1000_30_1|1001_3_1,1
+2,1,长社,maps/001,data/pve/monster102,data/tower/tower001,9,101_100_1|1000_40_1|1001_1_1,1
+3,1,南阳,maps/001,data/pve/monster103,data/tower/tower001,9,101_100_1|1000_50_1|3001_1_0.5,2
+4,1,西华关,maps/001,data/pve/monster104,data/tower/tower001,9,101_200_1|1000_60_1,1
+5,1,下邳,maps/001,data/pve/monster105,data/tower/tower001,9,101_300_1|1000_70_1,1
+6,1,广宗大营,maps/001,data/pve/monster106,data/tower/tower001,9,101_400_1|1000_80_1|3013_1_0.1,2
+7,1,宛城 ,maps/001,data/pve/monster107,data/tower/tower001,9,101_500_1|1000_90_1|6001_1_0.1,3
 8,2,虎牢关,maps/02,data/wave/monster201,data/tower/tower002,9,101_600_1|1000_100_1,1
 9,2,荥阳,maps/02,data/wave/monster202,data/tower/tower002,9,101_600_1|1000_100_1,1
 10,2,梁县,maps/02,data/wave/monster203,data/tower/tower002,9,101_600_1|1000_100_1,1

@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-
+using SimpleJson;
 public class MonsterManager {
 	private string[][] monsterList;
 	private static MonsterManager _monsterManager;
@@ -68,6 +68,19 @@ public class MonsterManager {
 	public void initMonsterData(string monsterPath){
 		monsterList = DataManager.getInstance ().getData (monsterPath,"\r\n",0);
 
+	}
+	public ArrayList getPveMonstersByBoShu(int boshu,Transform _parent){
+		int siblingIndex = 200;
+		ArrayList list = new ArrayList ();
+		for(int i =1;i < monsterList.Length; i++)
+		{  
+			string [] oneData = monsterList[i];
+			int b = int.Parse(oneData [0]);
+			if(boshu == b){
+				list.Add (oneData);
+			}
+		}
+		return list;
 	}
 	public ArrayList getMonstersByBoShu(int boshu,Transform _parent){
 		int siblingIndex = 200;

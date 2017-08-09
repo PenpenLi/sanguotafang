@@ -32,27 +32,31 @@ public class PveMonster : PveEntity {
 	}
 	public void onClick(){
 		if (isCanHit) {
+			pvescene.ischeckBout = false;
 			isCanHit = false;
 			pvescene.hideAllMonsterSelect ();
 			/////////////////////////////////////////////////////////////////
-			JsonObject jo = pvescene.selectSkill;
+			JsonObject jo = pvescene.pveHero.selectSkill;
 			if (jo != null && jo.ContainsKey ("skillType")) {//选择的是技能
-				int skillType = int.Parse (jo.ContainsKey ("skillType").ToString ());
-				if (skillType > 10) {//技能类型是攻击性的
-				
-				} else {//技能类型是加BUFF的
-				
+				int skillType = int.Parse (jo["skillType"].ToString ());
+				//pvescene.pveHero.updateSkillTurn ();
+				switch (skillType) {
+				case 1:
+					onHit (pvescene.skillDamage);
+					break;
+				case 2:
+					pvescene.attackAllMonster (pvescene.skillDamage);
+					break;
+				default:
+					break;
 				}
 			
 			} else {//选择的是武器
 				onHit (pvescene.equipDamage);
 			}
-
+			//pvescene.checkBout ();
 			/////////////////////////////////////////////////////////////////////
 
-			Loom.QueueOnMainThread (() => {
-				pvescene.setNextAttackEntityBySpeed ();
-			}, 1.0f);
 		}
 	}
 	public override void active(){
@@ -60,10 +64,9 @@ public class PveMonster : PveEntity {
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 0, "easeType", iTween.EaseType.linear, "loopType", "none", "time", 0.2f));
 		Loom.QueueOnMainThread (() => {
 			disActive();
+			pvescene.ischeckBout = false;
 			pvescene.PveEntityList[0].onHit(100);
-			Loom.QueueOnMainThread (() => {
-				pvescene.setNextAttackEntityBySpeed ();
-			}, 1.0f);
+
 		}, 0.2f);
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));
 		//pvescene.setSkillsAndEquip (entityData);

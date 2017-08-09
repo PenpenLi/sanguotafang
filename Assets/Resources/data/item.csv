@@ -42,18 +42,18 @@ id,name,desc,color,itemType,heroId,price,heroLevel,icon,addExp,upLimit,attackVal
 1028,5级攻速石,给镶嵌的装备提供属性加成，四个可以进行合成。,red,2,0,,0,1016,5,1,0,0,0,0
 1029,5级暴击石,给镶嵌的装备提供属性加成，四个可以进行合成。,red,2,0,,0,1017,5,1,0,0,0,0
 1030,5级抗暴石,给镶嵌的装备提供属性加成，四个可以进行合成。,red,2,0,,0,1018,5,1,0,0,0,0
-8001,星火剑,Red tasselled pear,green,5,0,,,8001,,1,33,100,0,weapon
-8002,雷云剑,Double dagger,green,5,0,,,8001,,1,52,101,0,weapon
-8003,极限法剑,Bronze dagger,green,5,0,,,8001,,1,71,102,0,weapon
-8004,吴越剑,Wuyue sword,blue,5,0,,,8001,,1,90,103,0,weapon
-8005,龙泉剑,Longquan sword,blue,5,0,,,8001,,1,109,104,0,weapon
-8006,龙渊,Ebony trident,blue,5,0,,,8001,,1,128,105,0,weapon
-8007,金蛇信,Golden snake sword,blue,5,0,,,8001,,1,147,106,0,weapon
-8008,寒雪枪,Bronze axe,blue,5,0,,,8001,,1,166,107,0,weapon
-8009,丰城剑,Spike knife,blue,5,0,,,8001,,1,185,108,0,weapon
-8010,悲欢剑,Bamboo double sword,blue,5,0,,,8001,,1,204,109,0,weapon
-8011,赤云剑,Flame spear,blue,5,0,,,8001,,1,240,110,0,weapon
-8012,承影,Goose wing knife,red,5,0,,,8012,,1,280,111,0,weapon
+8001,星火剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,green,5,0,,,8001,,1,33,100,0,weapon
+8002,雷云剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,green,5,0,,,8001,,1,52,101,0,weapon
+8003,极限法剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,green,5,0,,,8001,,1,71,102,0,weapon
+8004,吴越剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,90,103,0,weapon
+8005,龙泉剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,109,104,0,weapon
+8006,龙渊,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,128,105,0,weapon
+8007,金蛇信,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,147,106,0,weapon
+8008,寒雪枪,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,166,107,0,weapon
+8009,丰城剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,185,108,0,weapon
+8010,悲欢剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,204,109,0,weapon
+8011,赤云剑,给目标造成<color=#FF0000>{0}</color> 物理伤害。,blue,5,0,,,8001,,1,240,110,0,weapon
+8012,承影,给目标造成<color=#FF0000>{0}</color> 物理伤害。,red,5,0,,,8012,,1,280,111,0,weapon
 8013,布衣,Cloth,green,5,0,,,8013,,1,0,112,21,armor
 8014,皮衣,Fur clothing,green,5,0,,,8013,,1,0,113,36,armor
 8015,紧身衣,Tights,blue,5,0,,,8013,,1,0,114,51,armor
@@ -89,3 +89,4 @@ id,name,desc,color,itemType,heroId,price,heroLevel,icon,addExp,upLimit,attackVal
 8110,女娲石,Nvwa Ore,green,5,0,,,8103,,1,0,144,46,amulet
 8111,灵魂之石,Soul stone,green,5,0,,,8103,,1,15,145,50,amulet
 8112,地狱之门,Gate of Hell,yellow,5,0,,,8103,,1,44,146,44,amulet
+10000,徒手,给目标造成<color=#FF0000>{0}</color> 物理伤害。,green,5,0,,,10000,,1,0,0,0,weapon

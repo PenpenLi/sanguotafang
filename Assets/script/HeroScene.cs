@@ -10,6 +10,7 @@ using Spine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 public delegate void callBackFunc<JsonObject>(JsonObject jo);
+public delegate void callBack();
 public class HeroScene : Observer {
     //public UnityEngine.UI.Image bg;
     // Use this for initialization

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using SimpleJson;
@@ -15,7 +16,7 @@ public class PveEntity : MonoBehaviour {
 	protected int currentHP;//当前血量
 	protected int maxHP;//最大血量
 	protected PveScene pvescene;
-	protected JsonObject entityData;
+	public JsonObject entityData;
 	public bool isCanHit = false;//是否可以被攻击
 	public int speed = 0;//出手速度
 	// Use this for initialization
@@ -28,23 +29,32 @@ public class PveEntity : MonoBehaviour {
 		
 	}
 	public void onHit(int _demage){
-		iTween.ShakePosition (style.gameObject, new Vector3 (5.0f, 5.0f, 0.0f), 0.2f);
+		Bleed bleed = (Bleed)PoolManager.getInstance ().getGameObject ("Bleed");
+		if (_demage > 0) {
+			iTween.ShakePosition (style.gameObject, new Vector3 (5.0f, 5.0f, 0.0f), 0.2f);
+			bleed.blood.color = DataManager.getInstance ().getColor ("red");
+		} else {
+			//加血
+			bleed.blood.color = DataManager.getInstance ().getColor ("green");
+		}
 		currentHP = currentHP - _demage;
 		currentHP = currentHP >= 0 ? currentHP : 0;
+		currentHP = currentHP >= maxHP ? maxHP : currentHP;
 		float xscale = (float)currentHP / (float)maxHP;
 		HP.transform.localScale = new Vector3 (xscale,1,1);
-		HPTxt.text = ((int)(xscale * 100)).ToString () + "%";
-		Loom.QueueOnMainThread (() => {
+		HPTxt.text = (Math.Ceiling(xscale * 100)).ToString () + "%";
+
+		bleed.transform.SetParent (style.transform);
+		bleed.show (-_demage,() => {
 			if (currentHP == 0) {
 				onDead ();
 			}
-		},0.5f);
+			pvescene.checkBout ();
+		});
 
 	}
 	public void onDead(){
 		PoolManager.getInstance ().addToPool (this.type,this);
-		pvescene.checkBout ();
-		
 	}
 	public void showSelect(){
 		if (!select.isActiveAndEnabled) {

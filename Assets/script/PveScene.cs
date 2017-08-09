@@ -10,10 +10,10 @@ public class PveScene : Observer {
 	//public PveMonster monster2;
 	//public PveMonster monster3;
 
-	public PveHero pvehero1;
-	public PveHero pvehero2;
-	public PveHero pvehero3;
-	public PveHero pvehero4;
+	//public PveHero pvehero1;
+	//public PveHero pvehero2;
+	//public PveHero pvehero3;
+	//public PveHero pvehero4;
 	public Dictionary<int,PveHero> PveHeroList;
 	public Dictionary<int,PveMonster> PveMonsterList;
 	public Dictionary<int,Button> skillList;
@@ -30,9 +30,8 @@ public class PveScene : Observer {
 	public RawImage selectKuang;
 	public int actIndex = 0;
 
-	public int equipDamage =0;
-	public int skillDamage =0;
 	public Image bg;
+	public Image heroPanel;
 	public int monsterBoShu = 1;//怪物第几波
 	public PveHero pveHero;//当前出手的英雄数据
 	public bool ischeckBout = false;
@@ -43,10 +42,10 @@ public class PveScene : Observer {
 		PveEntityList = new List<PveEntity> ();
 		skillList = new Dictionary<int, Button> ();
 		IconBaseList = new ArrayList ();
-		PveHeroList [0] = pvehero1;
-		PveHeroList [1] = pvehero2;
-		PveHeroList [2] = pvehero3;
-		PveHeroList [3] = pvehero4;
+		//PveHeroList [0] = pvehero1;
+		//PveHeroList [1] = pvehero2;
+		//PveHeroList [2] = pvehero3;
+		//PveHeroList [3] = pvehero4;
 
 		//PveMonsterList [0] = monster1;
 		//PveMonsterList [1] = monster2;
@@ -56,9 +55,9 @@ public class PveScene : Observer {
 		skillList [1] = skill2;
 		skillList [2] = skill3;
 		skillList [3] = skill4;
-		foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
-			kvp.Value.gameObject.SetActive (false);
-		}
+		//foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
+		//	kvp.Value.gameObject.SetActive (false);
+		//}
 
 		initBg ();
 		initHero ();
@@ -73,7 +72,7 @@ public class PveScene : Observer {
 		//bg.SetNativeSize ();
 
 		//屏幕适配,按宽度缩放
-		float retio = (float)(Screen.width) / (float)(bg.sprite.rect.width);
+		/**float retio = (float)(Screen.width) / (float)(bg.sprite.rect.width);
 		float retioBg = (float)(Screen.height) / (float)(bg.sprite.rect.height);
 		if (retio < retioBg)
 		{
@@ -83,19 +82,42 @@ public class PveScene : Observer {
 		{
 			bg.transform.localScale = new Vector3(retioBg, retioBg, 0);
 		}
+		**/
 	}
 	public void initHero(){
 		Dictionary<int,JsonObject> heroarr = HeroManager.getInstance().getHeros();
 		int index = 0;
+		int pos = 7;
 		foreach(KeyValuePair<int,JsonObject> kvp in heroarr)
 		{
-			PveHeroList[index].gameObject.SetActive (true);
-			PveHeroList[index].init (kvp.Value,this);
-
+			//PveHeroList[index].gameObject.SetActive (true);
+			//PveHeroList[index].init (kvp.Value,this);
+			PveHero pvehero = (PveHero)PoolManager.getInstance ().getGameObject ("PveHero");
+			//foreach (KeyValuePair<int,PveMonster> kvp in PveMonsterList) {
+			pvehero.transform.SetParent (heroPanel.transform);
+			pvehero.transform.localScale = Vector3.one;
+			JsonObject _monsterpos = DataManager.getInstance ().pvePosJson [pos];
+			pvehero.transform.localPosition = new Vector3 (float.Parse (_monsterpos ["x"].ToString ()), float.Parse (_monsterpos ["y"].ToString ()), float.Parse (_monsterpos ["z"].ToString ()));
+			pvehero.init (kvp.Value,this);
+			PveHeroList [index] = pvehero;
 			index++;
+			pos++;
 			////////////////////////////////////
 
 		}
+	}
+	public PveHero getHighestThreatHero(){//获取仇恨值最高的英雄，供怪物虐
+		int threat = 0;
+		PveHero pvehero = null;
+		foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
+			if (kvp.Value.isActiveAndEnabled) {
+				if (kvp.Value.threat > threat) {
+					threat = kvp.Value.threat;
+					pvehero = kvp.Value;
+				}
+			}
+		}
+		return pvehero;
 	}
 	public void attackAllMonster(int damage){
 		foreach (KeyValuePair<int,PveMonster> kvp in PveMonsterList) {
@@ -286,7 +308,7 @@ public class PveScene : Observer {
 		/////////////////////////////////////////////////////////////////
 		pveHero = pvehero;
 		int heroId = int.Parse (pvehero.entityData ["heroId"].ToString ());
-		equipDamage =  DataManager.getInstance().getHeroDamage(pvehero.entityData);
+		//equipDamage =  DataManager.getInstance().getHeroDamage(pvehero.entityData);
 		ArrayList equipArr = BagManager.getInstance ().getEquipByHeroId (heroId);
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (pvehero.entityData);
 
@@ -316,7 +338,7 @@ public class PveScene : Observer {
 			skill.image.sprite = Resources.Load(skilldata["icon"].ToString(),typeof(Sprite)) as Sprite;
 			skill.image.SetNativeSize ();
 			skilldata ["pos"] = i;
-			skilldata ["currentTurn"] = pvehero.skillTurnDic[skillid];
+			//skilldata ["currentTurn"] = pvehero.skillTurnDic[skillid];
 			addIcon (skill,skilldata,pvehero.skillTurnDic[skillid]);
 		}
 	}
@@ -325,7 +347,7 @@ public class PveScene : Observer {
 		pveHero.selectSkill = jo;
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (pveHero.entityData);
 		int id = int.Parse (staticdata ["attackType"].ToString ()) + 10000;
-		skillInfo.text = string.Format (DataManager.getInstance ().languageJson [id]["name"].ToString(), equipDamage);
+		skillInfo.text = string.Format (DataManager.getInstance ().languageJson [id]["name"].ToString(), pveHero.getEquipDamage());
 		selectKuang.transform.SetParent (null);
 		selectKuang.transform.SetParent (equip.transform);
 		selectKuang.transform.localPosition = Vector3.zero;
@@ -344,15 +366,14 @@ public class PveScene : Observer {
 	}
 	public void onClickSkill(JsonObject jo){
 		//Debug.Log (jo.ToString());
-		int turn = int.Parse (jo["currentTurn"].ToString());
-		if (turn == 0) {//回合数冷却了之后才能用
-			pveHero.selectSkill = jo;
+		//int turn = int.Parse (jo["currentTurn"].ToString());
+		if (pveHero.isCanUseSkill(jo)) {//回合数冷却了之后才能用
+			//pveHero.selectSkill = jo;
 			int target = int.Parse (jo ["target"].ToString ());
-			int _demage = int.Parse (jo ["attackDamage"].ToString ());
-			float _add = float.Parse (jo ["attackAdd"].ToString ());
-			skillDamage = _demage + (int)(_add * equipDamage);
+			//int _demage = int.Parse (jo ["attackDamage"].ToString ());
+			//float _add = float.Parse (jo ["attackAdd"].ToString ());
 			//技能自身伤害+普攻的百分比伤害
-			skillInfo.text = skillInfo.text = string.Format (jo ["desc"].ToString (), skillDamage);
+			skillInfo.text = skillInfo.text = string.Format (jo ["desc"].ToString (), pveHero.getSelectedSkillDamage());
 			int pos = int.Parse (jo ["pos"].ToString ());
 			Button skill = skillList [pos - 1];
 			selectKuang.transform.SetParent (null);

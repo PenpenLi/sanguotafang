@@ -15,6 +15,8 @@ public class PveEntity : MonoBehaviour {
 	public Text entityName;
 	protected int currentHP;//当前血量
 	protected int maxHP;//最大血量
+	protected int currentMP;//当前血量
+	protected int maxMP;//最大血量
 	protected PveScene pvescene;
 	public JsonObject entityData;
 	public bool isCanHit = false;//是否可以被攻击
@@ -27,6 +29,14 @@ public class PveEntity : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+	public void changeMP(int mp){
+		currentMP -= mp;
+		currentMP = currentMP >= 0 ? currentMP : 0;
+		currentMP = currentMP >= maxMP ? maxMP : currentMP;
+		float xscale = (float)currentMP / (float)maxMP;
+		MP.transform.localScale = new Vector3 (xscale,1,1);
+		MPTxt.text = (Math.Ceiling(xscale * 100)).ToString () + "%";
 	}
 	public void onHit(int _demage){
 		Bleed bleed = (Bleed)PoolManager.getInstance ().getGameObject ("Bleed");

@@ -42,17 +42,17 @@ public class PveMonster : PveEntity {
 				//pvescene.pveHero.updateSkillTurn ();
 				switch (skillType) {
 				case 1:
-					onHit (pvescene.skillDamage);
+					onHit (pvescene.pveHero.getSelectedSkillDamage(true));
 					break;
 				case 2:
-					pvescene.attackAllMonster (pvescene.skillDamage);
+					pvescene.attackAllMonster (pvescene.pveHero.getSelectedSkillDamage(true));
 					break;
 				default:
 					break;
 				}
 			
 			} else {//选择的是武器
-				onHit (pvescene.equipDamage);
+				onHit (pvescene.pveHero.getEquipDamage(true));
 			}
 			//pvescene.checkBout ();
 			/////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public class PveMonster : PveEntity {
 		Loom.QueueOnMainThread (() => {
 			disActive();
 			pvescene.ischeckBout = false;
-			pvescene.PveEntityList[0].onHit(100);
+			pvescene.getHighestThreatHero().onHit(100);
 
 		}, 0.2f);
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));

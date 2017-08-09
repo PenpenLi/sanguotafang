@@ -37,13 +37,14 @@ public class SkillInfo : MonoBehaviour {
 		/// 初始化武器信息
 		/// </summary>
 		/// //技能
-		JsonObject herodata = DataManager.getInstance().heroDicJson[int.Parse(jo["heroId"].ToString())];
-		jo = DataManager.getInstance().skillDicJson[int.Parse(herodata["skill1"].ToString())];
+		//JsonObject herodata = DataManager.getInstance().heroDicJson[int.Parse(jo["heroId"].ToString())];
+		//jo = DataManager.getInstance().skillDicJson[int.Parse(herodata["skill1"].ToString())];
 		if (jo.ContainsKey ("icon")) {
 			icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
 		} else {
 			icon.sprite = (Resources.Load(jo["id"].ToString(), typeof(Sprite)) as Sprite);
 		}
+		data ["skillLevel"] = 1;
 		icon.SetNativeSize();
 		itemName.text = "Lv." + data["skillLevel"].ToString() + " " + jo ["name"].ToString ();
 		itemInfo.text = jo ["desc"].ToString ();

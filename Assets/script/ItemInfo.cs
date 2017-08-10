@@ -87,11 +87,8 @@ public class ItemInfo : MonoBehaviour {
 		/// <summary>
 		/// 初始化武器信息
 		/// </summary>
-		if (jo.ContainsKey ("icon")) {
-			icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
-		} else {
-			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
-		}
+		icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
+	
 		icon.SetNativeSize();
 		itemName.text = jo ["name"].ToString ();
 		itemInfo.text = jo ["desc"].ToString ();

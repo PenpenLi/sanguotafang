@@ -39,14 +39,14 @@ public class MainScene : Observer {
 			//herodata = HeroManager.getInstance ().getHeros () [heroid];
 			int index = heroarr.LastIndexOf (herodata);
 			index = index + 1 < heroarr.Count ? index + 1 : 0;
-			changeHero(heroarr [index] as JsonObject);
+			//changeHero(heroarr [index] as JsonObject);
 
 		}
 		t++;
 
 	}
 	public void fresh(){
-		changeHero (herodata);
+		//changeHero (herodata);
 	}
 	void changeHero(JsonObject _herodata){
 		t =0;

@@ -117,7 +117,8 @@ public class PveHero : PveEntity {
 		}
 	}
 	public void onClick(){
-		if (isCanHit) {
+		base.onClick ();
+		/**if (isCanHit) {
 			pvescene.ischeckBout = false;
 			isCanHit = false;
 			pvescene.hideAllHeroSelect ();
@@ -142,7 +143,7 @@ public class PveHero : PveEntity {
 
 			/////////////////////////////////////////////////////////////////////
 
-		}
+		}**/
 	}
 	public override void active(){
 		iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));

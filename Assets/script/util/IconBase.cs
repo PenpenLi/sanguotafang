@@ -39,25 +39,16 @@ public class IconBase : MonoBehaviour {
 		count.gameObject.SetActive (false);
 		itemType = 0;
 		data = jo;
-		jo = BagManager.getInstance ().getItemStaticData (jo);
-		if (!jo.ContainsKey ("icon")) {
-			jo = HeroManager.getInstance ().getHeroStaticData (jo);
-		}
+		jo = DataManager.getInstance().getStaticData(jo);//BagManager.getInstance ().getItemStaticData (jo);
+		//if (!jo.ContainsKey ("icon")) {
+		//	jo = HeroManager.getInstance ().getHeroStaticData (jo);
+		//}
 		if (jo.ContainsKey ("itemType")) {
 			itemType = int.Parse (jo ["itemType"].ToString ());
 		}
 
 		Func = null;
-		if (jo.ContainsKey ("icon")) {
-			if (jo.ContainsKey ("skillType")) {
-				icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
-			} else {
-				icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
-			}
-
-		} else {
-			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
-		}
+		icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
 		if (jo.ContainsKey ("heroId")) {//英雄碎片
 			int heroId = int.Parse (jo ["heroId"].ToString ());
 			if (int.Parse (jo ["heroId"].ToString ()) >= 6000) {

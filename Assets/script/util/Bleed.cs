@@ -21,7 +21,7 @@ public class Bleed : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		if (isPlay) {
 			if (playType == 1) {
 				playBlood ();
@@ -59,7 +59,7 @@ public class Bleed : MonoBehaviour {
 	}
 	public void playBlood(){
 		if (step == 1) {//放大阶段
-			if (currentScale.x < 2.0f) {
+			if (currentScale.x < 3.0f) {
 				currentScale.x = currentScale.y = currentScale.z += 0.5f;
 				transform.localScale = currentScale;
 			} else {
@@ -67,28 +67,32 @@ public class Bleed : MonoBehaviour {
 			}
 		}else if(step == 2){//回到正常大小阶段
 			if (currentScale.x > 1.0f) {
-				currentScale.x = currentScale.y = currentScale.z -= 0.1f;
+				currentScale.x = currentScale.y = currentScale.z -= 0.3f;
 				transform.localScale = currentScale;
 			} else {
 				step = 3;
+				Loom.QueueOnMainThread (() => {
+					if (action != null) {
+						action ();
+					}
+				}, 0.5f);
 			}
 		}else if(step == 3){//向上移动阶段
 			if (transform.localPosition.y < 30) {
-				transform.Translate (new Vector3 (0, 1, 0));
-				//Color color = blood.color;
-				//color.a -=0.03f;
-				//blood.color = color;
+				transform.Translate (new Vector3 (0, 0.5f, 0));
+				Color color = blood.color;
+				color.a -=0.01f;
+				blood.color = color;
 			} else {
 				isPlay = false;
 				step = 1;
 				currentScale = Vector3.zero;
-				//Color color = blood.color;
-				//color.a =1.0f;
-				//blood.color = color;
+				Color color = blood.color;
+				color.a =1.0f;
+				blood.color = color;
 				PoolManager.getInstance ().addToPool (type,this);
-				if (action != null) {
-					action ();
-				}
+
+
 			}
 		}
 	}

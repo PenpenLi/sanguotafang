@@ -21,6 +21,7 @@ public class PveEntity : MonoBehaviour {
 	public JsonObject entityData;
 	public bool isCanHit = false;//是否可以被攻击
 	public int speed = 0;//出手速度
+	public IconBase iconBase;
 	// Use this for initialization
 	void Start () {
 		
@@ -54,7 +55,7 @@ public class PveEntity : MonoBehaviour {
 		HP.transform.localScale = new Vector3 (xscale,1,1);
 		HPTxt.text = (Math.Ceiling(xscale * 100)).ToString () + "%";
 
-		bleed.transform.SetParent (style.transform);
+		bleed.transform.SetParent (this.transform);
 		bleed.show (-_demage,() => {
 			if (currentHP == 0) {
 				onDead ();
@@ -63,7 +64,18 @@ public class PveEntity : MonoBehaviour {
 		});
 
 	}
+	public void onClick(){
+		if (isCanHit) {
+			isCanHit = false;
+			pvescene.attackEntity (this);
+		}
+
+	}
 	public void onDead(){
+		if (iconBase != null) {
+			PoolManager.getInstance ().addToPool (iconBase.type,iconBase);
+			iconBase = null;
+		}
 		PoolManager.getInstance ().addToPool (this.type,this);
 	}
 	public void showSelect(){

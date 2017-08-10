@@ -116,11 +116,11 @@ public class EquipInfo :Observer {
 		/// </summary>
 		kind = jo["kind"].ToString();
 		equipId = int.Parse(jo["id"].ToString());
-		if (jo.ContainsKey ("icon")) {
-			icon.sprite = (Resources.Load("icon/" + jo["icon"].ToString(), typeof(Sprite)) as Sprite);
-		} else {
-			icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
-		}
+		//if (jo.ContainsKey ("icon")) {
+		icon.sprite = (Resources.Load(jo["icon"].ToString(), typeof(Sprite)) as Sprite);
+		//} else {
+		//	icon.sprite = (Resources.Load("icon/" + jo["id"].ToString(), typeof(Sprite)) as Sprite);
+		//}
 		icon.SetNativeSize();
 		pinzhi = DataManager.getInstance ().getPinZhi(jo ["color"].ToString ());
 		if (data.ContainsKey ("level")) {

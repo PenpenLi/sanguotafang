@@ -91,11 +91,11 @@ public class BagPanel : Observer {
 		//ico.transform.SetParent (this.transform);
 		//ico.transform.localScale = new Vector3 (0.6f,0.6f,0.6f);
 		//ico.transform.localPosition = new Vector3 (100,-this.GetComponent<Image>().rectTransform.rect.height/2,0);
-		if (staticData.ContainsKey ("icon")) {
-			icon.sprite = (Resources.Load("icon/" + staticData["icon"].ToString(), typeof(Sprite)) as Sprite);
-		} else if(data.ContainsKey ("id")){
-			icon.sprite = (Resources.Load("icon/" + staticData["id"].ToString(), typeof(Sprite)) as Sprite);
-		}
+		//if (staticData.ContainsKey ("icon")) {
+			icon.sprite = (Resources.Load(staticData["icon"].ToString(), typeof(Sprite)) as Sprite);
+		//} else if(data.ContainsKey ("id")){
+		//	icon.sprite = (Resources.Load("icon/" + staticData["id"].ToString(), typeof(Sprite)) as Sprite);
+		//}
 		openType = _openType;
 		//icon.sprite = ("icon/" + staticdata["icon"].ToString(), typeof(Sprite)) as Sprite);
 		//icon.SetNativeSize();

@@ -542,4 +542,18 @@ public class DataManager {
 	public string getJsonStringValue(JsonObject jo,string key){
 		return jo [key].ToString ();
 	}
+	public JsonObject getStaticData(JsonObject item){
+		if (!item.ContainsKey ("desc")) {
+			if (item.ContainsKey ("itemId")) {
+				int itemid = int.Parse (item ["itemId"].ToString ());
+				if (DataManager.getInstance ().itemDicJson.ContainsKey (itemid))
+					return DataManager.getInstance ().itemDicJson [itemid];
+			} else if (item.ContainsKey ("heroId")) {
+				int heroid = int.Parse (item ["heroId"].ToString ());
+				if (DataManager.getInstance ().heroDicJson.ContainsKey (heroid))
+					return DataManager.getInstance ().heroDicJson [heroid];
+			}
+		}
+		return item;
+	}
 }

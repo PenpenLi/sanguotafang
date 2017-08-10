@@ -31,7 +31,8 @@ public class PveMonster : PveEntity {
 		hideSelect ();
 	}
 	public void onClick(){
-		if (isCanHit) {
+		base.onClick ();
+		/**if (isCanHit) {
 			pvescene.ischeckBout = false;
 			isCanHit = false;
 			pvescene.hideAllMonsterSelect ();
@@ -57,7 +58,7 @@ public class PveMonster : PveEntity {
 			//pvescene.checkBout ();
 			/////////////////////////////////////////////////////////////////////
 
-		}
+		}**/
 	}
 	public override void active(){
 		iTween.MoveBy(style.gameObject, iTween.Hash("y", 50, "easeType", iTween.EaseType.linear, "loopType", "pingPing", "time", 0.3f));

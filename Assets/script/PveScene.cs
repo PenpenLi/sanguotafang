@@ -32,6 +32,8 @@ public class PveScene : Observer {
 
 	public Image bg;
 	public Image heroPanel;
+	public Image skillPanel;
+	public Transform attackList;
 	public int monsterBoShu = 1;//怪物第几波
 	public PveHero pveHero;//当前出手的英雄数据
 	public bool ischeckBout = false;
@@ -207,7 +209,7 @@ public class PveScene : Observer {
 				}
 			}
 			initMonster ();
-
+			skillPanel.gameObject.SetActive (false);
 			//sortEntityBySpeed ();
 		} else if (isAllHeroDead) {
 			gameOver ();
@@ -252,6 +254,23 @@ public class PveScene : Observer {
 				}
 			}
 		}
+		IconBase[] array = attackList.GetComponentsInChildren<IconBase> ();
+		for(int i = 0; i < array.Length ; i++){
+			IconBase icon = array [i];
+			PoolManager.getInstance ().addToPool (icon.type,icon);
+		}
+		for (int i = 0; i < PveEntityList.Count; i++)
+		{
+			
+			JsonObject jo = DataManager.getInstance ().getStaticData (PveEntityList [i].entityData);
+			IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo["color"].ToString());
+			icon.init (PveEntityList [i].entityData).Func = new callBackFunc<JsonObject> (onClickCallBack);
+			icon.transform.SetParent (attackList);
+			//icon.transform.localPosition = Vector3.zero;
+			icon.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+			PveEntityList [i].iconBase = icon;
+		}
+
 	
 	}
 	public void setNextAttackEntityBySpeed(){//通过优先度选择下一个出手的对象
@@ -259,7 +278,8 @@ public class PveScene : Observer {
 
 			if (actIndex > 0) {
 				PveEntityList [actIndex - 1].disActive ();
-
+				PveEntityList [actIndex - 1].iconBase.transform.SetParent (null);
+				PveEntityList [actIndex - 1].iconBase.transform.SetParent (attackList);
 
 			}
 			if (actIndex >= PveEntityList.Count) {
@@ -273,6 +293,7 @@ public class PveScene : Observer {
 			pveHero = null;
 			if (PveEntityList [actIndex].isActiveAndEnabled) {
 				PveEntityList [actIndex].active ();
+				skillPanel.gameObject.SetActive (true);
 				actIndex++;
 			} else {
 				PveEntityList.RemoveAt (actIndex);
@@ -387,6 +408,46 @@ public class PveScene : Observer {
 				showAllHeroSelect ();
 			}
 		}
+	}
+	/// <summary>
+	/// //////////
+	/// </summary>
+	/// <param name="pveentity">对攻击的对象.</param>
+	public void attackEntity(PveEntity pveentity){
+		ischeckBout = false;
+		hideAllHeroSelect ();
+		hideAllMonsterSelect ();
+		/////////////////////////////////////////////////////////////////
+		JsonObject jo = pveHero.selectSkill;
+		if (jo != null && jo.ContainsKey ("skillType")) {//选择的是技能
+			int skillType = int.Parse (jo["skillType"].ToString ());
+			//pvescene.pveHero.updateSkillTurn ();
+			switch (skillType) {
+			case 1:
+				pveentity.onHit (pveHero.getSelectedSkillDamage(true));
+				break;
+			case 2:
+				attackAllMonster (pveHero.getSelectedSkillDamage(true));
+				break;
+			case 201:
+				pveentity.onHit (-pveHero.getSelectedSkillDamage(true));
+				break;
+			case 202:
+				attackAllHero (-pveHero.getSelectedSkillDamage(true));
+				break;
+			default:
+				break;
+			}
+
+		} else {//选择的是武器
+			Effect effect = (Effect)PoolManager.getInstance ().getGameObject ("Effect");
+			effect.transform.SetParent (pveentity.transform);
+			effect.transform.localPosition = Vector3.zero;
+			effect.init ("skill/pugong");
+			pveentity.onHit (pveHero.getEquipDamage(true));
+		}
+		//pvescene.checkBout ();
+		/////////////////////////////////////////////////////////////////////
 	}
 	public void quitScene(){
 		PoolManager.getInstance ().clearPool ();

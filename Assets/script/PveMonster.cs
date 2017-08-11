@@ -27,7 +27,9 @@ public class PveMonster : PveEntity {
 		style.sprite = Resources.Load(jo["style"].ToString(),typeof(Sprite)) as Sprite;
 		style.SetNativeSize ();
 		entityName.text = jo["name"].ToString();
+		entityName.color = DataManager.getInstance ().getColor (jo["color"].ToString());
 		speed = int.Parse (jo ["speed"].ToString ());
+		equipDamage = int.Parse (jo ["attack"].ToString ());
 		hideSelect ();
 	}
 	public void onClick(){
@@ -66,7 +68,7 @@ public class PveMonster : PveEntity {
 		Loom.QueueOnMainThread (() => {
 			disActive();
 			pvescene.ischeckBout = false;
-			pvescene.getHighestThreatHero().onHit(100);
+			pvescene.getHighestThreatHero().onHit(equipDamage);
 
 		}, 0.2f);
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));

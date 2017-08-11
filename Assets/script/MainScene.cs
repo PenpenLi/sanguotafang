@@ -22,8 +22,8 @@ public class MainScene : Observer {
 
 
 
-		skeletonGraphic.Func = new callBackFunc<JsonObject> (changeHero);
-		skeletonGraphic.ClickFunc = new callBackFunc<JsonObject> (onClickButton);
+		skeletonGraphic.Func = new callBackFunJ<JsonObject> (changeHero);
+		skeletonGraphic.ClickFunc = new callBackFunJ<JsonObject> (onClickButton);
 		skeletonGraphic.heroStyleBg.gameObject.SetActive (false);
 		updateData ();
     }
@@ -48,10 +48,10 @@ public class MainScene : Observer {
 	public void fresh(){
 		//changeHero (herodata);
 	}
-	void changeHero(JsonObject _herodata){
+	void changeHero(JsonObject _d){
 		t =0;
-		skeletonGraphic.init (_herodata);
-		herodata = _herodata;
+		skeletonGraphic.init (_d);
+		herodata = _d;
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (herodata);
 		JsonObject data = herodata;
 
@@ -59,11 +59,11 @@ public class MainScene : Observer {
 		heroLevel.text = data ["level"].ToString ();
 		heroName.color = DataManager.getInstance().getColor(staticdata["color"].ToString());
 	}
-	public void onClickButton(JsonObject _herodata){
+	public void onClickButton(JsonObject _d){
 
-		if (_herodata != null && this.isActiveAndEnabled) {
+		if (_d != null && this.isActiveAndEnabled) {
 			BagManager.getInstance ().getGameScene ().onclickBtn (2);
-			int heroid = int.Parse (_herodata["heroId"].ToString());
+			int heroid = int.Parse (_d["heroId"].ToString());
 			herodata = HeroManager.getInstance ().getHeros () [heroid];
 			BagManager.getInstance ().getGameScene ().heroPanel.OnChangeHero (herodata);
 		}

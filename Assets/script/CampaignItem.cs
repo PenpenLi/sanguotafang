@@ -83,7 +83,7 @@ public class CampaignItem : MonoBehaviour {
 
 		
 	}
-	public void onClickDropItem(JsonObject jo){
+	public void onClickDropItem(IconBase jo){
 		
 	}
 	public void onTiaoZhan(){

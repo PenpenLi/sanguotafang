@@ -8,8 +8,7 @@ public class PveHero : PveEntity {
 	// Use this for initialization
 	public Dictionary<int,int> skillTurnDic;
 	public JsonObject selectSkill;
-	private int equipDamage =0;
-	private int skillDamage =0;
+
 	public int threat = 0;
 	void Awake () {
 		type = "PveHero";
@@ -65,14 +64,17 @@ public class PveHero : PveEntity {
 		return equipDamage;
 	}
 	public bool isCanUseSkill(JsonObject skilldata){
-		int skillid = int.Parse (skilldata ["id"].ToString ());
-		int needMP = skilldata.ContainsKey("needMP") ? int.Parse (skilldata ["needMP"].ToString ()): 20;
-		int turn = skillTurnDic [skillid];
-		if(turn == 0  && currentMP >= needMP){
-			selectSkill = skilldata;
-			return true;
+		if (skilldata.ContainsKey ("skillType")) {
+			int skillid = int.Parse (skilldata ["id"].ToString ());
+			int needMP = skilldata.ContainsKey ("needMP") ? int.Parse (skilldata ["needMP"].ToString ()) : 20;
+			int turn = skillTurnDic [skillid];
+			if (turn == 0 && currentMP >= needMP) {
+				//selectSkill = skilldata;
+				return true;
+			}
+			return false;
 		}
-		return false;
+		return true;
 	}
 	/// <summary>
 	/// /////////

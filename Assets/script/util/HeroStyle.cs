@@ -14,8 +14,8 @@ public class HeroStyle : MonoBehaviour {//英雄形象类，通用性，实现�
 	private JsonObject data;
 	private bool mouseState = false;
 	private Vector3 mouseDownPosition;
-	public callBackFunc<JsonObject> Func;//滑动切换英雄
-	public callBackFunc<JsonObject> ClickFunc;//点击
+	public callBackFunJ<JsonObject> Func;//滑动切换英雄
+	public callBackFunJ<JsonObject> ClickFunc;//点击
 	// Use this for initialization
 	void Start () {
 		

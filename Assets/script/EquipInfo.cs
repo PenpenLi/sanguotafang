@@ -281,13 +281,13 @@ public class EquipInfo :Observer {
 		}
 
 	}
-	public void onClickStone(JsonObject _data){
+	public void onClickStone(IconBase _data){
 		//stoneArr [pos];
 		ItemInfo _equipInfo = (ItemInfo)PoolManager.getInstance().getGameObject(PoolManager.ITEM_INFO);
 		_equipInfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 		_equipInfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 		_equipInfo.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
-		_equipInfo.init (_data);
+		_equipInfo.init (_data.data);
 
 	}
 	public void initStone(){//宝石系统

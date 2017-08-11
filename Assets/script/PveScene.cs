@@ -202,12 +202,7 @@ public class PveScene : Observer {
 			}
 		}
 		if (isOver) {//开始下一回合战斗
-			//减英雄回合数
-			foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
-				if (kvp.Value.isActiveAndEnabled) {
-					kvp.Value.updateSkillTurn ();
-				}
-			}
+			
 			initMonster ();
 			skillPanel.gameObject.SetActive (false);
 			//sortEntityBySpeed ();
@@ -216,6 +211,12 @@ public class PveScene : Observer {
 		} else {
 			if (!ischeckBout) {
 				ischeckBout = true;
+				//减英雄回合数
+				foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
+					if (kvp.Value.isActiveAndEnabled) {
+						kvp.Value.updateSkillTurn ();
+					}
+				}
 				setNextAttackEntityBySpeed ();
 			}
 		}
@@ -301,21 +302,26 @@ public class PveScene : Observer {
 			}
 		}
 	}
-	public void addIcon(Button btn,JsonObject jo,int turn = 0){
+	public IconBase addIcon(Button btn,JsonObject jo,int turn = 0){
 		IconBase icon = (IconBase)PoolManager.getInstance ().getGameObject (jo["color"].ToString());
-		icon.init (jo).Func = new callBackFunc<JsonObject> (onClickCallBack);
 		icon.transform.SetParent (btn.transform);
 		icon.transform.localPosition = Vector3.zero;
 		icon.transform.localScale = new Vector3 (1.0f,1.0f,1.0f);
+		if (!pveHero.isCanUseSkill (jo)) {
+			icon.init (jo);
+			icon.setCDTime ("");
+		} else {
+			icon.init (jo).Func = new callBackFunc<JsonObject> (onClickCallBack);
+		}
+
+
 		//equip.gameObject.SetActive (true);
 		if (turn > 0) {
-			icon.count.gameObject.SetActive (true);
-			icon.count.text = turn.ToString () + "冷却回合";
-		} else {
-			icon.count.gameObject.SetActive (false);
+			icon.setCDTime (turn.ToString());
 		}
 
 		IconBaseList.Add(icon);
+		return icon;
 	}
 	public void setSkillsAndEquip(PveHero pvehero){
 		///////////////////////清理图标///////////////////////////////
@@ -349,8 +355,7 @@ public class PveScene : Observer {
 		}
 		//if (!isHaveEquip) {//没有装备武器
 			
-			addIcon (equip,sdjo);
-			onClickEquip (sdjo);
+			onClickEquip (addIcon (equip,sdjo));
 		//}
 		for (int i = 1; i <= 4; i++) {
 			int skillid = int.Parse (staticdata ["skill" + i.ToString ()].ToString ());
@@ -361,10 +366,12 @@ public class PveScene : Observer {
 			skilldata ["pos"] = i;
 			//skilldata ["currentTurn"] = pvehero.skillTurnDic[skillid];
 			addIcon (skill,skilldata,pvehero.skillTurnDic[skillid]);
+
 		}
 	}
-	public void onClickEquip(JsonObject jo){
+	public void onClickEquip(IconBase _iconBase){
 		//Debug.Log (jo.ToString());
+		JsonObject jo = _iconBase.data;
 		pveHero.selectSkill = jo;
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (pveHero.entityData);
 		int id = int.Parse (staticdata ["attackType"].ToString ()) + 10000;
@@ -376,8 +383,8 @@ public class PveScene : Observer {
 		showAllMonsterSelect ();
 
 	}
-	public void onClickCallBack(JsonObject jo){
-		if (jo.ContainsKey ("skillType")) {//选择的是技能
+	public void onClickCallBack(IconBase jo){
+		if (jo.data.ContainsKey ("skillType")) {//选择的是技能
 			onClickSkill(jo);
 		} else {//选择的是武器
 			onClickEquip(jo);
@@ -385,16 +392,17 @@ public class PveScene : Observer {
 		}
 
 	}
-	public void onClickSkill(JsonObject jo){
+	public void onClickSkill(IconBase _iconBase){
 		//Debug.Log (jo.ToString());
 		//int turn = int.Parse (jo["currentTurn"].ToString());
-		if (pveHero.isCanUseSkill(jo)) {//回合数冷却了之后才能用
-			//pveHero.selectSkill = jo;
+		JsonObject jo = _iconBase.data;
+		//if (pveHero.isCanUseSkill (jo)) {//回合数冷却了之后才能用
+			pveHero.selectSkill = jo;
 			int target = int.Parse (jo ["target"].ToString ());
 			//int _demage = int.Parse (jo ["attackDamage"].ToString ());
 			//float _add = float.Parse (jo ["attackAdd"].ToString ());
 			//技能自身伤害+普攻的百分比伤害
-			skillInfo.text = skillInfo.text = string.Format (jo ["desc"].ToString (), pveHero.getSelectedSkillDamage());
+			skillInfo.text = skillInfo.text = string.Format (jo ["desc"].ToString (), pveHero.getSelectedSkillDamage ());
 			int pos = int.Parse (jo ["pos"].ToString ());
 			Button skill = skillList [pos - 1];
 			selectKuang.transform.SetParent (null);
@@ -407,7 +415,9 @@ public class PveScene : Observer {
 				hideAllMonsterSelect ();
 				showAllHeroSelect ();
 			}
-		}
+		//} else {
+		//	_iconBase.setCDTime ("MP");
+		//}
 	}
 	/// <summary>
 	/// //////////
@@ -446,6 +456,9 @@ public class PveScene : Observer {
 			effect.init ("skill/pugong");
 			pveentity.onHit (pveHero.getEquipDamage(true));
 		}
+		Vector3 scale = selectKuang.transform.parent.localScale;
+		iTween.ScaleTo(selectKuang.transform.parent.gameObject, iTween.Hash ("y", scale.y + 0.2f, "x", scale.x + 0.2f, "easeType", iTween.EaseType.linear, "loopType", "none", "time", 0.1));
+		iTween.ScaleTo (selectKuang.transform.parent.gameObject, iTween.Hash ("y", scale.y, "x", scale.x, "easeType", iTween.EaseType.linear, "loopType", "none", "delay", 0.1, "time", 0.1));
 		//pvescene.checkBout ();
 		/////////////////////////////////////////////////////////////////////
 	}

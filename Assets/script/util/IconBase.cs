@@ -17,8 +17,10 @@ public class IconBase : MonoBehaviour {
 	public Image sub;
 	public string type;
 	public Text count;
-	private JsonObject data;
+	public JsonObject data;
 	public int itemType = 0;
+	public Image cdPanel;
+	public Text cdTime;
 	public callBackFunc<JsonObject> Func;
 
 	void Awake () {
@@ -37,6 +39,7 @@ public class IconBase : MonoBehaviour {
 	public IconBase init(JsonObject jo){
 		sub.gameObject.SetActive (false);
 		count.gameObject.SetActive (false);
+		cdPanel.gameObject.SetActive (false);
 		itemType = 0;
 		data = jo;
 		jo = DataManager.getInstance().getStaticData(jo);//BagManager.getInstance ().getItemStaticData (jo);
@@ -71,10 +74,14 @@ public class IconBase : MonoBehaviour {
 			}
 		}
 	}
+	public void setCDTime(string txt){
+		cdPanel.gameObject.SetActive (true);
+		cdTime.text = txt;
+	}
 	public void onClick(){
 		AudioManager.instance.playBtnClick ();
 		if (Func != null) {
-			Func (data);
+			Func (this);
 		}
 	}
 }

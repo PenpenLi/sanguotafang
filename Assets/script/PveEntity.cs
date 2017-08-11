@@ -22,6 +22,8 @@ public class PveEntity : MonoBehaviour {
 	public bool isCanHit = false;//是否可以被攻击
 	public int speed = 0;//出手速度
 	public IconBase iconBase;
+	protected int equipDamage =0;
+	protected int skillDamage =0;
 	// Use this for initialization
 	void Start () {
 		

@@ -69,7 +69,7 @@ public class OtherInfoPanel : MonoBehaviour {
 
 		heroHeadList = new ArrayList();
 
-		skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
+		skeletonGraphic.Func = new callBackFunJ<JsonObject> (OnChangeHero);
 		if (_Current == null) {
 			_Current = this;
 		}
@@ -96,7 +96,7 @@ public class OtherInfoPanel : MonoBehaviour {
 				}
 				index++;
 			}
-			skeletonGraphic.Func = new callBackFunc<JsonObject> (OnChangeHero);
+			skeletonGraphic.Func = new callBackFunJ<JsonObject> (OnChangeHero);
 		}
 
 		//HeroStyle.heroarr = HeroManager.getInstance ().getHerosArrayList ();
@@ -123,18 +123,18 @@ public class OtherInfoPanel : MonoBehaviour {
 		}
 
 	}
-	public void onCallBack(JsonObject jo){
+	public void onCallBack(IconBase jo){
 		//Debug.Log (jo.ToString());
 
-		string key = BagManager.getInstance().getItemStaticData(jo) ["kind"].ToString ();
+		string key = BagManager.getInstance().getItemStaticData(jo.data) ["kind"].ToString ();
 		onClickEquip (key);
 	}
 	public void onClickEquip(string equipType){
 		openBagByType (equipType);
 		selectKind = equips[equipType];
 	}
-	public void onClickHead(JsonObject d){
-		OnChangeHero(d);
+	public void onClickHead(IconBase d){
+		OnChangeHero(d.data);
 	}
 	public void addHero(JsonObject herodata){
 

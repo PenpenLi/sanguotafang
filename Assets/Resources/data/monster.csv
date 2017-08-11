@@ -19,3 +19,9 @@ id,name,icon,style,hp,monsterType,pr,sr,speed,moveType,desc,attack,color
 16,关羽,monster/guanyu,monster/guanyu,600,1,0,5,1,1,对法术攻击有一定的抵抗能力,5,green
 17,贪婪的毒章鱼,monster/duzhangyu,monster/duzhangyu,3000,1,0,0,1,1,传说中最low的怪物。。,50,green
 18,魔化的巨型章鱼,monster/mohuazhangyu,monster/mohuazhangyu,5000,1,0,0,1,1,传说中最low的怪物。。,100,blue
+19,骷髅蚁,monster/kulouyi,monster/kulouyi,3500,1,0,0,1,1,,120,green
+20,阿尔萨斯,monster/aersasi,monster/aersasi,6000,2,0,0,300,1,,300,yellow
+21,索伦王,monster/suolunwang,monster/suolunwang,8000,2,0,0,300,1,,450,yellow
+22,红发女魔,monster/hongfanvmo,monster/hongfanvmo,3500,1,0,0,270,1,,150,blue
+23,屎壳郎君,monster/shikelangjun,monster/shikelangjun,9000,2,0,0,300,1,,500,red
+24,红袍女巫,monster/hongpaonvwu,monster/hongpaonvwu,4000,1,0,0,200,1,,200,blue

@@ -9,7 +9,8 @@ using Spine.Unity;
 using Spine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-public delegate void callBackFunc<JsonObject>(JsonObject jo);
+public delegate void callBackFunc<JsonObject>(IconBase jo);
+public delegate void callBackFunJ<JsonObject>(JsonObject jo);
 public delegate void callBack();
 public class HeroScene : Observer {
     //public UnityEngine.UI.Image bg;
@@ -252,16 +253,16 @@ public class HeroScene : Observer {
 		}
 
 	}
-	public void onCallBack(JsonObject jo){
+	public void onCallBack(IconBase jo){
 		//Debug.Log (jo.ToString());
-		if (jo.ContainsKey ("skillType")) {
+		if (jo.data.ContainsKey ("skillType")) {
 			SkillInfo skillinfo = (SkillInfo)PoolManager.getInstance().getGameObject(PoolManager.SKILL_INFO);
 
-			skillinfo.init (jo);
+			skillinfo.init (jo.data);
 			skillinfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 			skillinfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 		} else {
-			string key = BagManager.getInstance().getItemStaticData(jo) ["kind"].ToString ();
+			string key = BagManager.getInstance().getItemStaticData(jo.data) ["kind"].ToString ();
 			onClickEquip (key);
 		}
 
@@ -274,8 +275,8 @@ public class HeroScene : Observer {
     {
         SceneManager.LoadScene("MainScene");
     }
-	public void onClickHead(JsonObject d){
-		OnChangeHero(d);
+	public void onClickHead(IconBase d){
+		OnChangeHero(d.data);
 	}
 	public void addHero(JsonObject herodata){
 		

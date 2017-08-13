@@ -13,6 +13,7 @@ public class PveHero : PveEntity {
 	void Awake () {
 		type = "PveHero";
 		skillTurnDic = new Dictionary<int, int> ();
+
 		PoolManager.getInstance ().initPoolByType (type,this,5);
 	}
 	void Start () {
@@ -24,17 +25,17 @@ public class PveHero : PveEntity {
 		
 	}
 	public void init(JsonObject jo,PveScene _pvescene){
+		resetPropert ();
 		pvescene = _pvescene;
 		entityData = jo;
-		threat = equipDamage = DataManager.getInstance().getHeroDamage(jo);
-		currentHP = maxHP = DataManager.getInstance().getHeroHp(jo);
+		threat = PropertyDic[Property.AP] = DataManager.getInstance().getHeroDamage(jo);
+		PropertyDic[Property.HP] = PropertyDic[Property.MAXHP] = DataManager.getInstance().getHeroHp(jo);
 		jo = HeroManager.getInstance ().getHeroStaticData (jo);
 		style.sprite = Resources.Load("heroHanf/" + jo["style"].ToString(),typeof(Sprite)) as Sprite;
 		hideSelect ();
-		speed = int.Parse (jo ["speed"].ToString ());
+		PropertyDic[Property.SPEED] = int.Parse (jo ["speed"].ToString ());
 		initSkillTurn (jo);
-		currentMP = maxMP = 100;//默认全为100
-
+		PropertyDic[Property.MP] = PropertyDic[Property.MAXMP] = 100;//默认全为100
 		//select.gameObject.SetActive (false);
 		//style.SetNativeSize ();
 	}
@@ -60,15 +61,15 @@ public class PveHero : PveEntity {
 	/// <param name="isAddthreat">If set to <c>true</c> is addthreat.</param>
 	public int getEquipDamage(bool isAddthreat = false){
 		if (isAddthreat)
-			threat += equipDamage;
-		return equipDamage;
+			threat += PropertyDic[Property.AP];
+		return PropertyDic[Property.AP];
 	}
 	public bool isCanUseSkill(JsonObject skilldata){
 		if (skilldata.ContainsKey ("skillType")) {
 			int skillid = int.Parse (skilldata ["id"].ToString ());
 			int needMP = skilldata.ContainsKey ("needMP") ? int.Parse (skilldata ["needMP"].ToString ()) : 20;
 			int turn = skillTurnDic [skillid];
-			if (turn == 0 && currentMP >= needMP) {
+			if (turn == 0 && PropertyDic[Property.MP] >= needMP) {
 				//selectSkill = skilldata;
 				return true;
 			}
@@ -86,11 +87,11 @@ public class PveHero : PveEntity {
 		JsonObject jo = DataManager.getInstance ().skillDicJson [skillid];
 		int _demage = int.Parse (jo ["attackDamage"].ToString ());
 		float _add = float.Parse (jo ["attackAdd"].ToString ());
-		skillDamage = _demage + (int)(_add * equipDamage);
+		PropertyDic[Property.SP] = _demage + (int)(_add * PropertyDic[Property.AP]);
 		if (isAddthreat) {
-			threat += skillDamage;
+			threat += PropertyDic[Property.SP];
 		}
-		return skillDamage;
+		return PropertyDic[Property.SP];
 	}
 	/// <summary>
 	/// /////////
@@ -102,11 +103,11 @@ public class PveHero : PveEntity {
 		//JsonObject jo = DataManager.getInstance ().skillDicJson [skillid];
 		int _demage = int.Parse (selectSkill ["attackDamage"].ToString ());
 		float _add = float.Parse (selectSkill["attackAdd"].ToString ());
-		skillDamage = _demage + (int)(_add * equipDamage);
+		PropertyDic[Property.SP] = _demage + (int)(_add * PropertyDic[Property.AP]);
 		if (isAddthreat) {
-			threat += skillDamage;
+			threat += PropertyDic[Property.SP];
 		}
-		return skillDamage;
+		return PropertyDic[Property.SP];
 	}
 	public void updateSkillTurn(){
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (entityData);

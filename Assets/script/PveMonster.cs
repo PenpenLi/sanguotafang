@@ -6,6 +6,7 @@ using SimpleJson;
 public class PveMonster : PveEntity {
 	void Awake () {
 		type = "PveMonster";
+		//PropertyDic = new Dictionary<Property, int> ();
 		PoolManager.getInstance ().initPoolByType (type,this,5);
 	}
 	// Use this for initialization
@@ -20,16 +21,17 @@ public class PveMonster : PveEntity {
 		
 	}
 	public void init(JsonObject jo,PveScene _pvescene){
+		resetPropert ();
 		pvescene = _pvescene;
 		entityData = jo;
-		currentHP = maxHP = int.Parse(jo["hp"].ToString());
+		PropertyDic[Property.HP] = PropertyDic[Property.MAXHP] = int.Parse(jo["hp"].ToString());
 		//jo = HeroManager.getInstance ().getHeroStaticData (jo);
 		style.sprite = Resources.Load(jo["style"].ToString(),typeof(Sprite)) as Sprite;
 		style.SetNativeSize ();
 		entityName.text = jo["name"].ToString();
 		entityName.color = DataManager.getInstance ().getColor (jo["color"].ToString());
-		speed = int.Parse (jo ["speed"].ToString ());
-		equipDamage = int.Parse (jo ["attack"].ToString ());
+		PropertyDic[Property.SPEED] = int.Parse (jo ["speed"].ToString ());
+		PropertyDic[Property.AP] = int.Parse (jo ["attack"].ToString ());
 		hideSelect ();
 	}
 	public void onClick(){
@@ -68,7 +70,7 @@ public class PveMonster : PveEntity {
 		Loom.QueueOnMainThread (() => {
 			disActive();
 			pvescene.ischeckBout = false;
-			pvescene.getHighestThreatHero().onHit(equipDamage);
+			pvescene.getHighestThreatHero().onHit(PropertyDic[Property.AP]);
 
 		}, 0.2f);
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));

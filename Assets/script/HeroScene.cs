@@ -258,7 +258,7 @@ public class HeroScene : Observer {
 		if (jo.data.ContainsKey ("skillType")) {
 			SkillInfo skillinfo = (SkillInfo)PoolManager.getInstance().getGameObject(PoolManager.SKILL_INFO);
 
-			skillinfo.init (jo.data);
+			skillinfo.init (jo.data,data);
 			skillinfo.transform.SetParent (BagManager.getInstance().getGameScene().transform);
 			skillinfo.transform.localPosition = new Vector3 (0.0f,0.0f,0.0f);
 		} else {

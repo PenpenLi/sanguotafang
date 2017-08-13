@@ -247,7 +247,7 @@ public class PveScene : Observer {
 		{
 			for (int j = i + 1; j < PveEntityList.Count; j++)
 			{
-				if (PveEntityList[j].speed > PveEntityList[i].speed)
+				if (PveEntityList[j].PropertyDic[Property.SPEED] > PveEntityList[i].PropertyDic[Property.SPEED])
 				{
 					temp = PveEntityList[j];
 					PveEntityList[j] = PveEntityList[i];

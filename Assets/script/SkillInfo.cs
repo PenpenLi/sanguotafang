@@ -7,7 +7,10 @@ using SimpleJson;
 public class SkillInfo : MonoBehaviour {
 	public Text panelName;
 	public Text itemName;
-	public Text itemShuLiang;
+	public Text attackType;
+	public Text needMp;
+	public Text turn;
+	public Text needStep;
 	public Text itemInfo;
 	public JsonObject data;
 	public Image icon;
@@ -28,7 +31,7 @@ public class SkillInfo : MonoBehaviour {
 	void Update () {
 		
 	}
-	public void init(JsonObject jo){
+	public void init(JsonObject jo,JsonObject herodata = null){
 		data = jo;
 		//if (jo.ContainsKey ("staticdata")) {
 		//	jo = jo ["staticdata"] as JsonObject;
@@ -47,10 +50,21 @@ public class SkillInfo : MonoBehaviour {
 		data ["skillLevel"] = 1;
 		icon.SetNativeSize();
 		itemName.text = "Lv." + data["skillLevel"].ToString() + " " + jo ["name"].ToString ();
-		itemInfo.text = jo ["desc"].ToString ();
-		int damage = int.Parse (jo ["attackDamage"].ToString ());
+		if (herodata != null) {
+			
+			itemInfo.text = string.Format (jo ["desc"].ToString (), DataManager.getInstance ().getHeroDamage (herodata));
+		} else {
+			itemInfo.text = jo ["desc"].ToString ();
+		}
+		int attacktype = int.Parse (jo ["attackType"].ToString ());
+		int isUseActionStep = int.Parse (jo ["isUseActionStep"].ToString ());
 		int damageAdd = (int.Parse (data ["skillLevel"].ToString ()) - 1) * 2;
-		itemShuLiang.text = (damage + damageAdd).ToString()  + "%";
+		attackType.text = DataManager.getInstance ().languageJson[10002+attacktype]["name"].ToString();
+		needMp.text = string.Format(DataManager.getInstance ().languageJson[10008]["name"].ToString (),int.Parse(jo["needMP"].ToString ()));
+		turn.text = string.Format (DataManager.getInstance ().languageJson[10007]["name"].ToString(),int.Parse(jo["turn"].ToString ()));
+
+		needStep.text = DataManager.getInstance ().languageJson [10009 + isUseActionStep] ["name"].ToString ();
+		//itemShuLiang.text = (damage + damageAdd).ToString()  + "%";
 		updateBtn(levelupBtn,levelUpNeedInfo,1000,"skillLevel","skillLevelUpNeed","levelUp");	
 	}
 	public void onClose(){

@@ -211,12 +211,7 @@ public class PveScene : Observer {
 		} else {
 			if (!ischeckBout) {
 				ischeckBout = true;
-				//减英雄回合数
-				foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
-					if (kvp.Value.isActiveAndEnabled) {
-						kvp.Value.updateSkillTurn ();
-					}
-				}
+			
 				setNextAttackEntityBySpeed ();
 			}
 		}
@@ -287,6 +282,12 @@ public class PveScene : Observer {
 				//新的一轮回合
 
 				actIndex = 0;
+				//减英雄回合数
+				foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
+					if (kvp.Value.isActiveAndEnabled) {
+						kvp.Value.updateSkillTurn ();
+					}
+				}
 			}
 			if (pveHero != null) {
 				pveHero.resetSkillTurn ();

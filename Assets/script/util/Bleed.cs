@@ -60,14 +60,14 @@ public class Bleed : MonoBehaviour {
 	public void playBlood(){
 		if (step == 1) {//放大阶段
 			if (currentScale.x < 3.0f) {
-				currentScale.x = currentScale.y = currentScale.z += 0.5f;
+				currentScale.x = currentScale.y = currentScale.z += 1.0f;
 				transform.localScale = currentScale;
 			} else {
 				step = 2;
 			}
 		}else if(step == 2){//回到正常大小阶段
 			if (currentScale.x > 1.0f) {
-				currentScale.x = currentScale.y = currentScale.z -= 0.3f;
+				currentScale.x = currentScale.y = currentScale.z -= 0.5f;
 				transform.localScale = currentScale;
 			} else {
 				step = 3;

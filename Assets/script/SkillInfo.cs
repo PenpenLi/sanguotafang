@@ -51,8 +51,11 @@ public class SkillInfo : MonoBehaviour {
 		icon.SetNativeSize();
 		itemName.text = "Lv." + data["skillLevel"].ToString() + " " + jo ["name"].ToString ();
 		if (herodata != null) {
-			
-			itemInfo.text = string.Format (jo ["desc"].ToString (), DataManager.getInstance ().getHeroDamage (herodata));
+			int _demage = int.Parse (jo ["attackDamage"].ToString ());
+			float _add = float.Parse (jo ["attackAdd"].ToString ());
+			int _equipDamage = DataManager.getInstance ().getHeroDamage (herodata);
+			int _skillDamage = _demage + (int)(_add * _equipDamage);
+			itemInfo.text = string.Format (jo ["desc"].ToString (),_skillDamage );
 		} else {
 			itemInfo.text = jo ["desc"].ToString ();
 		}

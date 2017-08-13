@@ -121,17 +121,17 @@ public class PveScene : Observer {
 		}
 		return pvehero;
 	}
-	public void attackAllMonster(int damage){
+	public void attackAllMonster(int damage,int num = 1){
 		foreach (KeyValuePair<int,PveMonster> kvp in PveMonsterList) {
 			if (kvp.Value.isActiveAndEnabled) {
-				kvp.Value.onHit (damage);
+				kvp.Value.onHit (damage,num);
 			}
 		}
 	}
-	public void attackAllHero(int damage){
+	public void attackAllHero(int damage,int num = 1){
 		foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
 			if (kvp.Value.isActiveAndEnabled) {
-				kvp.Value.onHit (damage);
+				kvp.Value.onHit (damage,num);
 			}
 		}
 	}
@@ -188,7 +188,8 @@ public class PveScene : Observer {
 
 	}
 	public void checkBout(){//检查本回合是否结束
-		
+		if (ischeckBout)
+			return;
 		bool isOver = true;
 		bool isAllHeroDead = true;
 		foreach (KeyValuePair<int,PveMonster> kvp in PveMonsterList) {
@@ -201,19 +202,17 @@ public class PveScene : Observer {
 				isAllHeroDead = false;
 			}
 		}
+		if (!ischeckBout) {
+			ischeckBout = true;
+		}
 		if (isOver) {//开始下一回合战斗
-			
-			initMonster ();
-			skillPanel.gameObject.SetActive (false);
+				initMonster ();
+				skillPanel.gameObject.SetActive (false);
 			//sortEntityBySpeed ();
 		} else if (isAllHeroDead) {
 			gameOver ();
 		} else {
-			if (!ischeckBout) {
-				ischeckBout = true;
-			
 				setNextAttackEntityBySpeed ();
-			}
 		}
 	}
 	public void gameOver(){
@@ -432,19 +431,25 @@ public class PveScene : Observer {
 		JsonObject jo = pveHero.selectSkill;
 		if (jo != null && jo.ContainsKey ("skillType")) {//选择的是技能
 			int skillType = int.Parse (jo["skillType"].ToString ());
+			int attacNum = int.Parse (jo["attackNum"].ToString ());
+			string[] buffInfo = (jo["buff1"].ToString ()).Split('_');
+			Buff buff = new Buff (buffInfo);
+			pveentity.addBuff (buff);
+			//if (buff.targetEntity) {
+			//}
 			//pvescene.pveHero.updateSkillTurn ();
 			switch (skillType) {
 			case 1:
-				pveentity.onHit (pveHero.getSelectedSkillDamage(true));
+				pveentity.onHit (pveHero.getSelectedSkillDamage(true),attacNum);
 				break;
 			case 2:
-				attackAllMonster (pveHero.getSelectedSkillDamage(true));
+				attackAllMonster (pveHero.getSelectedSkillDamage(true),attacNum);
 				break;
 			case 201:
-				pveentity.onHit (-pveHero.getSelectedSkillDamage(true));
+				pveentity.onHit (-pveHero.getSelectedSkillDamage(true),attacNum);
 				break;
 			case 202:
-				attackAllHero (-pveHero.getSelectedSkillDamage(true));
+				attackAllHero (-pveHero.getSelectedSkillDamage(true),attacNum);
 				break;
 			default:
 				break;

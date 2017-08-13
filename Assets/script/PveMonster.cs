@@ -21,7 +21,8 @@ public class PveMonster : PveEntity {
 		
 	}
 	public void init(JsonObject jo,PveScene _pvescene){
-		resetPropert ();
+		base.init ();
+
 		pvescene = _pvescene;
 		entityData = jo;
 		PropertyDic[Property.HP] = PropertyDic[Property.MAXHP] = int.Parse(jo["hp"].ToString());
@@ -32,7 +33,6 @@ public class PveMonster : PveEntity {
 		entityName.color = DataManager.getInstance ().getColor (jo["color"].ToString());
 		PropertyDic[Property.SPEED] = int.Parse (jo ["speed"].ToString ());
 		PropertyDic[Property.AP] = int.Parse (jo ["attack"].ToString ());
-		hideSelect ();
 	}
 	public void onClick(){
 		base.onClick ();
@@ -70,7 +70,7 @@ public class PveMonster : PveEntity {
 		Loom.QueueOnMainThread (() => {
 			disActive();
 			pvescene.ischeckBout = false;
-			pvescene.getHighestThreatHero().onHit(PropertyDic[Property.AP]);
+			pvescene.getHighestThreatHero().onHit(getPropert(Property.AP));
 
 		}, 0.2f);
 		//iTween.MoveBy(style.gameObject, iTween.Hash("y", 15, "easeType", iTween.EaseType.linear, "loopType", "pingPong", "delay", .1));

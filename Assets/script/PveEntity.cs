@@ -46,7 +46,9 @@ public class PveEntity : MonoBehaviour {
 	protected int critPoint = 0;//暴击伤害百分比
 	protected int luck = 0;//幸运值
 	public Dictionary<Property,int> PropertyDic;
-	public Dictionary<Property,int> PropertyAddByBuffDic;
+	public Dictionary<Property,int> PropertyAddByBuffDic;//Buff增加属性的具体数字
+	public Dictionary<Property,int> PropertyAddByBuffPointDic;//Buff增加属性的百分比
+	public List<Buff> BuffDic;
 	// Use this for initialization
 	void Start () {
 		
@@ -56,13 +58,38 @@ public class PveEntity : MonoBehaviour {
 	void Update () {
 		
 	}
+	public void init(){
+		BuffDic.Clear ();
+		BuffDic = new List<Buff> ();
+		resetPropert ();
+		HP.transform.localScale =Vector3.one;
+		hideSelect ();
+	}
 	public void resetPropert(){
 		PropertyDic = new Dictionary<Property, int> ();
 		PropertyAddByBuffDic = new Dictionary<Property, int> ();
+		PropertyAddByBuffPointDic = new Dictionary<Property, int> ();
 		for (Property i = 0; i <Property.MAXINDEX; i++) {
 			PropertyDic [i] = 0;
 			PropertyAddByBuffDic [i] = 0;
+			PropertyAddByBuffPointDic [i] = 100;
 		}
+	}
+	public void addBuff(Buff buff){
+		BuffDic.Add (buff);
+		buff.init (this);
+	}
+	public void removeBuff(Buff buff){
+		BuffDic.Remove (buff);
+	}
+	public void updateBuff(){
+		for (int i = 0; i <BuffDic.Count; i++) {
+			BuffDic [i].updateBuff ();
+		}
+	}
+	public int getPropert(Property _propert){
+		return (int)((PropertyDic[_propert] + PropertyAddByBuffDic[_propert]) *  PropertyAddByBuffPointDic[_propert]/100);
+		
 	}
 	public void changeMP(int _mp){
 		int mp = PropertyDic [Property.MP];
@@ -71,37 +98,55 @@ public class PveEntity : MonoBehaviour {
 		mp = mp >= 0 ? mp : 0;
 		mp = mp >= maxmp ? maxmp : mp;
 		PropertyDic [Property.MP] = mp;
-		PropertyDic [Property.MAXMP] = maxmp;
 		float xscale = (float)mp / (float)maxmp;
 		MP.transform.localScale = new Vector3 (xscale,1,1);
 		MPTxt.text = (Math.Ceiling(xscale * 100)).ToString () + "%";
 	}
-	public void onHit(int _demage){
-		Bleed bleed = (Bleed)PoolManager.getInstance ().getGameObject ("Bleed");
-		if (_demage > 0) {
-			iTween.ShakePosition (style.gameObject, new Vector3 (5.0f, 5.0f, 0.0f), 0.2f);
-			bleed.blood.color = DataManager.getInstance ().getColor ("red");
-		} else {
-			//加血
-			bleed.blood.color = DataManager.getInstance ().getColor ("green");
+	public void onHit(int _demage,int num = 1){
+		float _delay = 0.0f;
+		for (int i = 0; i < num; i++) {
+			
+			Loom.QueueOnMainThread (() => {
+				if (PropertyDic [Property.HP] > 0) {
+					Bleed bleed = (Bleed)PoolManager.getInstance ().getGameObject ("Bleed");
+					if (_demage > 0) {
+						iTween.ShakePosition (style.gameObject, new Vector3 (5.0f, 5.0f, 0.0f), 0.2f);
+						bleed.blood.color = DataManager.getInstance ().getColor ("red");
+					} else {
+						//加血
+						bleed.blood.color = DataManager.getInstance ().getColor ("green");
+					}
+					int buffhp = PropertyAddByBuffDic [Property.HP];//护盾
+					buffhp = buffhp - _demage;
+					if (buffhp < 0 || _demage < 0) {
+						int hp = PropertyDic [Property.HP];
+						int maxhp = PropertyDic [Property.MAXHP];
+						hp = hp + buffhp;
+						hp = hp >= 0 ? hp : 0;
+						hp = hp >= maxhp ? maxhp : hp;
+						float xscale = (float)hp / (float)maxhp;
+						HP.transform.localScale = new Vector3 (xscale, 1, 1);
+						HPTxt.text = (Math.Ceiling (xscale * 100)).ToString () + "%";
+						PropertyDic [Property.HP] = hp;
+
+					} else {
+						buffhp = 0;
+					}
+					bleed.transform.SetParent (this.transform);
+
+						bleed.show (buffhp, () => {
+							if (PropertyDic [Property.HP] == 0) {
+								onDead ();
+							}
+							pvescene.checkBout ();
+						});
+				}
+
+			},_delay);
+			_delay += 0.5f;
+
+
 		}
-		int hp = PropertyDic [Property.HP];
-		int maxhp = PropertyDic [Property.MAXHP];
-		hp = hp - _demage;
-		hp = hp >= 0 ? hp : 0;
-		hp = hp >= maxhp ? maxhp : hp;
-		float xscale = (float)hp / (float)maxhp;
-		HP.transform.localScale = new Vector3 (xscale,1,1);
-		HPTxt.text = (Math.Ceiling(xscale * 100)).ToString () + "%";
-		PropertyDic [Property.HP] = hp;
-		PropertyDic [Property.MAXHP] = maxhp;
-		bleed.transform.SetParent (this.transform);
-		bleed.show (-_demage,() => {
-			if (PropertyDic [Property.HP] == 0) {
-				onDead ();
-			}
-			pvescene.checkBout ();
-		});
 
 	}
 	public void onClick(){

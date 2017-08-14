@@ -282,6 +282,11 @@ public class PveScene : Observer {
 
 				actIndex = 0;
 				//减英雄回合数
+				for (int i = 0; i < PveEntityList.Count; i++) {
+					if (PveEntityList[i].isActiveAndEnabled) {
+						PveEntityList [i].updateBuff ();
+					}
+				}
 				foreach (KeyValuePair<int,PveHero> kvp in PveHeroList) {
 					if (kvp.Value.isActiveAndEnabled) {
 						kvp.Value.updateSkillTurn ();
@@ -375,7 +380,8 @@ public class PveScene : Observer {
 		pveHero.selectSkill = jo;
 		JsonObject staticdata = HeroManager.getInstance ().getHeroStaticData (pveHero.entityData);
 		int id = int.Parse (staticdata ["attackType"].ToString ()) + 10000;
-		skillInfo.text = string.Format (DataManager.getInstance ().languageJson [id]["name"].ToString(), pveHero.getEquipDamage());
+		skillInfo.text = string.Format (jo ["name"].ToString () + ":" +DataManager.getInstance ().languageJson [id]["name"].ToString(), pveHero.getEquipDamage());
+
 		selectKuang.transform.SetParent (null);
 		selectKuang.transform.SetParent (equip.transform);
 		selectKuang.transform.localPosition = Vector3.zero;
@@ -401,7 +407,14 @@ public class PveScene : Observer {
 			//int _demage = int.Parse (jo ["attackDamage"].ToString ());
 			//float _add = float.Parse (jo ["attackAdd"].ToString ());
 			//技能自身伤害+普攻的百分比伤害
-			skillInfo.text = skillInfo.text = string.Format (jo ["desc"].ToString (), pveHero.getSelectedSkillDamage ());
+		skillInfo.text = skillInfo.text = string.Format (jo ["name"].ToString () + ":" +jo ["desc"].ToString (), pveHero.getSelectedSkillDamage ());
+		int buffId = int.Parse(jo["buff"].ToString ());
+		if (DataManager.getInstance ().buffJson.ContainsKey (buffId)) {
+			JsonObject buffData = DataManager.getInstance ().buffJson [buffId];
+			if (buffData != null) {
+				skillInfo.text += buffData ["desc"].ToString ();
+			}
+		}
 			int pos = int.Parse (jo ["pos"].ToString ());
 			Button skill = skillList [pos - 1];
 			selectKuang.transform.SetParent (null);
@@ -434,9 +447,16 @@ public class PveScene : Observer {
 			int skillType = int.Parse (jo["skillType"].ToString ());
 			int attacNum = int.Parse (jo["attackNum"].ToString ());
 			int isUseActionStep = int.Parse (jo["isUseActionStep"].ToString ());
-			string[] buffInfo = (jo["buff1"].ToString ()).Split('_');
-			Buff buff = new Buff (buffInfo);
-			pveentity.addBuff (buff);
+			///////////////////////技能释放后 添加BUFF效果////////////////////////////////
+			int buffId = int.Parse(jo["buff"].ToString ());
+			if (DataManager.getInstance ().buffJson.ContainsKey (buffId)) {
+				JsonObject buffData = DataManager.getInstance ().buffJson [buffId];
+				if (buffData != null) {
+					Buff buff = new Buff (buffData);
+					pveentity.addBuff (buff);
+				}
+			}
+			///////////////////////////////////////////////////////////
 			if (isUseActionStep == 0) {
 				actIndex--;
 				actIndex = actIndex < 0 ? 0 : actIndex;

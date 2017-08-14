@@ -123,7 +123,7 @@ public class PveHero : PveEntity {
 				skillTurnDic [skillid]--;
 			}
 		}
-		updateBuff ();
+		//updateBuff ();
 	}
 	public void onClick(){
 		base.onClick ();

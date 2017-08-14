@@ -35,6 +35,7 @@ public class DataManager {
 	public Dictionary<int, JsonObject> soundJson;
 	public Dictionary<int, JsonObject> languageJson;
 	public Dictionary<int, JsonObject> pvePosJson;
+	public Dictionary<int, JsonObject> buffJson;
     public Dictionary<string,ArrayList> chapterWaveData;
 	public static JsonObject playerData;
 	public static DataManager getInstance(){//获取单例
@@ -59,6 +60,7 @@ public class DataManager {
 			_dataManager.soundJson = _dataManager.getJson("data/sound", "\r\n");
 			_dataManager.languageJson = _dataManager.getJson("data/language", "\r\n");
 			_dataManager.pvePosJson = _dataManager.getJson("data/pvepos", "\r\n");
+			_dataManager.buffJson = _dataManager.getJson("data/buff", "\r\n");
 			_dataManager.dataDic ["item"] = _dataManager.itemDicJson;
 			//_dataManager.dataDic ["equipment"] = _dataManager.equipDicJson;
 			_dataManager.dataDic ["chapter"] = _dataManager.chapterDicJson;

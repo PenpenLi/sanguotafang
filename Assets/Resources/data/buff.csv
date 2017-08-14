@@ -1,0 +1,6 @@
+id,name,icon,attackType,desc,property,turn,changeType,valueType,addType,changeValue,baseType
+0,名字,图标,伤害类型,描述,0AP_1SP_2HP_3MP_4MAXHP_5MAXMP_6AD_7SD_8CRIT_9CRITPOINT_10LUCK_11SPEED,持续几回合,修改属性的方式1永久性修改2每回合3回合内增加或减少某项属性值Buff消失后还原属性值,0增加到基础数值HP_1某项属性的加成数值_2某项属性的百分比加成,1数值2百分比,改变数值,基于释放者哪项属性值
+100,buff100,skill_icon/1012,1, 给目标友军套上一层能吸收<color=#00FF00>{0}(+1.52AP)</color>点伤害的护盾,2,0,1,1,2,152,0
+101,buff101,skill_icon/3111,2,3回合内每回合回复目标友军<color=#00FF00>{0}(+{1}AP)</color>HP。,2,1,2,0,2,58,0
+102,buff102,skill_icon/3011,3,增加目标友军<color=#FF0000>{0}</color>AP伤害，持续3回合。,0,1,3,1,2,45,0
+103,buff103,skill_icon/3011,1,给敌对目标添加流血效果，3回合内，每回合流血<color=#FF0000>{0}</color>HP,2,3,2,0,2,-80,0

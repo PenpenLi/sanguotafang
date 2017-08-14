@@ -206,13 +206,13 @@ public class PveScene : Observer {
 			ischeckBout = true;
 		}
 		if (isOver) {//开始下一回合战斗
-				initMonster ();
-				skillPanel.gameObject.SetActive (false);
+			initMonster ();
+			skillPanel.gameObject.SetActive (false);
 			//sortEntityBySpeed ();
 		} else if (isAllHeroDead) {
 			gameOver ();
 		} else {
-				setNextAttackEntityBySpeed ();
+			setNextAttackEntityBySpeed ();
 		}
 	}
 	public void gameOver(){
@@ -388,7 +388,6 @@ public class PveScene : Observer {
 			onClickSkill(jo);
 		} else {//选择的是武器
 			onClickEquip(jo);
-
 		}
 
 	}
@@ -424,6 +423,8 @@ public class PveScene : Observer {
 	/// </summary>
 	/// <param name="pveentity">对攻击的对象.</param>
 	public void attackEntity(PveEntity pveentity){
+		if (pveHero == null)
+			return;
 		ischeckBout = false;
 		hideAllHeroSelect ();
 		hideAllMonsterSelect ();
@@ -432,9 +433,15 @@ public class PveScene : Observer {
 		if (jo != null && jo.ContainsKey ("skillType")) {//选择的是技能
 			int skillType = int.Parse (jo["skillType"].ToString ());
 			int attacNum = int.Parse (jo["attackNum"].ToString ());
+			int isUseActionStep = int.Parse (jo["isUseActionStep"].ToString ());
 			string[] buffInfo = (jo["buff1"].ToString ()).Split('_');
 			Buff buff = new Buff (buffInfo);
 			pveentity.addBuff (buff);
+			if (isUseActionStep == 0) {
+				actIndex--;
+				actIndex = actIndex < 0 ? 0 : actIndex;
+			}
+
 			//if (buff.targetEntity) {
 			//}
 			//pvescene.pveHero.updateSkillTurn ();

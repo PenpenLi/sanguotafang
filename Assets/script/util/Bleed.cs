@@ -62,6 +62,7 @@ public class Bleed : MonoBehaviour {
 			if (currentScale.x < 3.0f) {
 				currentScale.x = currentScale.y = currentScale.z += 1.0f;
 				transform.localScale = currentScale;
+
 			} else {
 				step = 2;
 			}

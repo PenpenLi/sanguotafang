@@ -48,6 +48,7 @@ public class PveEntity : MonoBehaviour {
 	public Dictionary<Property,int> PropertyDic;
 	public Dictionary<Property,int> PropertyAddByBuffDic;//Buff增加属性的具体数字
 	public Dictionary<Property,int> PropertyAddByBuffPointDic;//Buff增加属性的百分比
+	public Dictionary<int,Dictionary<Property,int>> PropertyAllDic;
 	public List<Buff> BuffDic;
 	// Use this for initialization
 	void Start () {
@@ -59,7 +60,6 @@ public class PveEntity : MonoBehaviour {
 		
 	}
 	public void init(){
-		BuffDic.Clear ();
 		BuffDic = new List<Buff> ();
 		resetPropert ();
 		HP.transform.localScale =Vector3.one;
@@ -69,6 +69,10 @@ public class PveEntity : MonoBehaviour {
 		PropertyDic = new Dictionary<Property, int> ();
 		PropertyAddByBuffDic = new Dictionary<Property, int> ();
 		PropertyAddByBuffPointDic = new Dictionary<Property, int> ();
+		PropertyAllDic = new Dictionary<int, Dictionary<Property, int>> ();
+		PropertyAllDic [0] = PropertyDic;
+		PropertyAllDic [1] = PropertyAddByBuffDic;
+		PropertyAllDic [2] = PropertyAddByBuffPointDic;
 		for (Property i = 0; i <Property.MAXINDEX; i++) {
 			PropertyDic [i] = 0;
 			PropertyAddByBuffDic [i] = 0;
@@ -86,10 +90,53 @@ public class PveEntity : MonoBehaviour {
 		for (int i = 0; i <BuffDic.Count; i++) {
 			BuffDic [i].updateBuff ();
 		}
+		for (int i = 0; i <BuffDic.Count; i++) {
+			if (BuffDic [i].turn <= 0) {
+				BuffDic.RemoveAt (i);
+				i--;
+			}
+		}
 	}
 	public int getPropert(Property _propert){
 		return (int)((PropertyDic[_propert] + PropertyAddByBuffDic[_propert]) *  PropertyAddByBuffPointDic[_propert]/100);
 		
+	}
+	public void showPropertyChange(Property changeEntityProperty,int _changeValue,int valueType){
+		Bleed bleed = (Bleed)PoolManager.getInstance ().getGameObject ("Bleed");
+		if (_changeValue > 0) {
+			bleed.blood.color = DataManager.getInstance ().getColor ("green");
+		} else {
+			bleed.blood.color = DataManager.getInstance ().getColor ("red");
+		}
+		bleed.transform.SetParent (this.transform);
+		string str = "";
+		switch (valueType) {
+		case 0:
+			str = DataManager.getInstance ().languageJson [10011 + (int)changeEntityProperty] ["name"].ToString () + _changeValue.ToString ();
+			if (changeEntityProperty == Property.HP) {
+				if (PropertyDic [Property.HP] > PropertyDic [Property.MAXHP]) {
+					PropertyDic [Property.HP] = PropertyDic [Property.MAXHP];
+				}
+				float xscale = (float)PropertyDic [Property.HP] / (float)PropertyDic [Property.MAXHP];
+				HP.transform.localScale = new Vector3 (xscale, 1, 1);
+				HPTxt.text = (Math.Ceiling (xscale * 100)).ToString () + "%";
+			}
+			break;
+		case 1:
+			str = DataManager.getInstance ().languageJson [10023 + (int)changeEntityProperty]["name"].ToString () + _changeValue.ToString ();
+			break;
+		case 2:
+			str = DataManager.getInstance ().languageJson [10035 + (int)changeEntityProperty]["name"].ToString () + _changeValue.ToString ();
+			break;
+		default:
+			break;
+		}
+		bleed.show (str, () => {
+			if (PropertyDic [Property.HP] == 0) {
+				onDead ();
+			}
+			pvescene.checkBout ();
+		});
 	}
 	public void changeMP(int _mp){
 		int mp = PropertyDic [Property.MP];
@@ -118,6 +165,7 @@ public class PveEntity : MonoBehaviour {
 					}
 					int buffhp = PropertyAddByBuffDic [Property.HP];//护盾
 					buffhp = buffhp - _demage;
+					PropertyAddByBuffDic [Property.HP] = buffhp <0 ? 0 : buffhp;
 					if (buffhp < 0 || _demage < 0) {
 						int hp = PropertyDic [Property.HP];
 						int maxhp = PropertyDic [Property.MAXHP];
@@ -133,7 +181,6 @@ public class PveEntity : MonoBehaviour {
 						buffhp = 0;
 					}
 					bleed.transform.SetParent (this.transform);
-
 						bleed.show (buffhp, () => {
 							if (PropertyDic [Property.HP] == 0) {
 								onDead ();
@@ -143,7 +190,7 @@ public class PveEntity : MonoBehaviour {
 				}
 
 			},_delay);
-			_delay += 0.5f;
+			_delay += 0.3f;
 
 
 		}

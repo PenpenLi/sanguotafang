@@ -1,5 +1,5 @@
 id,name,icon,attackType,skillType,desc,effectName,attackNum,attackInterval,music,attackRange,priotY,stateDuration,stateChance,attackDamage,startAttackIndex,shakeScreen,color,attackAdd,target,turn,needMP,isUseActionStep,buff1
-0,名字,图标,伤害类型,技能类型,描述,特效,攻击次数,攻击隔间,音效,攻击范围,Y轴的描点,状态持续时间,触发概率,伤害,播放到第几帧开始伤害 ,是否震动屏幕 ,颜色,伤害加成，为英雄普攻伤害的百分比,目标：1怪物2友军,回合数,消耗蓝mp,是否消耗行动,技能I所带来的buff
+0,名字,图标,伤害类型,技能类型,描述,特效,攻击次数,攻击隔间,音效,攻击范围,Y轴的描点,状态持续时间,触发概率,伤害,播放到第几帧开始伤害 ,是否震动屏幕 ,颜色,伤害加成，为英雄普攻伤害的百分比,目标：1怪物2友军,回合数,消耗蓝mp,是否消耗行动,x_Property_回合数_属性修改方式_添加到哪个DIC_数值还是百分比_value
 100,剑气斩,skill_icon/1012,1,1,集气于剑上，然后挥砍出去，对直线上的所有敌人造成<color=#FF0000>{0}</color> 物理伤害,skill/chongci,1,0,100,75,0.5,0,0,0,0,0,green,0.56,1,1,1,1,1000
 101,治愈之光,skill_icon/3111,2,201,给予友军目标<color=#00FF00>{0}</color>的治愈效果。,skill/juji,1,0,101,60,0.5,0,0,0,0,0.5,yellow,1.56,2,3,2,1,1001
 102,祈福,skill_icon/3011,3,202,立即恢复全体友军<color=#00FF00>{0}</color>的HP。,skill/skill012,1,1,102,75,0.2,2003,1,0,0,0,red,2.56,2,3,3,1,1002
@@ -18,4 +18,6 @@ id,name,icon,attackType,skillType,desc,effectName,attackNum,attackInterval,music
 114,暴雨梨花针,skill_icon/2063,4,2,成千上万的冰针从天而降，对刺中的目标造成<color=#FF0000>{0}</color> 魔法伤害,skill/baoyulihuazhen,1,0,111,200,0.2,0,0,0,9,1,green,0.56,1,1,16,1,1015
 115,泥塘,skill_icon/2063,2,2,地面冒出一团泥塘，对经过的敌人减速,skill/nitang,1,0.2,112,100,0.5,2001,1,0,0,0,green,1.56,1,1,17,1,1016
 116,伏击,skill_icon/2063,1,1,给目标造成<color=#FF0000>{0}</color>物理伤害。当对方处于眩晕或压制状态时，伤害量增加50%，伏击的冷却时间减少1回合。,skill/nitang,1,0,112,100,0.5,0,1,0,0,1,green,2.02,1,3,30,1,1017
-117,横扫,skill_icon/2063,1,2,给所有敌人造成<color=#FF0000>{0}</color>物理伤害。敌人的HP80%以上时，伤害量增加50%,skill/nitang,1,0,112,100,0.5,0,1,0,0,0,green,1.56,1,3,30,1,1002
+117,横扫,skill_icon/1051,1,2,给所有敌人造成<color=#FF0000>{0}</color>物理伤害。敌人的HP80%以上时，伤害量增加50%,skill/nitang,1,0,112,100,0.5,0,1,0,0,0,green,1.56,1,3,30,1,1002
+118,全力一击,skill_icon/3103,1,1,给敌对目标造成<color=#FF0000>{0}</color>物理伤害。目标的物理防御在3回合内减少35%。,skill/nitang,1,0,112,100,0.5,0,1,0,0,0,green,1.52,1,3,15,1,1000
+119,友谊之盾,skill_icon/2032,2,100,给友军套上一层<color=#00FF00>{0}</color>HP的护盾，吸收敌人的伤害。,skill/nitang,1,0,112,100,0.5,0,0,0,0,0,green,1.72,2,3,20,0,1_2_3_2_0_1_120
